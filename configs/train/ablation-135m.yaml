@@ -1,0 +1,28 @@
+# Ablation protocol at 135M: 10B tokens (~75 tokens per parameter), 1M tokens per step.
+# Same seed, data order and budget for every arm; only the model config changes.
+# tokens/step = micro_batch_size * seq_len * grad_accum_steps * world_size
+#             = 16 * 2048 * 4 * 8 GPUs = 1,048,576
+model: configs/model/slm-135m.yaml
+data_dir: data/tokens/core-v0
+out_dir: runs/ablation-135m-baseline
+seed: 1234
+seq_len: 2048
+micro_batch_size: 16
+grad_accum_steps: 4
+max_steps: 9537
+lr: 3.0e-3
+min_lr: 3.0e-4
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 500
+decay_fraction: 0.2
+dtype: bfloat16
+compile: true
+deterministic: false
+peak_tflops: 989.0
+log_interval: 10
+eval_interval: 500
+eval_batches: 32
+observe_interval: 500
+ckpt_interval: 1000
+keep_checkpoints: 3

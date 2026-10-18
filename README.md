@@ -8,7 +8,59 @@ The project aims to develop a useful model for local deployment and to understan
 
 ## Project status
 
-SLM-1B Challenge is currently at the research planning stage. This repository starts with the project vision and experimental agenda. It does not yet provide a model, training pipeline, dataset release, or benchmark results. The methods described below are proposed directions whose value at this scale remains to be tested.
+SLM-1B Challenge has completed its first infrastructure milestone. The repository now contains a tested model implementation, data pipeline, training loop and evaluation tools, verified end to end on synthetic data. It does not yet provide a trained model, an approved training corpus, or benchmark results. The methods described below are proposed directions whose value at this scale remains to be tested; [docs/ROADMAP.md](docs/ROADMAP.md) lists the next milestones and their exit criteria.
+
+What exists today:
+
+- **Model.** A decoder-only transformer with grouped-query attention, QK normalisation, SwiGLU and RoPE, configured at 135M, 300M and 1.04B parameters, plus ablation variants with gated attention and local/global layers. Every intermediate activation passes through a named hook point. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+- **Causal analysis.** Capture and intervention on any hook point, head ablation, activation patching, logit lens, and attention sink measurements, also logged during training.
+- **Open Data Factory.** A source registry with an enforced license policy, and a pipeline for normalisation, quality filtering, privacy redaction, exact and MinHash deduplication, and benchmark decontamination. Every removal is logged with its reason, and every kept document carries its source, revision and hash. See [docs/DATA_POLICY.md](docs/DATA_POLICY.md).
+- **Reproducible training.** Batches are a function of seed and step, checkpoints carry optimiser and RNG state, and run manifests record configuration hashes, data hashes, code revision and environment. A resumed run matches an uninterrupted run exactly in deterministic mode.
+- **Evaluation and cost.** Bits per byte, verified task completion with cost per solved task, latency, memory and GPU energy.
+- **Open weights in standard formats.** Export to Hugging Face Llama or Qwen3 format, checked to give identical logits in `transformers`, with a provenance file linking weights to their run and data.
+- **Agent traces.** A span schema linking tasks, model calls, tool calls, verification results and costs.
+
+## Getting started
+
+Requires Python 3.10 or newer and PyTorch 2.3 or newer. A GPU is optional for the smoke run.
+
+```bash
+pip install -e ".[dev,hf,energy]"
+pytest
+
+# Smoke run on synthetic data, from the repository root (a few minutes)
+python -m slm sources audit -v
+python -m slm data synth --kind prose --n 3000 --out data/raw/smoke/prose.jsonl
+python -m slm data synth --kind arithmetic --n 200 --seed 1 --out data/raw/smoke/arith-eval.jsonl
+python -m slm data run configs/data/pipeline-smoke.yaml
+python -m slm tokenizer train --inputs data/processed/smoke/documents.jsonl --out data/tokenizer/smoke --vocab-size 4096
+python -m slm data encode --tokenizer data/tokenizer/smoke --inputs data/processed/smoke/documents.jsonl --out data/tokens/smoke --val-fraction 0.05
+python -m slm train configs/train/smoke.yaml
+python -m slm eval bpb --checkpoint runs/smoke/checkpoints/step_00000300.pt --tokenizer data/tokenizer/smoke --data data/processed/smoke/documents.jsonl --limit 50
+python -m slm eval cost --checkpoint runs/smoke/checkpoints/step_00000300.pt --tokenizer data/tokenizer/smoke
+python -m slm export --checkpoint runs/smoke/checkpoints/step_00000300.pt --tokenizer data/tokenizer/smoke --out exports/smoke-hf
+
+# Size and compute estimate of the 1B target
+python -m slm model info configs/model/slm-1b.yaml --tokens 1e12
+```
+
+Training configurations accept overrides, for example `python -m slm train configs/train/smoke.yaml --set max_steps=100 seed=7`. Multi-GPU runs use `torchrun --nproc_per_node=N -m slm train ...`.
+
+## Repository layout
+
+| Path | Contents |
+|---|---|
+| `src/slm/model.py` | Transformer with hook points, KV cache and generation |
+| `src/slm/observe.py`, `src/slm/interp.py` | Capture, interventions and causal analyses |
+| `src/slm/data/` | Source registry and policy, filters, deduplication, privacy, decontamination, pipeline, token shards, synthetic data |
+| `src/slm/tokenizer.py` | Byte-level BPE training with a provenance manifest |
+| `src/slm/train.py` | Deterministic, resumable, instrumented training loop |
+| `src/slm/evaluation.py` | Bits per byte, verified tasks, cost and energy |
+| `src/slm/export.py` | Hugging Face export with provenance |
+| `src/slm/trace.py` | Agent trace spans |
+| `configs/` | Model, training, data source and pipeline configurations |
+| `docs/` | Architecture, data policy, experiment protocol, roadmap, and card templates |
+| `tests/` | Unit and end-to-end tests |
 
 ## Open science as a design requirement
 

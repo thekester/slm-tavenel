@@ -1,0 +1,31 @@
+# Proposed 1B pretraining run. NOT yet validated: learning rate, batch size and schedule
+# are starting points to be confirmed by the 135M/300M sweeps (docs/ROADMAP.md, M2-M3).
+# Budget: 1T tokens (~960 tokens per parameter), 2,097,152 tokens per step.
+# tokens/step = 8 * 4096 * 2 * 32 GPUs = 2,097,152 ; steps = 1e12 / 2,097,152 = 476,837
+model: configs/model/slm-1b.yaml
+data_dir: data/tokens/core-v1
+out_dir: runs/slm-1b-pretrain
+seed: 1234
+seq_len: 4096
+micro_batch_size: 8
+grad_accum_steps: 2
+max_steps: 476837
+lr: 1.0e-3
+min_lr: 1.0e-4
+weight_decay: 0.1
+beta1: 0.9
+beta2: 0.95
+grad_clip: 1.0
+schedule: wsd
+warmup_steps: 2000
+decay_fraction: 0.1
+dtype: bfloat16
+compile: true
+deterministic: false
+peak_tflops: 989.0
+log_interval: 10
+eval_interval: 1000
+eval_batches: 64
+observe_interval: 1000
+ckpt_interval: 2000
+keep_checkpoints: 5

@@ -1,0 +1,12 @@
+# Transfer scale, ~300M parameters: confirms that ablation winners at 135M still win.
+vocab_size: 49152
+d_model: 1024
+n_layers: 24
+n_heads: 16
+n_kv_heads: 4
+ffn_hidden: 2560
+max_seq_len: 4096
+rope_theta: 100000.0
+qk_norm: true
+attn_gate: none
+window_pattern: []

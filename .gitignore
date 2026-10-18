@@ -1,0 +1,7 @@
+# Generated data, runs and exports are reproduced from configs, never committed.
+/data/
+/runs/
+/exports/
+__pycache__/
+*.egg-info/
+.pytest_cache/

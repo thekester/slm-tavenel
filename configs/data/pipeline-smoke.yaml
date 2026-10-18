@@ -1,0 +1,26 @@
+# Smoke pipeline over synthetic data. Exercises every step; thresholds are relaxed for
+# template text, which is repetitive by construction. Run from the repository root:
+#   python -m slm data synth --kind prose --n 3000 --out data/raw/smoke/prose.jsonl
+#   python -m slm data synth --kind arithmetic --n 200 --seed 1 --out data/raw/smoke/arith-eval.jsonl
+#   python -m slm data run configs/data/pipeline-smoke.yaml
+name: smoke
+registry: configs/data/sources.yaml
+inputs:
+  - source: synthetic-prose-v1
+    path: data/raw/smoke/prose.jsonl
+    text_field: text
+    id_field: id
+steps:
+  - normalize: {}
+  - min_length: {min_chars: 100}
+  - gopher_quality: {min_words: 20}
+  - repetition: {max_dup_line_frac: 0.5, max_dup_line_char_frac: 0.5, top_ngram: [2, 0.5], dup_ngram: [5, 0.95]}
+  - blocklist: {patterns: ["lorem ipsum"]}
+  - pii: {}
+  - exact_dedup: {}
+  - minhash_dedup: {num_perm: 128, bands: 16, ngram: 5, threshold: 0.8, seed: 0}
+  - decontaminate:
+      n: 8
+      eval_files:
+        - {path: data/raw/smoke/arith-eval.jsonl, fields: [text], id_field: id}
+output_dir: data/processed/smoke

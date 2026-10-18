@@ -1,0 +1,13 @@
+# Ablation scale, ~135M parameters (deep and thin, comparable in shape to SmolLM2-135M).
+# Used for attention, data-mixture and tokenizer ablations before transfer to 1B.
+vocab_size: 49152
+d_model: 576
+n_layers: 30
+n_heads: 9
+n_kv_heads: 3
+ffn_hidden: 1536
+max_seq_len: 2048
+rope_theta: 100000.0
+qk_norm: true
+attn_gate: none
+window_pattern: []

@@ -1,0 +1,14 @@
+# Ablation A2: layers that vary their attention span. Five sliding-window layers (512 tokens)
+# for one global layer. Hypothesis: lower inference memory and latency at long context
+# with limited loss in quality. Compare with slm-135m.yaml at 2k and with long-context probes.
+vocab_size: 49152
+d_model: 576
+n_layers: 30
+n_heads: 9
+n_kv_heads: 3
+ffn_hidden: 1536
+max_seq_len: 2048
+rope_theta: 100000.0
+qk_norm: true
+attn_gate: none
+window_pattern: [512, 512, 512, 512, 512, 0]

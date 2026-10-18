@@ -1,0 +1,21 @@
+# Template for a real source once it is approved in sources.yaml. Thresholds follow the
+# Gopher and FineWeb defaults; any change is an experiment and must be recorded as one.
+name: common-pile-sample
+registry: configs/data/sources.yaml
+inputs:
+  - source: common-pile-comma-v0.1
+    path: data/raw/common-pile/sample.jsonl
+    text_field: text
+    id_field: id
+steps:
+  - normalize: {}
+  - min_length: {min_chars: 200}
+  - gopher_quality: {}
+  - repetition: {}
+  - pii: {}
+  - exact_dedup: {}
+  - minhash_dedup: {num_perm: 112, bands: 14, ngram: 5, threshold: 0.75, seed: 0}
+  - decontaminate:
+      n: 13
+      eval_files: []  # add every evaluation set used in reported results
+output_dir: data/processed/common-pile-sample

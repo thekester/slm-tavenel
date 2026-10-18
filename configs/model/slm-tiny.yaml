@@ -1,0 +1,12 @@
+# Smoke-test model (~1M parameters): validates the pipeline end to end on a laptop.
+vocab_size: 4096
+d_model: 128
+n_layers: 4
+n_heads: 4
+n_kv_heads: 2
+ffn_hidden: 384
+max_seq_len: 512
+rope_theta: 10000.0
+qk_norm: true
+attn_gate: none
+window_pattern: []
