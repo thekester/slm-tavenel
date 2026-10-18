@@ -16,7 +16,7 @@ The ambition is to release the source code, model weights, tokenizer, configurat
 
 Openness must be documented for each component. A public download alone does not establish that an artifact meets the project's reuse requirements. The intended core corpus will require identifiable sources, recorded permissions, and a review of applicable obligations before inclusion.
 
-Apache 2.0 is a candidate license for original code and model artifacts where the necessary rights are established. This README does not grant that license. Formal license files and release documentation will define the terms of each published artifact, while third party materials retain their applicable terms.
+The original code and documentation in this repository are released under the [MIT License](LICENSE), with copyright attributed to Théophile Avenel. Third party materials retain their applicable terms. Future model weights and datasets will document their licensing separately when released.
 
 ## Research directions
 
@@ -119,6 +119,14 @@ This bibliography covers the papers named in our research notes and the primary 
 **DataTrove.** Hugging Face. [Official repository](https://github.com/huggingface/datatrove). Provides reusable data processing components, including filtering and deduplication. It is an implementation reference for the Open Data Factory.
 
 The public comments discussed in our notes raise additional questions about explanation faithfulness, debugging, memory robustness, and cost per successful task. We treat those questions as proposed research hypotheses, rather than additional papers or established experimental findings.
+
+## License and attribution
+
+Copyright (c) 2026 Théophile Avenel.
+
+This project's original code and documentation are available under the [MIT License](LICENSE). You may use, copy, modify, merge, publish, distribute, sublicense, and sell them, including as part of commercial or proprietary projects, subject to the license terms.
+
+Copies or substantial portions must retain the copyright notice naming Théophile Avenel and the MIT permission notice. The license does not require a separate academic citation or a visible credit in a product interface. If you discuss this project in a publication, an acknowledgement of Théophile Avenel and a link to this repository are appreciated.
 
 ## Contributing
 
