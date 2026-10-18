@@ -48,16 +48,21 @@ def build_empty() -> Tokenizer:
     return tok
 
 
-def iter_texts(paths: list[str], max_docs: int | None, seed: int) -> Iterator[str]:
-    """Deterministic sample: documents are read in order, then shuffled with ``seed``."""
-    texts: list[str] = []
+def _lines(paths: list[str]) -> Iterator[str]:
     for p in paths:
         with open(p, encoding="utf-8") as f:
-            for line in f:
-                if line.strip():
-                    texts.append(json.loads(line)["text"])
-    random.Random(seed).shuffle(texts)
-    yield from texts[:max_docs] if max_docs else texts
+            yield from (line for line in f if line.strip())
+
+
+def iter_texts(paths: list[str], max_docs: int | None, seed: int) -> Iterator[str]:
+    """Deterministic sample of ``max_docs`` documents chosen with ``seed``, streamed in two passes
+    so the corpus never has to fit in memory."""
+    if not max_docs:
+        yield from (json.loads(line)["text"] for line in _lines(paths))
+        return
+    total = sum(1 for _ in _lines(paths))
+    chosen = set(random.Random(seed).sample(range(total), min(max_docs, total)))
+    yield from (json.loads(line)["text"] for i, line in enumerate(_lines(paths)) if i in chosen)
 
 
 def train(

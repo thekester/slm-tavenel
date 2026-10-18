@@ -1,6 +1,7 @@
 # Generated data, runs and exports are reproduced from configs, never committed.
 /data/
 /runs/
+/runs-*.err
 /exports/
 __pycache__/
 *.egg-info/
