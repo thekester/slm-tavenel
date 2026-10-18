@@ -201,6 +201,23 @@ class Block(nn.Module):
         return self.hook_resid_post(x)
 
 
+def _chunk_loss_sum(h: torch.Tensor, weight: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+    logits = F.linear(h, weight).float()
+    return F.cross_entropy(logits, targets, ignore_index=-100, reduction="sum")
+
+
+def chunked_cross_entropy(h: torch.Tensor, weight: torch.Tensor, targets: torch.Tensor, chunk: int = 4096) -> torch.Tensor:
+    """Mean cross-entropy over rows of h, recomputing each chunk's logits in the backward pass."""
+    from torch.utils.checkpoint import checkpoint
+
+    h = h.reshape(-1, h.size(-1))
+    targets = targets.reshape(-1)
+    total = h.new_zeros((), dtype=torch.float32)
+    for i in range(0, h.size(0), chunk):
+        total = total + checkpoint(_chunk_loss_sum, h[i : i + chunk], weight, targets[i : i + chunk], use_reentrant=False)
+    return total / (targets != -100).sum().clamp_min(1)
+
+
 class SLM(nn.Module):
     def __init__(self, cfg: ModelConfig) -> None:
         super().__init__()
@@ -242,7 +259,10 @@ class SLM(nn.Module):
         input_ids: torch.Tensor,
         targets: torch.Tensor | None = None,
         cache: KVCache | None = None,
-    ) -> tuple[torch.Tensor, torch.Tensor | None]:
+        return_logits: bool = True,
+    ) -> tuple[torch.Tensor | None, torch.Tensor | None]:
+        """With ``return_logits=False`` and targets, the loss is computed in chunks and the
+        full B x T x vocab logits are never stored, which bounds training memory."""
         T = input_ids.shape[1]
         offset = cache.seq_len if cache is not None else 0
         if offset + T > self.cfg.max_seq_len:
@@ -250,7 +270,10 @@ class SLM(nn.Module):
         x = self.hook_embed(self.embed(input_ids))
         for block in self.blocks:
             x = block(x, self.rope_cos, self.rope_sin, offset, cache)
-        logits = self.lm_head(self.final_norm(x))
+        h = self.final_norm(x)
+        if targets is not None and not return_logits:
+            return None, chunked_cross_entropy(h, self.lm_head.weight, targets)
+        logits = self.lm_head(h)
         loss = None
         if targets is not None:
             loss = F.cross_entropy(

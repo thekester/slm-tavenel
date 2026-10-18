@@ -262,7 +262,7 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
             if world > 1 and micro < cfg.grad_accum_steps - 1:
                 sync = run_model.no_sync()
             with sync, autocast_context(device, cfg.dtype), attention_backend(device, cfg.deterministic):
-                _, loss = run_model(x, y)
+                _, loss = run_model(x, y, return_logits=False)
                 (loss / cfg.grad_accum_steps).backward()
             loss_sum += loss.item()
         grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_clip).item()

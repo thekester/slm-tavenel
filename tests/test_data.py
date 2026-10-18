@@ -74,13 +74,54 @@ def test_exact_and_near_dedup():
     assert lsh.check("c", other) is None
 
 
+def test_pii_ip_and_iban_precision():
+    for text in ["edict preserved in the Digest (48.22.7.1).", "version numbers start from 1.0.0.1 in the UI",
+                 "(clause 5.2.4.1.1)", "UUID=\"AT32UC3B0512AU\"", "list=PLB03EA9545DD188C3"]:
+        out, counts = redact(text)
+        assert counts["ip"] == counts["iban"] == 0, out
+    out, counts = redact("the server at 93.184.216.34 answered; logs show 93.184.216.35:8080")
+    assert counts["ip"] == 2
+    out, counts = redact("IBAN FR76 3000 6000 0112 3456 7890 189 and GB82WEST12345698765432")
+    assert counts["iban"] == 2, out
+    out, counts = redact("IBAN FR76 3000 6000 0112 3456 7890 188")  # wrong check digits
+    assert counts["iban"] == 0
+    out, counts = redact("AT32UC3B0512AU\nAT32UC3B164\nAB12CDEF\nGHIJ KLMN")  # line breaks crashed the check
+    assert counts["iban"] == 0
+
+
 def test_pii_redaction():
-    text, counts = redact("Write to jane.doe@example.org or call +33 6 12 34 56 78 from 8.8.8.8, not 192.168.1.1.")
+    text, counts = redact("Write to jane.doe@example.org or call +33 6 12 34 56 78 from IP 8.8.8.8, not 192.168.1.1.")
     assert "<EMAIL>" in text and "<PHONE>" in text and "<IP_ADDRESS>" in text
     assert "192.168.1.1" in text
     assert counts["email"] == 1 and counts["ip"] == 1
     same, counts = redact("In 2024, 1500 people attended.")
     assert same == "In 2024, 1500 people attended." and sum(counts.values()) == 0
+
+
+@pytest.mark.parametrize("phone", ["+33 6 12 34 56 78", "+44 (0)20 7946 0958", "06 12 34 56 78",
+                                   "01.23.45.67.89", "(555) 123-4567", "555-123-4567", "+1 555 123 4567"])
+def test_pii_phone_formats(phone):
+    text, counts = redact(f"Appelez le {phone} demain.")
+    assert counts["phone"] == 1 and "<PHONE>" in text
+
+
+# False positives observed on Wikipedia with an earlier, generic pattern.
+@pytest.mark.parametrize("text", [
+    "time scales were defined to read JD 2443144.5003725 (1 January 1977 00:00:32",
+    "RTMP 86.205.001 was found in 1986. RTMP 99.120.007 was found in 1996",
+    "set in 2021 at 38 picokelvin (pK), or 0.000000000038 of a kelvin",
+    "risk of new cerebral infarction [RR = 0.62 (95% CI 0.48 0.80)]",
+    "archiveurl=https://web.archive.org/web/20160304123456/https://example.org",
+    "Phil.-Hist. Cl., 164 (1910) 501–528 online",
+    "an acre may be declared as exactly 4,046.8564224 square metres",
+    "Revolutions: A Continental History, 1750–1850 (2018) 340 pp",
+    "Viking 2001 {ISBN 978-0-670-03035-8} an 85-page essay",
+    "Molex 51021-0200 Mini-SPOX connector",
+    "population 1 234 567 in 2020, 2 345 678 in 2021",
+])
+def test_pii_keeps_ordinary_numbers(text):
+    out, counts = redact(text)
+    assert counts["phone"] == 0, out
 
 
 def test_contamination():

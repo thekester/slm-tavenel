@@ -14,6 +14,40 @@ def test_forward_shapes_and_loss(tiny_model):
     assert loss.ndim == 0 and torch.isfinite(loss)
 
 
+def test_chunked_loss_matches_full_loss_and_gradients():
+    torch.manual_seed(0)
+    model = SLM(tiny_config())
+    x, y = torch.randint(0, 97, (3, 20)), torch.randint(0, 97, (3, 20))
+    y[0, :4] = -100
+    _, full = model(x, y)
+    full.backward()
+    g_full = [p.grad.clone() for p in model.parameters()]
+    model.zero_grad()
+    logits_none, chunked = model(x, y, return_logits=False)
+    assert logits_none is None
+    torch.testing.assert_close(chunked, full)
+    chunked.backward()
+    for a, b in zip(g_full, (p.grad for p in model.parameters())):
+        torch.testing.assert_close(a, b, atol=1e-6, rtol=1e-4)
+
+
+def test_chunked_cross_entropy_across_chunks():
+    from slm.model import chunked_cross_entropy
+
+    torch.manual_seed(0)
+    h = torch.randn(2, 25, 16, requires_grad=True)
+    w = torch.randn(50, 16, requires_grad=True)
+    t = torch.randint(0, 50, (2, 25))
+    t[1, 3] = -100
+    ref = torch.nn.functional.cross_entropy((h @ w.T).view(-1, 50), t.view(-1), ignore_index=-100)
+    out = chunked_cross_entropy(h, w, t, chunk=7)
+    torch.testing.assert_close(out, ref)
+    gh_ref, gw_ref = torch.autograd.grad(ref, (h, w))
+    gh, gw = torch.autograd.grad(out, (h, w))
+    torch.testing.assert_close(gh, gh_ref)
+    torch.testing.assert_close(gw, gw_ref)
+
+
 def test_causality(tiny_model):
     x = torch.randint(0, 97, (1, 12))
     y = x.clone()

@@ -201,6 +201,19 @@ def cmd_eval_tasks(args) -> int:
     return 0
 
 
+def cmd_generate(args) -> int:
+    from slm.tokenizer import EOS
+
+    model, tok, device = _load(args)
+    gen = torch.Generator(device=device).manual_seed(args.seed)
+    for prompt in args.prompt:
+        ids = torch.tensor([tok.encode(prompt).ids], device=device)
+        out = model.generate(ids, args.max_new_tokens, temperature=args.temperature, top_k=args.top_k,
+                             eos_id=tok.token_to_id(EOS), generator=gen)
+        print(f"--- {prompt!r}\n{tok.decode(out[0].tolist())}\n")
+    return 0
+
+
 def cmd_interp_attention(args) -> int:
     from slm import interp
 
@@ -303,6 +316,14 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--attempts", type=int, default=1)
     a.add_argument("--temperature", type=float, default=0.0)
     a.set_defaults(fn=cmd_eval_tasks)
+
+    a = with_model(sub.add_parser("generate", help="sample continuations of prompts"))
+    a.add_argument("--prompt", nargs="+", required=True)
+    a.add_argument("--max-new-tokens", type=int, default=80)
+    a.add_argument("--temperature", type=float, default=0.8)
+    a.add_argument("--top-k", type=int, default=50)
+    a.add_argument("--seed", type=int, default=0)
+    a.set_defaults(fn=cmd_generate)
 
     i = sub.add_parser("interp", help="interpretability").add_subparsers(dest="sub", required=True)
     a = with_model(i.add_parser("attention", help="attention sink mass and entropy per head"))

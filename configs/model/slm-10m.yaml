@@ -1,0 +1,13 @@
+# First learning model, ~10M parameters, sized for a single 8 GB laptop GPU.
+# Small vocabulary: with 49,152 tokens the embedding alone would exceed the budget.
+vocab_size: 8192
+d_model: 256
+n_layers: 10
+n_heads: 4
+n_kv_heads: 2
+ffn_hidden: 768
+max_seq_len: 1024
+rope_theta: 10000.0
+qk_norm: true
+attn_gate: none
+window_pattern: []

@@ -1,0 +1,25 @@
+# First learning run: 10M model on Wikipedia EN+FR (exploratory corpus wiki-v0).
+# tokens/step = 16 * 1024 * 2 = 32,768 ; 15,000 steps = 492M tokens (~49 tokens/param).
+# Measured on an RTX 4060 Laptop (8 GB): ~65k tokens/s, 3.5 GB, so about 2 hours.
+model: configs/model/slm-10m.yaml
+data_dir: data/tokens/wiki-v0
+out_dir: runs/slm-10m-wiki
+seed: 1234
+seq_len: 1024
+micro_batch_size: 16
+grad_accum_steps: 2
+max_steps: 15000
+lr: 3.0e-3
+min_lr: 3.0e-4
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 500
+decay_fraction: 0.2
+dtype: bfloat16
+deterministic: false
+log_interval: 50
+eval_interval: 500
+eval_batches: 20
+observe_interval: 500
+ckpt_interval: 1000
+keep_checkpoints: 3
