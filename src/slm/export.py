@@ -111,6 +111,7 @@ def export(model: SLM, tokenizer_file: str | Path, out_dir: str | Path, provenan
         "model_max_length": model.cfg.max_seq_len,
         "clean_up_tokenization_spaces": False,
         "add_bos_token": False,
+        "model_input_names": ["input_ids", "attention_mask"],
     })
     write_json(out_dir / "provenance.json", {
         **(provenance or {}),

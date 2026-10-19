@@ -10,6 +10,8 @@ The project aims to develop a useful model for local deployment and to understan
 
 SLM-1B Challenge has completed its first infrastructure milestone. The repository now contains a tested model implementation, data pipeline, training loop and evaluation tools, verified end to end on synthetic data. It does not yet provide a trained model, an approved training corpus, or benchmark results. The methods described below are proposed directions whose value at this scale remains to be tested; [docs/ROADMAP.md](docs/ROADMAP.md) lists the next milestones and their exit criteria.
 
+Exploratory results at approximately 10M parameters are documented in [EXP-0001: Wikipedia training](experiments/EXP-0001-slm-10m-wiki.md), [EXP-0002: attention sink interventions](experiments/EXP-0002-sink-interventions-10m.md), and [EXP-0003: gated attention](experiments/EXP-0003-gated-attention-10m.md). These experiments use a corpus whose sources remain pending review. The gated comparison uses one training seed; replication is still required. The release includes the reports, configurations, and analysis script, but no trained weights or corpus.
+
 What exists today:
 
 - **Model.** A decoder-only transformer with grouped-query attention, QK normalisation, SwiGLU and RoPE, configured at 135M, 300M and 1.04B parameters, plus ablation variants with gated attention and local/global layers. Every intermediate activation passes through a named hook point. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).

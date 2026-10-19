@@ -105,7 +105,11 @@ def test_evaluation_and_export(corpus, tmp_path):
     theirs = hf(x).logits
     torch.testing.assert_close(theirs, ours, atol=1e-4, rtol=1e-4)
     hf_tok = transformers.AutoTokenizer.from_pretrained(out)
-    assert hf_tok("La rivière")["input_ids"] == tok.encode("La rivière").ids
+    enc = hf_tok("La rivière", return_tensors="pt")
+    assert enc["input_ids"][0].tolist() == tok.encode("La rivière").ids
+    hf_out = hf.generate(**enc, max_new_tokens=5, do_sample=False)
+    ours_out = model.generate(enc["input_ids"], 5)
+    assert hf_out[0].tolist()[: ours_out.shape[1]] == ours_out[0].tolist()[: hf_out.shape[1]]
 
 
 @pytest.mark.parametrize("qk_norm,arch", [(False, "llama"), (True, "qwen3")])
