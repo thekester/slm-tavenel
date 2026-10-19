@@ -100,7 +100,11 @@ class TrainConfig:
     micro_batch_size: int = 8
     grad_accum_steps: int = 1
     max_steps: int = 200
-    # Optimiser
+    # Optimiser: "adamw", or "muon" (Muon for block matrices, AdamW for the rest; see slm.optim)
+    optimizer: str = "adamw"
+    muon_momentum: float = 0.95
+    # Restrict attention to the current document inside packed training windows
+    doc_mask: bool = False
     lr: float = 3e-3
     min_lr: float = 3e-4
     weight_decay: float = 0.1
@@ -127,6 +131,8 @@ class TrainConfig:
     resume: bool = True
 
     def __post_init__(self) -> None:
+        if self.optimizer not in ("adamw", "muon"):
+            raise ValueError(f"unknown optimizer {self.optimizer!r}")
         if self.schedule not in ("wsd", "cosine"):
             raise ValueError(f"unknown schedule {self.schedule!r}")
         if self.dtype not in ("float32", "bfloat16", "float16"):

@@ -162,6 +162,16 @@ def cmd_train(args) -> int:
     return 0
 
 
+def cmd_bench(args) -> int:
+    from slm.config import load_model_config, load_train_config
+    from slm.train import benchmark
+
+    cfg = load_train_config(args.config, _parse_overrides(args.set))
+    model_cfg = load_model_config(args.model or cfg.model)
+    _print(benchmark(model_cfg, cfg, steps=args.steps, warmup=args.warmup))
+    return 0
+
+
 def _load(args):
     from slm import tokenizer
     from slm.train import load_model
@@ -198,6 +208,50 @@ def cmd_eval_tasks(args) -> int:
                          temperature=args.temperature)
     res.pop("per_task")
     _print(res)
+    return 0
+
+
+def cmd_benchmarks_fetch(args) -> int:
+    from slm.benchmarks import BENCHMARKS, fetch
+
+    for name in args.names or list(BENCHMARKS):
+        print(fetch(name, args.out))
+    return 0
+
+
+def cmd_eval_mc(args) -> int:
+    from slm.benchmarks import load_items, multiple_choice
+
+    model, tok, device = _load(args)
+    results = {}
+    for path in args.benchmarks:
+        results[Path(path).stem] = multiple_choice(model, tok, load_items(path, args.limit), device)
+    _print(results)
+    if args.out:
+        from slm.runlog import write_json
+
+        write_json(args.out, {"checkpoint": args.checkpoint, "results": results})
+    return 0
+
+
+def cmd_data_contamination(args) -> int:
+    """Report overlap between existing training documents and evaluation sets, without rebuilding."""
+    from collections import Counter
+
+    from slm.data.contamination import ContaminationIndex
+
+    idx = ContaminationIndex(n=args.n)
+    for path in args.eval:
+        idx.add_jsonl(path, args.fields, "id")
+    flagged, per_bench, n = 0, Counter(), 0
+    with open(args.docs, encoding="utf-8") as f:
+        for line in f:
+            n += 1
+            hits = idx.matches(json.loads(line)["text"])
+            if hits:
+                flagged += 1
+                per_bench.update({k.split(":", 1)[0] for k in hits})
+    _print({"documents": n, "flagged": flagged, "per_benchmark_documents": dict(per_bench), "ngram": args.n})
     return 0
 
 
@@ -295,6 +349,14 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--set", nargs="*", default=[], metavar="KEY=VALUE")
     a.set_defaults(fn=cmd_train)
 
+    a = sub.add_parser("bench", help="controlled training throughput on random tokens")
+    a.add_argument("config", help="training configuration (shapes, optimizer, precision)")
+    a.add_argument("--model", default=None, help="model configuration, overriding the one in the training config")
+    a.add_argument("--steps", type=int, default=30)
+    a.add_argument("--warmup", type=int, default=5)
+    a.add_argument("--set", nargs="*", default=[], metavar="KEY=VALUE")
+    a.set_defaults(fn=cmd_bench)
+
     def with_model(parser):
         parser.add_argument("--checkpoint", required=True)
         parser.add_argument("--tokenizer", required=True)
@@ -316,6 +378,22 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--attempts", type=int, default=1)
     a.add_argument("--temperature", type=float, default=0.0)
     a.set_defaults(fn=cmd_eval_tasks)
+
+    a = with_model(e.add_parser("mc", help="multiple-choice benchmarks by log-likelihood"))
+    a.add_argument("--benchmarks", nargs="+", required=True)
+    a.add_argument("--limit", type=int, default=None)
+    a.add_argument("--out", default=None)
+    a.set_defaults(fn=cmd_eval_mc)
+    a = e.add_parser("fetch-benchmarks", help="download pinned benchmark revisions")
+    a.add_argument("names", nargs="*")
+    a.add_argument("--out", default="data/benchmarks")
+    a.set_defaults(fn=cmd_benchmarks_fetch)
+    a = d.add_parser("contamination", help="n-gram overlap between documents and evaluation sets")
+    a.add_argument("--docs", required=True)
+    a.add_argument("--eval", nargs="+", required=True)
+    a.add_argument("--fields", nargs="+", default=["context", "choices"])
+    a.add_argument("--n", type=int, default=13)
+    a.set_defaults(fn=cmd_data_contamination)
 
     a = with_model(sub.add_parser("generate", help="sample continuations of prompts"))
     a.add_argument("--prompt", nargs="+", required=True)

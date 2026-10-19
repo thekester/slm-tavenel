@@ -17,8 +17,9 @@ What exists today:
 - **Model.** A decoder-only transformer with grouped-query attention, QK normalisation, SwiGLU and RoPE, configured at 135M, 300M and 1.04B parameters, plus ablation variants with gated attention and local/global layers. Every intermediate activation passes through a named hook point. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 - **Causal analysis.** Capture and intervention on any hook point, head ablation, activation patching, logit lens, and attention sink measurements, also logged during training.
 - **Open Data Factory.** A source registry with an enforced license policy, and a pipeline for normalisation, quality filtering, privacy redaction, exact and MinHash deduplication, and benchmark decontamination. Every removal is logged with its reason, and every kept document carries its source, revision and hash. See [docs/DATA_POLICY.md](docs/DATA_POLICY.md).
-- **Reproducible training.** Batches are a function of seed and step, checkpoints carry optimiser and RNG state, and run manifests record configuration hashes, data hashes, code revision and environment. A resumed run matches an uninterrupted run exactly in deterministic mode.
-- **Evaluation and cost.** Bits per byte, verified task completion with cost per solved task, latency, memory and GPU energy.
+- **Reproducible training.** Batches are a function of seed and step, checkpoints carry optimiser and RNG state, and run manifests record configuration hashes, data hashes, code revision and environment. A resumed run matches an uninterrupted run exactly in deterministic mode. Optional Muon optimiser and per-document attention masking, each an ablation in the plan.
+- **Evaluation and cost.** Bits per byte, multiple-choice benchmarks by log-likelihood at pinned revisions (ARC-Easy, HellaSwag, Belebele in English and French), verified task completion with cost per solved task, latency, memory, GPU energy, and a controlled throughput benchmark (`slm bench`).
+- **First results.** Experiments at 10M parameters on Wikipedia are recorded in [`experiments/`](experiments/), including causal tests of attention sinks and a gated-attention ablation.
 - **Open weights in standard formats.** Export to Hugging Face Llama or Qwen3 format, checked to give identical logits in `transformers`, with a provenance file linking weights to their run and data.
 - **Agent traces.** A span schema linking tasks, model calls, tool calls, verification results and costs.
 
@@ -44,6 +45,11 @@ python -m slm export --checkpoint runs/smoke/checkpoints/step_00000300.pt --toke
 
 # Size and compute estimate of the 1B target
 python -m slm model info configs/model/slm-1b.yaml --tokens 1e12
+
+# Benchmarks at pinned revisions, and a controlled throughput measurement
+python -m slm eval fetch-benchmarks --out data/benchmarks
+python -m slm eval mc --checkpoint runs/smoke/checkpoints/step_00000300.pt --tokenizer data/tokenizer/smoke --benchmarks data/benchmarks/arc_easy.jsonl --limit 200
+python -m slm bench configs/train/smoke.yaml --set optimizer=muon
 ```
 
 Training configurations accept overrides, for example `python -m slm train configs/train/smoke.yaml --set max_steps=100 seed=7`. Multi-GPU runs use `torchrun --nproc_per_node=N -m slm train ...`.

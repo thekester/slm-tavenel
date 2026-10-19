@@ -17,5 +17,10 @@ steps:
   - minhash_dedup: {num_perm: 112, bands: 14, ngram: 5, threshold: 0.75, seed: 0}
   - decontaminate:
       n: 13
-      eval_files: []  # add every evaluation set used in reported results
+      # every evaluation set used in reported results (fetch with `slm eval fetch-benchmarks`)
+      eval_files:
+        - {path: data/benchmarks/arc_easy.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/hellaswag.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/belebele_en.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/belebele_fr.jsonl, fields: [context, choices]}
 output_dir: data/processed/common-pile-sample

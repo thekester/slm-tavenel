@@ -54,7 +54,7 @@ Every intermediate value an explanation could refer to passes through a named `H
 | `blocks.{i}.hook_attn_out`, `hook_mlp_out` | B × T × d | what each sublayer writes to the residual stream |
 | `blocks.{i}.attn.hook_q`, `hook_k`, `hook_v` | B × H × T × D | after RoPE |
 | `blocks.{i}.attn.hook_pattern` | B × H × T × S | attention probabilities (requires `set_attention_capture(True)`) |
-| `blocks.{i}.attn.hook_gate` | B × T × H × (1 or D) | output gate values, gated variants only |
+| `blocks.{i}.attn.hook_gate` | B × T × H × (1 or D) | output gate values, gated variants only; in a gated model a closed gate, not first-token attention, marks an inactive head (`interp.gate_statistics`, logged in training) |
 | `blocks.{i}.attn.hook_z` | B × T × H × D | per-head output before the output projection |
 | `blocks.{i}.mlp.hook_hidden` | B × T × ffn | SwiGLU hidden activations |
 
@@ -91,5 +91,9 @@ Each arm changes one setting relative to `slm-135m.yaml`, with the same data ord
 | A4 | Depth versus width at equal parameters | 30 × 576 versus 15 × 832 | loss, tokens per second |
 | T1 | Vocabulary 49,152 versus 98,304 | tokenizer retrained | bits per byte (tokenizer independent), French and code fertility |
 | D1 | Data mixture for the decay phase | WSD branches from one checkpoint | bits per byte per domain, downstream tasks |
+| D2 | Does restricting attention to the current document inside packed windows help? (as in Llama 3) | `doc_mask: true` | whole-document bits per byte, benchmarks, throughput |
+| O1 | Does Muon ([Jordan et al., 2024](https://kellerjordan.github.io/posts/muon/); [Liu et al., 2025](https://arxiv.org/abs/2502.16982)) reach a given loss with fewer tokens than AdamW? | `optimizer: muon` | loss versus tokens, final loss, step time |
+
+Status of the first runs at 10M parameters is tracked in [`experiments/`](../experiments/): A1 is provisionally positive at one seed (EXP-0003), with a second seed in progress (EXP-0004); O1 and D2 are queued at 10M (EXP-0005 and EXP-0006).
 
 Attention-sink results from graph transformers are treated as motivation only, as the README states: the A1 hypothesis is tested here, not assumed.

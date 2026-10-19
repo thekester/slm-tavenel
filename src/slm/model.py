@@ -129,6 +129,7 @@ class Attention(nn.Module):
         sin: torch.Tensor,
         offset: int = 0,
         cache: KVCache | None = None,
+        doc_mask: torch.Tensor | None = None,
     ) -> torch.Tensor:
         B, T, _ = x.shape
         q = self.q_proj(x).view(B, T, self.n_heads, self.head_dim)
@@ -148,15 +149,21 @@ class Attention(nn.Module):
             k = k.repeat_interleave(rep, dim=1)
             v = v.repeat_interleave(rep, dim=1)
 
-        simple_causal = self.window == 0 and offset == 0 and S == T
+        simple_causal = self.window == 0 and offset == 0 and S == T and doc_mask is None
         if self.capture_pattern:
             scores = (q.float() @ k.float().transpose(-1, -2)) / math.sqrt(self.head_dim)
             mask = attention_mask(T, S, offset, self.window, x.device)
+            if doc_mask is not None:
+                mask = mask & doc_mask
             scores = scores.masked_fill(~mask, float("-inf"))
             probs = self.hook_pattern(scores.softmax(dim=-1))
             y = probs.to(v.dtype) @ v
         else:
-            mask = None if simple_causal else attention_mask(T, S, offset, self.window, x.device)
+            mask = None
+            if not simple_causal:
+                mask = attention_mask(T, S, offset, self.window, x.device)
+                if doc_mask is not None:
+                    mask = mask & doc_mask
             y = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, is_causal=mask is None)
 
         y = y.transpose(1, 2)  # B x T x H x D
@@ -194,11 +201,22 @@ class Block(nn.Module):
         self.hook_mlp_out = HookPoint()
         self.hook_resid_post = HookPoint()
 
-    def forward(self, x, cos, sin, offset=0, cache=None):
+    def forward(self, x, cos, sin, offset=0, cache=None, doc_mask=None):
         x = self.hook_resid_pre(x)
-        x = self.hook_resid_mid(x + self.hook_attn_out(self.attn(self.attn_norm(x), cos, sin, offset, cache)))
+        x = self.hook_resid_mid(x + self.hook_attn_out(self.attn(self.attn_norm(x), cos, sin, offset, cache, doc_mask)))
         x = x + self.hook_mlp_out(self.mlp(self.mlp_norm(x)))
         return self.hook_resid_post(x)
+
+
+def document_ids(input_ids: torch.Tensor, eos_id: int) -> torch.Tensor:
+    """Index of the document each token belongs to; the end-of-text token closes its document."""
+    is_eos = (input_ids == eos_id).long()
+    return torch.cumsum(is_eos, dim=1) - is_eos
+
+
+def document_mask(doc_ids: torch.Tensor) -> torch.Tensor:
+    """B x 1 x T x T boolean mask: True where query and key belong to the same document."""
+    return (doc_ids[:, None, :, None] == doc_ids[:, None, None, :])
 
 
 def _chunk_loss_sum(h: torch.Tensor, weight: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
@@ -260,16 +278,23 @@ class SLM(nn.Module):
         targets: torch.Tensor | None = None,
         cache: KVCache | None = None,
         return_logits: bool = True,
+        doc_ids: torch.Tensor | None = None,
     ) -> tuple[torch.Tensor | None, torch.Tensor | None]:
         """With ``return_logits=False`` and targets, the loss is computed in chunks and the
-        full B x T x vocab logits are never stored, which bounds training memory."""
+        full B x T x vocab logits are never stored, which bounds training memory.
+
+        ``doc_ids`` (B x T, see ``document_ids``) restricts attention to tokens of the same
+        document when several documents share a training window."""
         T = input_ids.shape[1]
         offset = cache.seq_len if cache is not None else 0
         if offset + T > self.cfg.max_seq_len:
             raise ValueError(f"sequence length {offset + T} exceeds max_seq_len {self.cfg.max_seq_len}")
+        if doc_ids is not None and cache is not None:
+            raise ValueError("document masking is for training and scoring, not cached generation")
+        doc_mask = document_mask(doc_ids) if doc_ids is not None else None
         x = self.hook_embed(self.embed(input_ids))
         for block in self.blocks:
-            x = block(x, self.rope_cos, self.rope_sin, offset, cache)
+            x = block(x, self.rope_cos, self.rope_sin, offset, cache, doc_mask)
         h = self.final_norm(x)
         if targets is not None and not return_logits:
             return None, chunked_cross_entropy(h, self.lm_head.weight, targets)

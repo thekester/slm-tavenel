@@ -38,6 +38,18 @@ adoption criterion of the protocol (two seeds) is not met yet.
 The gated model's validation loss was within 0.01 of the baseline until step 9,500 and lower at every
 evaluation from step 10,000 onward.
 
+**Benchmarks: no measurable difference** (log-likelihood, pinned revisions, `runs/*/analysis/mc.json`):
+
+| Benchmark (chance 25%) | Baseline acc | Gated acc | Difference (approx. std. error) |
+|---|---|---|---|
+| ARC-Easy, 2,376 items | 0.295 | 0.293 | -0.002 (0.013) |
+| HellaSwag, 10,042 items | 0.275 | 0.273 | -0.001 (0.006) |
+| Belebele EN, 900 items | 0.266 | 0.277 | +0.011 (0.021) |
+| Belebele FR, 900 items | 0.309 | 0.319 | +0.010 (0.022) |
+
+Both models are above chance on ARC-Easy, HellaSwag and Belebele FR, but at 10M parameters the
+benchmarks cannot resolve a 0.025-nat loss difference.
+
 **Sinks: absent.**
 
 | Metric (128 held-out windows) | Baseline | Gated |

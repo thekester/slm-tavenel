@@ -122,6 +122,24 @@ def attention_statistics(model: SLM, input_ids: torch.Tensor) -> dict[str, torch
 
 
 @torch.no_grad()
+def gate_statistics(model: SLM, input_ids: torch.Tensor, closed: float = 0.1) -> dict[str, torch.Tensor]:
+    """Gated attention only: mean gate value and fraction of tokens with gate < ``closed``,
+    per layer and head, shape (L, H). In a gated model a closed gate, not attention to the
+    first token, is the signature of a head that outputs nothing."""
+    if model.cfg.attn_gate == "none":
+        raise ValueError("model has no attention gate")
+    with capture(model, "blocks.*.attn.hook_gate") as gates:
+        model(input_ids)
+    mean, frac = [], []
+    for i in range(model.cfg.n_layers):
+        g = gates[f"blocks.{i}.attn.hook_gate"].float()  # B x T x H x (1 or D)
+        g = g.mean(-1)
+        mean.append(g.mean(dim=(0, 1)))
+        frac.append((g < closed).float().mean(dim=(0, 1)))
+    return {"mean": torch.stack(mean), "closed_frac": torch.stack(frac)}
+
+
+@torch.no_grad()
 def residual_norms(model: SLM, input_ids: torch.Tensor) -> dict[str, torch.Tensor]:
     """RMS and max-abs of the residual stream after each block, shape (L,)."""
     with capture(model, "blocks.*.hook_resid_post") as acts:

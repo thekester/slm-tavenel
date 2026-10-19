@@ -30,7 +30,8 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from slm import interp
 from slm.config import ModelConfig, TrainConfig, config_hash, load_model_config
 from slm.data.shards import TokenShards
-from slm.model import SLM
+from slm.model import SLM, document_ids
+from slm.optim import build_optimizer
 from slm.runlog import JsonlLogger, code_revision, environment_info, read_json, write_json
 
 
@@ -142,13 +143,17 @@ def load_model(checkpoint: str | Path, device: str | torch.device = "cpu") -> SL
 
 
 @torch.no_grad()
-def evaluate_loss(model: SLM, data: TokenShards, cfg: TrainConfig, device: torch.device) -> float:
+def evaluate_loss(model: SLM, data: TokenShards, cfg: TrainConfig, device: torch.device, eos_id: int | None = None) -> float:
+    """Loss on fixed validation windows, with the same attention masking as training.
+    Compare runs with different masking through bits per byte on whole documents instead."""
     model.eval()
     losses = []
     for i in range(cfg.eval_batches):
         x, y = data.sample(batch_rng(cfg.seed + 1, 0, 0, i), cfg.micro_batch_size, cfg.seq_len)
+        x = torch.from_numpy(x).to(device)
+        doc_ids = document_ids(x, eos_id) if eos_id is not None else None
         with autocast_context(device, cfg.dtype):
-            _, loss = model(torch.from_numpy(x).to(device), torch.from_numpy(y).to(device))
+            _, loss = model(x, torch.from_numpy(y).to(device), doc_ids=doc_ids)
         losses.append(loss.item())
     model.train()
     return float(np.mean(losses))
@@ -176,9 +181,70 @@ def observe(model: SLM, probe: torch.Tensor) -> dict[str, Any]:
     record["sink_mass_mean"] = [round(v, 5) for v in att["sink_mass"].mean(1).tolist()]
     record["sink_mass_max"] = [round(v, 5) for v in att["sink_mass"].max(1).values.tolist()]
     record["attn_entropy_mean"] = [round(v, 5) for v in att["entropy"].mean(1).tolist()]
+    if model.cfg.attn_gate != "none":
+        gates = interp.gate_statistics(model, probe)
+        record["gate_mean"] = [round(v, 4) for v in gates["mean"].mean(1).tolist()]
+        record["gate_closed_frac"] = [round(v, 4) for v in gates["closed_frac"].mean(1).tolist()]
     record["weight_norm"] = {n: round(w.norm().item(), 4) for n, w in matrix_weights(model).items()}
     model.train()
     return record
+
+
+def benchmark(model_cfg: ModelConfig, cfg: TrainConfig, steps: int = 30, warmup: int = 5,
+              mean_doc_len: int = 600) -> dict[str, Any]:
+    """Controlled throughput measurement: random tokens, fixed shapes, warmup excluded.
+
+    Compares architectures and training options on equal footing, independently of data
+    loading and of whatever else ran during a real training job. When ``cfg.doc_mask`` is set,
+    end-of-text tokens are placed so documents average ``mean_doc_len`` tokens.
+    """
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    torch.manual_seed(cfg.seed)
+    model = SLM(model_cfg).to(device)
+    opt = build_optimizer(model, cfg.optimizer, cfg.lr, cfg.weight_decay, (cfg.beta1, cfg.beta2), cfg.eps,
+                          momentum=cfg.muon_momentum, fused=device.type == "cuda")
+    gen = torch.Generator().manual_seed(cfg.seed)
+    eos = 0
+    times = []
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats(device)
+    for step in range(warmup + steps):
+        if device.type == "cuda":
+            torch.cuda.synchronize()
+        t0 = time.perf_counter()
+        for _ in range(cfg.grad_accum_steps):
+            x = torch.randint(1, model_cfg.vocab_size, (cfg.micro_batch_size, cfg.seq_len + 1), generator=gen)
+            if cfg.doc_mask:
+                x[torch.rand(x.shape, generator=gen) < 1 / mean_doc_len] = eos
+            x = x.to(device)
+            doc_ids = document_ids(x[:, :-1], eos) if cfg.doc_mask else None
+            with autocast_context(device, cfg.dtype):
+                _, loss = model(x[:, :-1], x[:, 1:], return_logits=False, doc_ids=doc_ids)
+                (loss / cfg.grad_accum_steps).backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_clip)
+        opt.step()
+        opt.zero_grad(set_to_none=True)
+        if device.type == "cuda":
+            torch.cuda.synchronize()
+        if step >= warmup:
+            times.append(time.perf_counter() - t0)
+    tokens = cfg.micro_batch_size * cfg.seq_len * cfg.grad_accum_steps
+    med = float(np.median(times))
+    result = {
+        "device": torch.cuda.get_device_name(device) if device.type == "cuda" else "cpu",
+        "params": model.num_params(),
+        "optimizer": cfg.optimizer,
+        "doc_mask": cfg.doc_mask,
+        "tokens_per_step": tokens,
+        "median_step_s": round(med, 5),
+        "p90_step_s": round(float(np.percentile(times, 90)), 5),
+        "tokens_per_s": round(tokens / med, 1),
+    }
+    if device.type == "cuda":
+        result["max_mem_gb"] = round(torch.cuda.max_memory_allocated(device) / 1e9, 3)
+    if cfg.peak_tflops > 0:
+        result["mfu"] = round(model.flops_per_token(cfg.seq_len) * tokens / med / (cfg.peak_tflops * 1e12), 4)
+    return result
 
 
 def train(cfg: TrainConfig) -> dict[str, Any]:
@@ -194,13 +260,9 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
         raise ValueError(f"tokenizer vocab {train_data.vocab_size} > model vocab {model_cfg.vocab_size}")
 
     model = SLM(model_cfg).to(device)
-    opt = torch.optim.AdamW(
-        param_groups(model, cfg.weight_decay),
-        lr=cfg.lr,
-        betas=(cfg.beta1, cfg.beta2),
-        eps=cfg.eps,
-        fused=device.type == "cuda",
-    )
+    opt = build_optimizer(model, cfg.optimizer, cfg.lr, cfg.weight_decay, (cfg.beta1, cfg.beta2), cfg.eps,
+                          momentum=cfg.muon_momentum, fused=device.type == "cuda")
+    eos_id = int(train_data.manifest["eos_id"]) if cfg.doc_mask else None
 
     start_step = 0
     resume_from = latest_checkpoint(out_dir) if cfg.resume else None
@@ -261,8 +323,9 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
             sync = contextlib.nullcontext()
             if world > 1 and micro < cfg.grad_accum_steps - 1:
                 sync = run_model.no_sync()
+            doc_ids = document_ids(x, eos_id) if eos_id is not None else None
             with sync, autocast_context(device, cfg.dtype), attention_backend(device, cfg.deterministic):
-                _, loss = run_model(x, y, return_logits=False)
+                _, loss = run_model(x, y, return_logits=False, doc_ids=doc_ids)
                 (loss / cfg.grad_accum_steps).backward()
             loss_sum += loss.item()
         grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_clip).item()
@@ -297,7 +360,7 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
             metrics.log(**record)
             t0 = time.perf_counter()
         if master and cfg.eval_interval and (done % cfg.eval_interval == 0 or done == cfg.max_steps):
-            evals.log(step=done, val_loss=round(evaluate_loss(model, val_data, cfg, device), 5))
+            evals.log(step=done, val_loss=round(evaluate_loss(model, val_data, cfg, device, eos_id), 5))
         if master and cfg.ckpt_interval and (done % cfg.ckpt_interval == 0 or done == cfg.max_steps):
             save_checkpoint(out_dir, done, model, opt, cfg, cfg.keep_checkpoints)
         if world > 1:

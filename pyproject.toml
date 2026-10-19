@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "slm-1b"
-version = "0.1.0.dev1"
+version = "0.1.0.dev2"
 description = "SLM-1B Challenge: a reproducible, observable, open one-billion-parameter language model."
 readme = "README.md"
 license = { text = "MIT" }

@@ -74,6 +74,17 @@ def test_training_is_reproducible_across_resume(corpus, tmp_path):
     assert manifest["train_config_hash"] and manifest["data"]["tokenizer_sha256"]
 
 
+def test_muon_and_doc_mask_training_reproducible_across_resume(corpus, tmp_path):
+    full = train(make_cfg(corpus, tmp_path / "full", 6, optimizer="muon", doc_mask=True, lr=0.02))
+    train(make_cfg(corpus, tmp_path / "split", 3, optimizer="muon", doc_mask=True, lr=0.02))
+    resumed = train(make_cfg(corpus, tmp_path / "split", 6, optimizer="muon", doc_mask=True, lr=0.02))
+    assert full["final_loss"] == pytest.approx(resumed["final_loss"], rel=1e-6)
+    a = load_model(latest_checkpoint(tmp_path / "full"))
+    b = load_model(latest_checkpoint(tmp_path / "split"))
+    for (n, p), (_, q) in zip(a.state_dict().items(), b.state_dict().items()):
+        torch.testing.assert_close(p, q, msg=n)
+
+
 def test_training_reduces_loss(corpus, tmp_path):
     cfg = make_cfg(corpus, tmp_path / "learn", 60, eval_interval=60)
     train(cfg)
