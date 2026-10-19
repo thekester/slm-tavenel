@@ -94,6 +94,6 @@ Each arm changes one setting relative to `slm-135m.yaml`, with the same data ord
 | D2 | Does restricting attention to the current document inside packed windows help? (as in Llama 3) | `doc_mask: true` | whole-document bits per byte, benchmarks, throughput |
 | O1 | Does Muon ([Jordan et al., 2024](https://kellerjordan.github.io/posts/muon/); [Liu et al., 2025](https://arxiv.org/abs/2502.16982)) reach a given loss with fewer tokens than AdamW? | `optimizer: muon` | loss versus tokens, final loss, step time |
 
-Status of the first runs at 10M parameters is tracked in [`experiments/`](../experiments/): A1 is provisionally positive at one seed (EXP-0003), with a second seed in progress (EXP-0004); O1 and D2 are queued at 10M (EXP-0005 and EXP-0006).
+Status of the first runs at 10M parameters is tracked in [`experiments/`](../experiments/): A1 shows consistent loss improvements across two training seeds (EXP-0003 and [EXP-0004](../experiments/EXP-0004-gated-attention-seed2.md)), supporting its selection for the 135M ablations. Confirmation at 135M and a controlled throughput comparison remain pending. O1 and D2 are separate 10M investigations (EXP-0005 and EXP-0006).
 
 Attention-sink results from graph transformers are treated as motivation only, as the README states: the A1 hypothesis is tested here, not assumed.

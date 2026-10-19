@@ -1,6 +1,6 @@
 # EXP-0003: ablation A1 at 10M, head-wise gated attention
 
-*Status:* concluded, single seed (provisional)
+*Status:* concluded, single seed; replicated at a second seed in EXP-0004 (gate adopted for 135M)
 *Dates:* 2026-10-19
 *Runs:* `runs/slm-10m-wiki` (baseline, EXP-0001) and `runs/slm-10m-wiki-gated` (treatment)
 

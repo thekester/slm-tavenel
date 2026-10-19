@@ -36,7 +36,8 @@ all of them newline (114) and period (82) tokens; its median elsewhere is 31.
 costs +0.027 (removed) or +0.013 (renormalized), under 1% of the loss. The largest single-layer effect
 is layer 4, the strongest sink layer (sink mass 0.23): +0.030 when its sink mass is redistributed.
 
-**Sink heads are not more important than other heads.** Ablating the 5 strongest sink heads costs
+**Sink heads are not more important than other heads** (seed 1 only; at seed 2 they are, see
+EXP-0004, so this result does not generalise). Ablating the 5 strongest sink heads costs
 +0.174, against +0.186 on average (max +0.385) for random sets of 5 heads. No difference beyond the
 spread of the control.
 
