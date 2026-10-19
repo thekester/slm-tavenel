@@ -12,6 +12,8 @@ SLM-1B Challenge has completed its first infrastructure milestone. The repositor
 
 Exploratory results at approximately 10M parameters are documented in [EXP-0001: Wikipedia training](experiments/EXP-0001-slm-10m-wiki.md), [EXP-0002: attention sink interventions](experiments/EXP-0002-sink-interventions-10m.md), [EXP-0003: gated attention](experiments/EXP-0003-gated-attention-10m.md), and [EXP-0004: replication with a second training seed](experiments/EXP-0004-gated-attention-seed2.md). These experiments use a corpus whose sources remain pending review. The gated comparison now covers two training seeds at 10M; confirmation at 135M and a controlled throughput comparison remain pending. The release includes the reports, configurations, and analysis script, but no trained weights or corpus.
 
+[EXP-0005: Muon at 10M](experiments/EXP-0005-muon-10m.md) reports a provisional improvement in loss and bits per byte with one training seed. Replication remains pending. A [combined gated attention and Muon configuration](configs/train/slm-10m-wiki-gated-muon.yaml) is available for a follow-up experiment; this release does not report results for that combination.
+
 What exists today:
 
 - **Model.** A decoder-only transformer with grouped-query attention, QK normalisation, SwiGLU and RoPE, configured at 135M, 300M and 1.04B parameters, plus ablation variants with gated attention and local/global layers. Every intermediate activation passes through a named hook point. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
