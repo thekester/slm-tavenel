@@ -1,0 +1,23 @@
+# EXP-0008 scaling series, 25M from scratch: control for slm-25m-wiki-grown.yaml (same recipe, budget and data).
+model: configs/model/slm-25m-gated.yaml
+data_dir: data/tokens/wiki-v0
+out_dir: runs/slm-25m-wiki-scratch
+seed: 7  # not 1234: the grown model must not replay the 10M run's batch order
+seq_len: 1024
+micro_batch_size: 8
+grad_accum_steps: 4
+max_steps: 15000
+lr: 3.0e-3
+min_lr: 3.0e-4
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 500
+decay_fraction: 0.2
+dtype: bfloat16
+deterministic: false
+log_interval: 50
+eval_interval: 500
+eval_batches: 20
+observe_interval: 500
+ckpt_interval: 1000
+keep_checkpoints: 3

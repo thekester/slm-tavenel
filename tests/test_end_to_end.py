@@ -85,6 +85,21 @@ def test_muon_and_doc_mask_training_reproducible_across_resume(corpus, tmp_path)
         torch.testing.assert_close(p, q, msg=n)
 
 
+def test_resume_does_not_require_initial_weights(corpus, tmp_path):
+    train(make_cfg(corpus, tmp_path / "source", 3))
+    initial = tmp_path / "initial.pt"
+    initial.write_bytes(latest_checkpoint(tmp_path / "source").read_bytes())
+    train(make_cfg(corpus, tmp_path / "initialized", 3, init_from=str(initial)))
+    manifest_path = tmp_path / "initialized" / "run_manifest.json"
+    provenance = json.loads(manifest_path.read_text())["initialized_from"]
+    assert provenance["path"] == str(initial) and provenance["sha256"]
+    initial.unlink()
+    train(make_cfg(corpus, tmp_path / "initialized", 6, init_from=str(initial)))
+    state = torch.load(latest_checkpoint(tmp_path / "initialized"), weights_only=False)
+    assert state["step"] == 6
+    assert json.loads(manifest_path.read_text())["initialized_from"] == provenance
+
+
 def test_training_reduces_loss(corpus, tmp_path):
     cfg = make_cfg(corpus, tmp_path / "learn", 60, eval_interval=60)
     train(cfg)
@@ -121,6 +136,14 @@ def test_evaluation_and_export(corpus, tmp_path):
     hf_out = hf.generate(**enc, max_new_tokens=5, do_sample=False)
     ours_out = model.generate(enc["input_ids"], 5)
     assert hf_out[0].tolist()[: ours_out.shape[1]] == ours_out[0].tolist()[: hf_out.shape[1]]
+
+    from slm.hf_adapter import load as load_reference
+
+    reference, reference_tok = load_reference(str(out), cpu)
+    torch.testing.assert_close(reference(x)[0], ours, atol=1e-4, rtol=1e-4)
+    assert reference_tok.encode("La rivière").ids == tok.encode("La rivière").ids
+    reference_bpb = bits_per_byte(reference, reference_tok, ["La rivière mesure le flux d'information."], cpu)
+    assert reference_bpb["bits_per_byte"] == pytest.approx(bpb["bits_per_byte"], rel=1e-5)
 
 
 @pytest.mark.parametrize("qk_norm,arch", [(False, "llama"), (True, "qwen3")])

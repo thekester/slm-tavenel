@@ -162,6 +162,14 @@ def cmd_train(args) -> int:
     return 0
 
 
+def cmd_grow(args) -> int:
+    from slm.config import load_model_config
+    from slm.grow import grow_checkpoint
+
+    _print(grow_checkpoint(args.checkpoint, load_model_config(args.model), args.out, seed=args.seed))
+    return 0
+
+
 def cmd_bench(args) -> int:
     from slm.config import load_model_config, load_train_config
     from slm.train import benchmark
@@ -177,6 +185,13 @@ def _load(args):
     from slm.train import load_model
 
     device = _device(args.device)
+    if getattr(args, "hf_model", None):
+        from slm import hf_adapter
+
+        model, tok = hf_adapter.load(args.hf_model, device, revision=args.hf_revision)
+        return model, tok, device
+    if not (args.checkpoint and args.tokenizer):
+        raise SystemExit("--checkpoint and --tokenizer are required (or --hf-model for a reference model)")
     return load_model(args.checkpoint, device), tokenizer.load(args.tokenizer), device
 
 
@@ -230,7 +245,8 @@ def cmd_eval_mc(args) -> int:
     if args.out:
         from slm.runlog import write_json
 
-        write_json(args.out, {"checkpoint": args.checkpoint, "results": results})
+        write_json(args.out, {"checkpoint": args.checkpoint, "hf_model": args.hf_model,
+                              "hf_revision": args.hf_revision, "results": results})
     return 0
 
 
@@ -349,6 +365,13 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--set", nargs="*", default=[], metavar="KEY=VALUE")
     a.set_defaults(fn=cmd_train)
 
+    a = sub.add_parser("grow", help="grow a trained checkpoint into a larger model (function preserving)")
+    a.add_argument("--checkpoint", required=True)
+    a.add_argument("--model", required=True, help="target model configuration")
+    a.add_argument("--out", required=True)
+    a.add_argument("--seed", type=int, default=0)
+    a.set_defaults(fn=cmd_grow)
+
     a = sub.add_parser("bench", help="controlled training throughput on random tokens")
     a.add_argument("config", help="training configuration (shapes, optimizer, precision)")
     a.add_argument("--model", default=None, help="model configuration, overriding the one in the training config")
@@ -357,14 +380,17 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--set", nargs="*", default=[], metavar="KEY=VALUE")
     a.set_defaults(fn=cmd_bench)
 
-    def with_model(parser):
-        parser.add_argument("--checkpoint", required=True)
-        parser.add_argument("--tokenizer", required=True)
+    def with_model(parser, allow_hf=False):
+        parser.add_argument("--checkpoint", default=None, required=not allow_hf)
+        parser.add_argument("--tokenizer", default=None, required=not allow_hf)
+        if allow_hf:
+            parser.add_argument("--hf-model", default=None, help="evaluate a Hugging Face reference model instead")
+            parser.add_argument("--hf-revision", default=None)
         parser.add_argument("--device", default=None)
         return parser
 
     e = sub.add_parser("eval", help="evaluation").add_subparsers(dest="sub", required=True)
-    a = with_model(e.add_parser("bpb", help="bits per byte on JSONL text"))
+    a = with_model(e.add_parser("bpb", help="bits per byte on JSONL text"), allow_hf=True)
     a.add_argument("--data", required=True)
     a.add_argument("--limit", type=int, default=None)
     a.set_defaults(fn=cmd_eval_bpb)
@@ -379,7 +405,7 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--temperature", type=float, default=0.0)
     a.set_defaults(fn=cmd_eval_tasks)
 
-    a = with_model(e.add_parser("mc", help="multiple-choice benchmarks by log-likelihood"))
+    a = with_model(e.add_parser("mc", help="multiple-choice benchmarks by log-likelihood"), allow_hf=True)
     a.add_argument("--benchmarks", nargs="+", required=True)
     a.add_argument("--limit", type=int, default=None)
     a.add_argument("--out", default=None)

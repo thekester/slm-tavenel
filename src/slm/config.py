@@ -105,6 +105,8 @@ class TrainConfig:
     muon_momentum: float = 0.95
     # Restrict attention to the current document inside packed training windows
     doc_mask: bool = False
+    # Initial weights (e.g. a grown checkpoint from `slm grow`); ignored when resuming
+    init_from: str = ""
     lr: float = 3e-3
     min_lr: float = 3e-4
     weight_decay: float = 0.1

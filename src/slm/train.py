@@ -32,7 +32,7 @@ from slm.config import ModelConfig, TrainConfig, config_hash, load_model_config
 from slm.data.shards import TokenShards
 from slm.model import SLM, document_ids
 from slm.optim import build_optimizer
-from slm.runlog import JsonlLogger, code_revision, environment_info, read_json, write_json
+from slm.runlog import JsonlLogger, code_revision, environment_info, read_json, sha256_file, write_json
 
 
 def lr_at(step: int, cfg: TrainConfig) -> float:
@@ -264,8 +264,18 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
                           momentum=cfg.muon_momentum, fused=device.type == "cuda")
     eos_id = int(train_data.manifest["eos_id"]) if cfg.doc_mask else None
 
-    start_step = 0
     resume_from = latest_checkpoint(out_dir) if cfg.resume else None
+    init_info = None
+    if resume_from is not None and (out_dir / "run_manifest.json").exists():
+        init_info = read_json(out_dir / "run_manifest.json").get("initialized_from")
+    if cfg.init_from and resume_from is None:
+        init = torch.load(cfg.init_from, map_location="cpu", weights_only=False)
+        if ModelConfig(**init["model_config"]) != model_cfg:
+            raise ValueError(f"{cfg.init_from} was built for a different model configuration")
+        model.load_state_dict(init["model"])
+        init_info = {"path": cfg.init_from, "sha256": sha256_file(cfg.init_from), "grown_from": init.get("grown_from")}
+
+    start_step = 0
     if resume_from is not None:
         state = torch.load(resume_from, map_location="cpu", weights_only=False)
         model.load_state_dict(state["model"])
@@ -299,6 +309,7 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
             },
             "world_size": world,
             "resumed_from": str(resume_from) if resume_from else None,
+            "initialized_from": init_info,
             "code": code_revision(),
             "environment": environment_info(),
         })

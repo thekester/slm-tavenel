@@ -1,0 +1,33 @@
+# wiki-v1: wiki-v0 sources plus 3 English and 2 French shards from the 2023-11-01 dumps,
+# now decontaminated against the four benchmarks used in reported results. Same steps and thresholds
+# as wiki-v0 otherwise. Sources are still `candidate`: exploratory corpus (--allow-unapproved).
+#   python -m slm data fetch --source wikipedia-en --out data/raw/wiki/en2.jsonl --files \
+#     20231101.en/train-00006-of-00041.parquet 20231101.en/train-00020-of-00041.parquet \
+#     20231101.en/train-00034-of-00041.parquet
+#   python -m slm data fetch --source wikipedia-fr --out data/raw/wiki/fr2.jsonl --files \
+#     20231101.fr/train-00004-of-00017.parquet 20231101.fr/train-00012-of-00017.parquet
+#   python -m slm eval fetch-benchmarks --out data/benchmarks
+#   python -m slm data run configs/data/pipeline-wiki-v1.yaml --allow-unapproved
+name: wiki-v1
+registry: configs/data/sources.yaml
+inputs:
+  - {source: wikipedia-en, path: data/raw/wiki/en.jsonl, text_field: text, id_field: id}
+  - {source: wikipedia-en, path: data/raw/wiki/en2.jsonl, text_field: text, id_field: id}
+  - {source: wikipedia-fr, path: data/raw/wiki/fr.jsonl, text_field: text, id_field: id}
+  - {source: wikipedia-fr, path: data/raw/wiki/fr2.jsonl, text_field: text, id_field: id}
+steps:
+  - normalize: {}
+  - min_length: {min_chars: 200}
+  - gopher_quality: {}
+  - repetition: {}
+  - pii: {}
+  - exact_dedup: {}
+  - minhash_dedup: {num_perm: 112, bands: 14, ngram: 5, threshold: 0.8, seed: 0}
+  - decontaminate:
+      n: 13
+      eval_files:
+        - {path: data/benchmarks/arc_easy.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/hellaswag.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/belebele_en.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/belebele_fr.jsonl, fields: [context, choices]}
+output_dir: data/processed/wiki-v1

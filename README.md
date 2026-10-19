@@ -14,6 +14,10 @@ Exploratory results at approximately 10M parameters are documented in [EXP-0001:
 
 [EXP-0005: Muon at 10M](experiments/EXP-0005-muon-10m.md) reports a provisional improvement in loss and bits per byte with one training seed. Replication remains pending. A [combined gated attention and Muon configuration](configs/train/slm-10m-wiki-gated-muon.yaml) is available for a follow-up experiment; this release does not report results for that combination.
 
+Model growth is available through `slm grow`, which expands depth and MLP width while preserving the initial outputs for supported configurations. Training can start from the resulting checkpoint with `init_from`. The [1M configuration](configs/model/slm-1m-gated.yaml) and [25M configuration](configs/model/slm-25m-gated.yaml) support scaling experiments, including a comparison between grown and randomly initialized models.
+
+The `eval bpb` and `eval mc` commands also accept `--hf-model` and `--hf-revision` for reference models. The [wiki-v1 pipeline](configs/data/pipeline-wiki-v1.yaml) expands the exploratory corpus and adds benchmark decontamination. These additions provide experiment infrastructure, without establishing new model quality results.
+
 What exists today:
 
 - **Model.** A decoder-only transformer with grouped-query attention, QK normalisation, SwiGLU and RoPE, configured at 135M, 300M and 1.04B parameters, plus ablation variants with gated attention and local/global layers. Every intermediate activation passes through a named hook point. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).

@@ -1,0 +1,14 @@
+# 25M model, the 10M gated model grown by `slm grow`: depth x2 (10 -> 20 layers, block expansion)
+# and MLP width 768 -> 1280. Attention width, heads and vocabulary unchanged so that growth from
+# configs/model/ablations/slm-10m-gated-headwise.yaml is function preserving (src/slm/grow.py).
+vocab_size: 8192
+d_model: 256
+n_layers: 20
+n_heads: 4
+n_kv_heads: 2
+ffn_hidden: 1280
+max_seq_len: 1024
+rope_theta: 10000.0
+qk_norm: true
+attn_gate: headwise
+window_pattern: []
