@@ -236,6 +236,7 @@ def cmd_benchmarks_fetch(args) -> int:
 
 def cmd_eval_mc(args) -> int:
     from slm.benchmarks import load_items, multiple_choice
+    from slm.runlog import sha256_file
 
     model, tok, device = _load(args)
     results = {}
@@ -246,7 +247,9 @@ def cmd_eval_mc(args) -> int:
         from slm.runlog import write_json
 
         write_json(args.out, {"checkpoint": args.checkpoint, "hf_model": args.hf_model,
-                              "hf_revision": args.hf_revision, "results": results})
+                              "hf_revision": args.hf_revision,
+                              "benchmarks": [{"path": path, "sha256": sha256_file(path)} for path in args.benchmarks],
+                              "results": results})
     return 0
 
 

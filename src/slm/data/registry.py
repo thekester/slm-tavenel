@@ -68,6 +68,8 @@ class Source:
     domains: list[str] = field(default_factory=list)
     # For aggregated collections: the licenses of the components actually used.
     component_licenses: list[str] = field(default_factory=list)
+    # For one source offered under alternative licenses (e.g. a dual-licensed text corpus).
+    license_options: list[str] = field(default_factory=list)
     review: Review = field(default_factory=Review)
     open_questions: list[str] = field(default_factory=list)
 
@@ -112,9 +114,9 @@ def evaluate(source: Source) -> Decision:
     blockers: list[str] = []
     obligations: list[str] = []
 
-    licenses = source.component_licenses or [source.license]
-    if source.license == "mixed" and not source.component_licenses:
-        blockers.append("license is 'mixed' but component_licenses are not listed")
+    licenses = source.component_licenses or source.license_options or [source.license]
+    if source.license == "mixed" and not (source.component_licenses or source.license_options):
+        blockers.append("license is 'mixed' but component_licenses/license_options are not listed")
     for lic in licenses:
         kind = classify_license(lic)
         if kind == "forbidden":

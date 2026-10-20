@@ -121,6 +121,12 @@ def test_benchmark_conversion_and_scoring():
     model = SLM(tiny_config(vocab_size=tok.get_vocab_size()))
     res = multiple_choice(model, tok, arc * 3, torch.device("cpu"))
     assert res["items"] == 3 and res["chance"] == 0.5 and res["acc"] in (0.0, 1.0)
+    assert [item["id"] for item in res["per_item"]] == ["q1"] * 3
+    assert all(item["label"] == 1 for item in res["per_item"])
+    for suffix in ("", "_norm"):
+        assert res[f"acc{suffix}"] == sum(item[f"correct{suffix}"] for item in res["per_item"]) / 3
+        assert all(item[f"correct{suffix}"] == (item[f"prediction{suffix}"] == item["label"])
+                   for item in res["per_item"])
 
     from slm.benchmarks import batched_choice_logprobs, choice_logprobs
 

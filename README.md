@@ -12,21 +12,34 @@ The project has moved beyond infrastructure-only work: it has exploratory traini
 10M parameters, reproducible run records, and evaluation scripts for held-out text and multiple-choice
 benchmarks. The Wikipedia sources used so far are still under review. These runs are research
 prototypes, not release-ready weights or evidence about the 1B target. See the [experiment reports](experiments/)
-and [roadmap](docs/ROADMAP.md) for scope and next steps.
+and [roadmap](docs/ROADMAP.md) for scope and next steps. The current source review pins the wiki-v1
+input shards and records the publisher's dual CC BY-SA/GFDL declaration; privacy and model-weight
+license implications remain unresolved in [the review record](docs/reviews/WIKIPEDIA-WIKI-V1.md).
 
 The head-wise attention gate has a consistent bits-per-byte improvement and removes the observed
 attention sinks across two 10M seeds; its multiple-choice scores remain close to chance. The Muon
-seed-1 result is promising but provisional. Seed 2 has finished training and its evaluation is being
-completed. The combined gated+Muon and 1M/25M scaling runs are in the experiment queue. A same-harness
-evaluation of SmolLM2-135M is queued as an external size reference.
+seed-1 result is promising but provisional. Seed 2 has completed training and evaluation; its fixed-
+document bits-per-byte gain repeats while multiple-choice scores remain inconclusive. The previous
+gated+Muon and 1M/25M scaling queue was stopped to prioritize the controlled wiki-v1 replication in
+[EXP-0008](experiments/EXP-0008-wiki-v1-clean-replication.md). External reference evaluations are
+paused during this work. The new nine-run replication began on 2026-10-20 with AdamW seed 1234;
+Pythia-14M remains the primary size-near reference and SmolLM2-135M a larger context point.
 
 ## Benchmark snapshot
 
 The table reports raw multiple-choice accuracy (`acc`) from the project evaluator. Each run used the
 same prompts, scoring code and pinned dataset revisions. ARC-Easy has 2,376 items; HellaSwag 10,042;
-each Belebele language split 900. Chance is about 25% for all four-choice sets. The runs use the
-exploratory wiki-v0 corpus and are not directly comparable to scores published with different
-prompts, splits or evaluation harnesses.
+each Belebele language split 900. Chance is about 25% for all four-choice sets.
+
+**These scores are exploratory, not clean held-out estimates.** The models were trained on wiki-v0,
+whose pipeline did not remove benchmark overlaps. wiki-v1 applies exact word 13-gram filtering to
+the four benchmark files and logged five removed training documents: three matching Belebele EN and
+two matching Belebele FR. This does not detect paraphrase or translation exposure, and the current
+Wikipedia sources remain under review. The wiki-v0 table is retained as experiment history; a new
+same-corpus replication is preregistered in [EXP-0008](experiments/EXP-0008-wiki-v1-clean-replication.md).
+That replication retrains the tokenizer on the filtered training split, keeps its BPB holdout out of
+tokenizer/model training, and records item-level benchmark outcomes for paired uncertainty estimates.
+Do not present the old table as a clean benchmark result.
 
 | 10M model | Training seed | ARC-Easy | HellaSwag | Belebele EN | Belebele FR |
 |---|---:|---:|---:|---:|---:|
@@ -35,28 +48,42 @@ prompts, splits or evaluation harnesses.
 | Head-wise gate | 1234 | 0.293 | 0.273 | 0.277 | 0.319 |
 | Head-wise gate | 2 | 0.289 | 0.271 | 0.283 | 0.299 |
 | Muon | 1234 | 0.306 | 0.273 | 0.283 | 0.302 |
-| Muon | 2 | pending evaluation | pending evaluation | pending evaluation | pending evaluation |
+| Muon | 2 | 0.290 | 0.270 | 0.286 | 0.319 |
+
+![Grouped bar chart comparing SLM-Tavenel 10M benchmark scores across training runs](docs/benchmark-comparison.svg)
 
 The small differences between these 10M runs are within the benchmarks' sampling uncertainty; these
 scores do not establish a downstream-task winner. The gate's current case rests on its repeated
 bits-per-byte gain and sink measurements, documented in [EXP-0003](experiments/EXP-0003-gated-attention-10m.md)
 and [EXP-0004](experiments/EXP-0004-gated-attention-seed2.md).
 
-| External reference | Parameters | ARC-Easy | HellaSwag | Belebele EN | Belebele FR |
-|---|---:|---:|---:|---:|---:|
-| SmolLM2-135M | 135M | evaluation queued | evaluation queued | evaluation queued | evaluation queued |
+| Existing SLM reference | Parameters | ARC-Easy | HellaSwag | Belebele EN | Belebele FR | Role |
+|---|---:|---:|---:|---:|---:|---|
+| [Pythia-14M](https://huggingface.co/EleutherAI/pythia-14m) | 14M | paused | paused | paused | paused | Primary size-near reference |
+| [SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M) | 135M | paused | paused | paused | paused | Secondary larger SLM reference |
 
-SmolLM2 will be scored with this repository's evaluator and the same benchmark files. It is about
-13.5 times larger than the 10M models, so the comparison provides a scale reference rather than a
-controlled architecture or training comparison. Detailed run data and decisions are in [EXP-0001](experiments/EXP-0001-slm-10m-wiki.md),
+Pythia-14M is the closest established open checkpoint in size to SLM-Tavenel 10M. Its model card
+identifies it as English-only and trained on the Pile, so English benchmark results are the most
+like-for-like; Belebele French is a cross-lingual probe. The paused run pins revision
+`d31f659f077f9ea500c4d7faa999893d7f28cbdf`. SmolLM2-135M adds a larger, modern SLM point, with the
+size difference stated rather than treated as a controlled comparison. Both references use this
+repository's evaluator, prompts, scoring rules and pinned benchmark files; published scores from
+other harnesses are not mixed into the chart. Same-harness scoring controls evaluation procedure, but
+not training data, token budget or contamination history, so external results are outcome references,
+not causal tests of architecture or training method. See the [Pythia model card](https://huggingface.co/EleutherAI/pythia-14m)
+and [Pythia repository](https://github.com/EleutherAI/pythia) for its model and evaluation details.
+
+Detailed SLM-Tavenel run data and decisions are in [EXP-0001](experiments/EXP-0001-slm-10m-wiki.md),
 [EXP-0003](experiments/EXP-0003-gated-attention-10m.md), [EXP-0004](experiments/EXP-0004-gated-attention-seed2.md)
 and [EXP-0005](experiments/EXP-0005-muon-10m.md); raw evaluator outputs are stored under each run's
 `analysis/mc.json`.
 
 The `eval bpb` and `eval mc` commands accept `--hf-model` and `--hf-revision` for reference models.
 The [wiki-v1 pipeline](configs/data/pipeline-wiki-v1.yaml) expands the exploratory corpus and adds
-benchmark decontamination. Model growth is available through `slm grow`; the [1M](configs/model/slm-1m-gated.yaml)
-and [25M](configs/model/slm-25m-gated.yaml) configurations support the queued scaling comparison.
+benchmark decontamination. EXP-0008 is the current priority; 1M/25M scaling comparisons are
+postponed until it is complete. Model growth is available through `slm grow`; the
+[1M](configs/model/slm-1m-gated.yaml) and [25M](configs/model/slm-25m-gated.yaml) configurations
+remain available for later work.
 
 What exists today:
 

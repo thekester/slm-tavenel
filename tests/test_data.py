@@ -43,6 +43,14 @@ def test_project_registry_audit_is_consistent():
     assert errors == []
     usable = {d.source_id for d in decisions if d.usable}
     assert usable == {"synthetic-prose-v1", "synthetic-arithmetic-v1"}
+    for source_id in ("wikipedia-en", "wikipedia-fr"):
+        source = reg[source_id]
+        assert source.license_options == ["CC-BY-SA-3.0", "GFDL"]
+        assert source.status == "candidate"
+        decision = evaluate(source)
+        assert not decision.usable
+        assert "license not verified by a reviewer" in decision.blockers
+        assert "privacy review not completed" in decision.blockers
 
 
 def test_quality_filters():

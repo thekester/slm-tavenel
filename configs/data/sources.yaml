@@ -107,7 +107,8 @@ sources:
     name: English Wikipedia, 2023-11-01 dump
     url: https://huggingface.co/datasets/wikimedia/wikipedia
     role: pretrain
-    license: CC-BY-SA-3.0
+    license: mixed
+    license_options: [CC-BY-SA-3.0, GFDL]
     status: candidate
     revision: b04c8d1ceb2f5cd4588862100d08de323dccfbaa
     subset: 20231101.en
@@ -115,16 +116,32 @@ sources:
     languages: [en]
     domains: [encyclopedia]
     open_questions:
-      - Text is dual-licensed CC-BY-SA and GFDL (declared on the dataset card); confirm which terms the
-        release will follow and how attribution to contributors is given.
-      - Articles about living people: complete the privacy review.
+      - The dataset card declares CC-BY-SA-3.0 and GFDL; determine per-page rights and whether
+        either license's obligations reach trained weights before any public weight release.
+      - Design a feasible attribution and share-alike compliance plan for a trained model and
+        document whether per-article links/source IDs are sufficient for the intended release.
+      - Complete a privacy review for biographies and personal information beyond pattern-based PII.
       - Check the dataset's extraction (templates, tables, references removed) for artefacts.
+    review:
+      provenance_verified: true
+      license_verified: false
+      pii_reviewed: false
+      reviewer: "SLM-Tavenel source audit (automated assistance; maintainer confirmation pending)"
+      date: "2026-10-20"
+      notes: >-
+        The pinned Hugging Face repository revision and all six English and four French parquet
+        shard hashes used by wiki-v1 are recorded in data/raw/wiki/*.fetch.json and the pipeline
+        manifest; see docs/reviews/WIKIPEDIA-WIKI-V1.md. The upstream dataset card declares both
+        CC-BY-SA-3.0 and GFDL, so the prior single-license registry entry was incomplete. The
+        exact page-level license choices and obligations for trained weights have not been
+        established. Keep candidate and block release approval pending legal and privacy review.
 
   - id: wikipedia-fr
     name: French Wikipedia, 2023-11-01 dump
     url: https://huggingface.co/datasets/wikimedia/wikipedia
     role: pretrain
-    license: CC-BY-SA-3.0
+    license: mixed
+    license_options: [CC-BY-SA-3.0, GFDL]
     status: candidate
     revision: b04c8d1ceb2f5cd4588862100d08de323dccfbaa
     subset: 20231101.fr
@@ -133,6 +150,19 @@ sources:
     domains: [encyclopedia]
     open_questions:
       - Same questions as wikipedia-en.
+    review:
+      provenance_verified: true
+      license_verified: false
+      pii_reviewed: false
+      reviewer: "SLM-Tavenel source audit (automated assistance; maintainer confirmation pending)"
+      date: "2026-10-20"
+      notes: >-
+        The pinned Hugging Face repository revision and all six English and four French parquet
+        shard hashes used by wiki-v1 are recorded in data/raw/wiki/*.fetch.json and the pipeline
+        manifest; see docs/reviews/WIKIPEDIA-WIKI-V1.md. The upstream dataset card declares both
+        CC-BY-SA-3.0 and GFDL, so the prior single-license registry entry was incomplete. The
+        exact page-level license choices and obligations for trained weights have not been
+        established. Keep candidate and block release approval pending legal and privacy review.
 
   # ---- comparison references ------------------------------------------------------------
   # Web-crawl corpora: the compilation license (ODC-By) does not establish permission for the

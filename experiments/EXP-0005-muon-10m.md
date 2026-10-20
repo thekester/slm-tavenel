@@ -1,6 +1,6 @@
 # EXP-0005: Muon optimiser at 10M (ablation O1)
 
-*Status:* seed 1 concluded; seed 2 training complete, evaluation in progress (`runs/slm-10m-wiki-muon-s2`)
+*Status:* two seeds evaluated; Muon improves fixed-document BPB at both seeds, while multiple-choice results remain inconclusive
 *Dates:* 2026-10-19
 *Runs:* `runs/slm-10m-wiki` (AdamW, EXP-0001) and `runs/slm-10m-wiki-muon`
 
@@ -40,26 +40,29 @@ against 0.309. No difference beyond noise.
 The bits-per-byte gain (0.015-0.016) is larger than the gated attention gain at the same seed
 (0.012) and 7 to 13 times the seed-to-seed difference measured in EXP-0004 (0.001-0.002).
 
-### Seed 2 replication (preliminary)
+### Seed 2 replication
 
-The second Muon seed completed 15,000 steps on 2026-10-20. This is a run record, not yet a paired
-seed-level comparison: the fixed-document BPB evaluation, benchmark evaluation and sink analysis
-are still running, and the corresponding AdamW seed-2 measurements need to be included before
-making a replication claim.
+The second Muon seed completed 15,000 steps on 2026-10-20. The table compares it with the matching
+AdamW seed-2 run from EXP-0004. Both use the fixed 500-document BPB sets and the same multiple-choice
+benchmark files and evaluator.
 
-| Metric | Muon seed 2 |
-|---|---:|
-| Run | `runs/slm-10m-wiki-muon-s2` |
-| Seed / steps / tokens | 2 / 15,000 / 491,520,000 |
-| Final training loss | 2.7590 |
-| Final validation loss | 2.6550 |
-| Wall time | 137.3 min |
-| Throughput / peak memory | ~60.6k tokens/s / 3.5 GB |
-| BPB EN (500 docs) | 1.3027 |
-| BPB FR, benchmarks, sink analysis | Pending |
+| Metric | AdamW seed 2 | Muon seed 2 | Difference (Muon - AdamW) |
+|---|---:|---:|---:|
+| Validation loss, step 15,000 | 2.6768 | 2.6550 | -0.0218 |
+| Bits per byte, EN | 1.3151 | 1.3027 | -0.0124 |
+| Bits per byte, FR | 1.1540 | 1.1435 | -0.0105 |
+| ARC-Easy accuracy | 0.296 | 0.290 | -0.006 |
+| HellaSwag accuracy | 0.272 | 0.270 | -0.001 |
+| Belebele EN accuracy | 0.270 | 0.286 | +0.016 |
+| Belebele FR accuracy | 0.314 | 0.319 | +0.004 |
 
-The run resumed from its step-1,000 checkpoint after shutdown. Its manifest records the code tree
-as dirty, so this result is exploratory under the experiment protocol.
+The fixed-document BPB gain repeats at seed 2 with the same sign in both languages. Multiple-choice
+scores move in mixed directions and are too close to the benchmark sampling uncertainty to support a
+task-accuracy claim. The full Muon seed-2 outputs are in `runs/slm-10m-wiki-muon-s2/analysis/`.
+
+The run resumed from its step-1,000 checkpoint after shutdown. Its manifest records the code tree as
+dirty, so this is exploratory evidence under the experiment protocol; it should be confirmed from a
+clean revision before a release claim.
 
 ## Internals
 
@@ -74,6 +77,7 @@ as dirty, so this result is exploratory under the experiment protocol.
 
 ## Decision
 
-Provisionally positive. Adoption waits for the second seed, following the protocol. If it confirms,
-the next 10M run combines Muon and the gate before moving both to 135M, where the learning rate
-should be re-tuned: Muon may tolerate a higher rate than the one inherited from AdamW.
+Positive for fixed-document BPB across two seeds, inconclusive for multiple-choice accuracy. The
+combination with the gate is a useful next ablation; any adoption beyond exploratory work still needs
+a clean-revision confirmation and a reviewed training corpus. At larger scale, re-tune the learning
+rate because Muon may tolerate a higher rate than the one inherited from AdamW.

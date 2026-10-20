@@ -142,14 +142,27 @@ def batched_choice_logprobs(model: SLM, tok, items: list[dict[str, Any]], device
 def multiple_choice(model: SLM, tok, items: list[dict[str, Any]], device: torch.device, batch_items: int = 16) -> dict[str, Any]:
     model.eval()
     correct = correct_norm = 0
+    per_item = []
     all_scores: list[list[float]] = []
     for i in range(0, len(items), batch_items):
         all_scores += batched_choice_logprobs(model, tok, items[i : i + batch_items], device)
-    for it, scores in zip(items, all_scores):
+    for item_index, (it, scores) in enumerate(zip(items, all_scores)):
         norm = [s / max(1, len(c.encode("utf-8"))) for s, c in zip(scores, it["choices"])]
-        correct += int(max(range(len(scores)), key=scores.__getitem__) == it["label"])
-        correct_norm += int(max(range(len(norm)), key=norm.__getitem__) == it["label"])
+        prediction = max(range(len(scores)), key=scores.__getitem__)
+        prediction_norm = max(range(len(norm)), key=norm.__getitem__)
+        item_correct = prediction == it["label"]
+        item_correct_norm = prediction_norm == it["label"]
+        correct += int(item_correct)
+        correct_norm += int(item_correct_norm)
+        per_item.append({
+            "id": str(it.get("id", item_index)),
+            "label": int(it["label"]),
+            "prediction": prediction,
+            "prediction_norm": prediction_norm,
+            "correct": item_correct,
+            "correct_norm": item_correct_norm,
+        })
     n = len(items)
     chance = sum(1 / len(it["choices"]) for it in items) / max(1, n)
     return {"items": n, "acc": correct / n, "acc_norm": correct_norm / n, "chance": chance,
-            "acc_stderr": (correct / n * (1 - correct / n) / n) ** 0.5}
+            "acc_stderr": (correct / n * (1 - correct / n) / n) ** 0.5, "per_item": per_item}
