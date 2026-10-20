@@ -10,6 +10,8 @@ $runs = @(
   @{ name = "10m-gated-s1234"; dir = "runs/fsc-scaling/10m-gated-s1234" },
   @{ name = "25m-gated-grown-s1234"; dir = "runs/fsc-scaling/25m-gated-grown-s1234" }
 )
+$runs = @($runs | Where-Object { Test-Path -LiteralPath "$($_.dir)/checkpoints/step_00015000.pt" })
+if ($runs.Count -lt 1) { throw "No completed local checkpoints are available for evaluation." }
 $benchmarks = @("data/benchmarks/arc_easy.jsonl", "data/benchmarks/hellaswag.jsonl",
                 "data/benchmarks/belebele_en.jsonl", "data/benchmarks/belebele_fr.jsonl")
 foreach ($run in $runs) {
@@ -23,11 +25,12 @@ foreach ($run in $runs) {
 }
 
 New-Item -ItemType Directory -Force runs/fsc-scaling/comparisons | Out-Null
-$pairs = @(
-  @{ base = "1m-gated-s1234"; treatment = "10m-gated-s1234"; label = "1m-vs-10m" },
-  @{ base = "10m-gated-s1234"; treatment = "25m-gated-grown-s1234"; label = "10m-vs-25m-grown" }
-)
+$pairs = @(@{ base = "1m-gated-s1234"; treatment = "10m-gated-s1234"; label = "1m-vs-10m" })
+if (Test-Path -LiteralPath "runs/fsc-scaling/25m-gated-grown-s1234/checkpoints/step_00015000.pt") {
+  $pairs += @{ base = "10m-gated-s1234"; treatment = "25m-gated-grown-s1234"; label = "10m-vs-25m-grown" }
+}
 foreach ($pair in $pairs) {
+  if ($pair.base -notin $runs.name -or $pair.treatment -notin $runs.name) { continue }
   & python scripts/compare_mc.py `
     "runs/fsc-scaling/$($pair.base)/analysis/fsc-pilot-v1-mc.json" `
     "runs/fsc-scaling/$($pair.treatment)/analysis/fsc-pilot-v1-mc.json" `
@@ -43,6 +46,7 @@ $referencePairs = @(
   @{ name = "tiny1m"; base = "1m-gated-s1234" }
 )
 foreach ($referencePair in $referencePairs) {
+  if ($referencePair.base -notin $runs.name) { continue }
   & python scripts/compare_mc.py `
     "runs/fsc-scaling/$($referencePair.base)/analysis/fsc-pilot-v1-mc.json" `
     "runs/reference/$($referencePair.name)/fsc-pilot-v1-mc.json" `

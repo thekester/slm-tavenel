@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 from html import escape
 from pathlib import Path
 
@@ -26,12 +27,23 @@ TASKS = [
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", default="docs/fsc-scaling-benchmark-comparison.svg")
+    parser.add_argument("--readme", default="README.md")
     args = parser.parse_args()
+    readme = Path(args.readme)
+    readme_text = readme.read_text(encoding="utf-8")
+    begin, end = "<!-- BEGIN FSC SCALING BENCHMARK RESULTS -->", "<!-- END FSC SCALING BENCHMARK RESULTS -->"
+    if readme_text.count(begin) != 1 or readme_text.count(end) != 1:
+        raise ValueError("README result markers must each occur exactly once")
+    marker_start = readme_text.index(begin)
+    if readme_text.index(end) < marker_start:
+        raise ValueError("README result markers are in reverse order")
+    marker_finish = readme_text.index(end, marker_start) + len(end)
     outputs = {}
     fingerprint = None
-    for label, path, color in MODELS:
-        if not path.is_file():
-            raise FileNotFoundError(f"missing evaluated result: {path}")
+    available = [(label, path, color) for label, path, color in MODELS if path.is_file()]
+    if len(available) < 2:
+        raise FileNotFoundError("at least two validated evaluation outputs are required")
+    for label, path, color in available:
         result = json.loads(path.read_text(encoding="utf-8"))
         if not result.get("benchmarks") or any(not item.get("sha256") for item in result["benchmarks"]):
             raise ValueError(f"missing benchmark hashes in {path}")
@@ -42,7 +54,7 @@ def main() -> int:
         for task, _ in TASKS:
             if task not in result["results"]:
                 raise ValueError(f"{path} is missing {task}")
-        outputs[label] = {"results": result["results"], "color": color}
+        outputs[label] = {"results": result["results"], "color": color, "model_params": result.get("model_params")}
 
     width, height = 1120, 600
     left, right, top, bottom = 70, 45, 86, 260
@@ -55,7 +67,7 @@ def main() -> int:
     parts = [
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">',
         '<title id="title">SLM-Tavenel scaling and external reference benchmarks</title>',
-        '<desc id="desc">Raw accuracy on four shared multiple-choice benchmarks. Bars show internal scale runs and three external references; whiskers show plus or minus one standard error. Chance is 25 percent.</desc>',
+        '<desc id="desc">Raw accuracy on four shared multiple-choice benchmarks for the available evaluated models; whiskers show plus or minus one standard error. Chance is approximately 25 percent.</desc>',
         '<rect width="100%" height="100%" fill="#ffffff"/>',
         '<text x="560" y="34" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#172033">SLM-Tavenel scale and SLM references</text>',
         '<text x="560" y="57" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#526078">Raw accuracy · same local evaluator and pinned benchmark files · error bars: ±1 SE</text>',
@@ -71,11 +83,11 @@ def main() -> int:
     group_w = plot_w / len(TASKS)
     bar_w = 18
     gap = 5
-    total = len(MODELS) * bar_w + (len(MODELS) - 1) * gap
+    total = len(available) * bar_w + (len(available) - 1) * gap
     for task_index, (task, task_label) in enumerate(TASKS):
         center = left + group_w * (task_index + 0.5)
         start = center - total / 2
-        for model_index, (label, _, _) in enumerate(MODELS):
+        for model_index, (label, _, _) in enumerate(available):
             item = outputs[label]["results"][task]
             acc = item["acc"]
             se = item.get("acc_stderr", 0)
@@ -91,7 +103,7 @@ def main() -> int:
 
     legend_y = height - 196
     legend_x0 = 95
-    for i, (label, _, color) in enumerate(MODELS):
+    for i, (label, _, color) in enumerate(available):
         col = i % 3
         row = i // 3
         xx, yy = legend_x0 + col * 330, legend_y + row * 27
@@ -101,8 +113,31 @@ def main() -> int:
     parts.append('<text x="560" y="575" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#64748b">External models have different training data, context limits and compute. Exploratory results.</text>')
     parts.append('</svg>')
     out = Path(args.out)
+
+    table = [
+        "### Same-harness multiple-choice results",
+        "",
+        "Raw accuracy (`acc`) on the same pinned benchmark files; values are proportions.",
+        "",
+        "| Model | Parameters | ARC-Easy | HellaSwag | Belebele EN | Belebele FR |",
+        "|---|---:|---:|---:|---:|---:|",
+    ]
+    for label, path, _ in available:
+        params = outputs[label]["model_params"]
+        parameter_label = f"{params / 1_000_000:.3g}M" if isinstance(params, (int, float)) else "not recorded"
+        scores = [outputs[label]["results"][task]["acc"] for task, _ in TASKS]
+        table.append(f"| {label} | {parameter_label} | " + " | ".join(f"{score:.3f}" for score in scores) + " |")
+    table += [
+        "",
+        f"![Same-harness benchmark comparison across SLM-Tavenel and SLM references]({Path(os.path.relpath(out.resolve(), readme.resolve().parent)).as_posix()})",
+        "",
+        "Whiskers show ±1 standard error for each model's accuracy. Paired bootstrap reports, when generated, are stored locally under `runs/fsc-scaling/comparisons/` and are not distributed in this repository. These intervals condition on the evaluated checkpoints and do not measure training-run variation.",
+        "",
+    ]
+    replacement = begin + "\n" + "\n".join(table) + "\n" + end
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text("\n".join(parts) + "\n", encoding="utf-8")
+    readme.write_text(readme_text[:marker_start] + replacement + readme_text[marker_finish:], encoding="utf-8")
     print(out)
     return 0
 

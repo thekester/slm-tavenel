@@ -1,6 +1,6 @@
 # EXP-0009: SLM-Tavenel scaling and same-harness references
 
-*Status:* running on 2026-10-20; 1M and 10M are complete and grown-25M has started. The active 1M, 10M and grown-25M runs use the frozen French-Science-Commons
+*Status:* 1M and 10M are complete. On 2026-10-20, the user paused grown-25M at step 3,050; its latest durable checkpoint is step 3,000. Resume later from that checkpoint. The active runs use the frozen French-Science-Commons
 pilot corpus; the corpus remains a candidate and results are exploratory pending rights and privacy
 review. External references are contextual, not controlled training comparisons.
 
@@ -17,17 +17,18 @@ review. External references are contextual, not controlled training comparisons.
 |---|---:|---|---:|---:|---:|---|
 | 1M gated | 1.2M | scratch | 491.52M | 15,000 | 1234 | Complete |
 | 10M gated | 10M | scratch | 491.52M | 15,000 | 1234 | Complete |
-| 25M gated | 25M | function-preserving growth from the trained 10M checkpoint | 491.52M additional | 15,000 additional | 1234 | Running |
+| 25M gated | 25M | function-preserving growth from the trained 10M checkpoint | 491.52M additional | 15,000 additional | 1234 | Paused at step 3,050; durable checkpoint at step 3,000 |
 | 25M gated | 25M | scratch | 491.52M | 15,000 | 1234 | Deferred |
 
-The active runs use the same 8,192-entry tokenizer, the same EN/FR and license-balanced frozen data, the
+The completed 1M and 10M runs use the same 8,192-entry tokenizer, the same EN/FR and license-balanced frozen data, the
 same 5% document-disjoint validation split, 1,024-token sequences, and 32,768 sampled tokens per
 training step. The common token budget makes this an iso-token comparison; compute, time, and
 tokens-per-parameter differ by scale and will be reported. The grown 25M condition inherits another
 491.52M-token 10M run, so compare its downstream numbers as a different initialization path and
 report the full cost. It must not be described as an iso-compute comparison with scratch.
 
-The scratch 25M run is deferred to limit compute and GPU time. Therefore this phase cannot compare
+The scratch 25M run is deferred to limit compute and GPU time. Grown-25M is paused and is not part of
+the current evaluation round. Therefore this phase cannot compare
 scratch and grown initialization at 25M; the grown model also inherits the completed 10M run's
 training budget and data exposure. Primary outcome is English and French bits-per-byte on the fixed
 held-out documents. Secondary
@@ -35,6 +36,16 @@ outcomes are raw and length-normalized accuracy on ARC-Easy, HellaSwag, Belebele
 with per-item results and paired uncertainty intervals. The four tasks are exploratory at these
 sample sizes; do not declare a model-size winner from small accuracy differences. Record checkpoint,
 tokenizer, data and benchmark hashes for each run.
+
+The internal 1M/10M pair is controlled for training token count, corpus, tokenizer, validation split
+and evaluation files, but not compute or tokens per parameter; only one seed per scale is currently
+available. Paired bootstrap intervals resample the observed item-level outcomes and are conditional
+on these checkpoints. They do not capture run-to-run variation, benchmark construction uncertainty,
+or residual contamination. External checkpoints use the same benchmark files and scoring code, but
+their tokenizers, model-specific context caps, training data, token budgets, compute and contamination
+histories differ. Their scores are descriptive reference points, not controlled comparisons. The FSC
+pipeline's recorded exact-match filtering reduces detectable overlap but cannot exclude semantic,
+translated, or unrecorded exposure. Rights review for the corpus and derivative weights remains open.
 
 ## External references
 
@@ -55,10 +66,13 @@ pretraining corpora, compute and contamination histories differ. They are contex
 points, not controlled causal comparisons. Score BPB on the same FSC validation texts when the
 reference tokenizer permits it; keep MC outputs even if one reference's BPB has a format issue.
 
-## Queue and outputs
+## Evaluation status and outputs
 
-The sequential queue is `scripts/run_fsc_scaling.ps1`; configs are under `configs/train/fsc-pilot-v1-*`.
-Run outputs are under `runs/fsc-scaling/`. Evaluation should run after training and write each
-checkpoint's BPB, item-level MC predictions and hashes under its `analysis/` directory. External
-reference outputs belong under `runs/reference/` with model revision recorded. Update the README
-comparison chart only after these outputs validate.
+The sequential training queue is `scripts/run_fsc_scaling.ps1`; configs are under `configs/train/fsc-pilot-v1-*`.
+Run outputs are under `runs/fsc-scaling/`. The current evaluation covers completed 1M and 10M
+checkpoints and the three pinned references; it does not wait for paused 25M. Each evaluation records
+BPB, item-level MC predictions, checkpoint/model revision, tokenizer or benchmark hashes under its
+`analysis/` directory or `runs/reference/`. Paired bootstrap intervals quantify item-sampling
+uncertainty conditional on these particular checkpoints and benchmark items; they do not estimate
+training-seed or training-data variability. Keep comparisons exploratory and update the chart only
+from validated same-file outputs. Resume 25M with `scripts/resume_fsc_25m_grown.ps1` when ready.

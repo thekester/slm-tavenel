@@ -2,6 +2,8 @@
 
 import importlib
 import json
+import shutil
+import subprocess
 from pathlib import Path
 from types import SimpleNamespace
 import xml.etree.ElementTree as ET
@@ -61,19 +63,77 @@ def test_evaluation_reuse_requires_matching_inputs(tmp_path, monkeypatch, script
 
 def test_chart_validates_hashes_and_supports_high_accuracy(tmp_path, monkeypatch, scripts):
     module = scripts("render_fsc_benchmark_chart")
+    readme = tmp_path / "README.md"
+    prefix, suffix = "Keep this introduction.\n", "\nKeep this conclusion."
+    readme.write_text(prefix + "<!-- BEGIN FSC SCALING BENCHMARK RESULTS -->\nPending\n<!-- END FSC SCALING BENCHMARK RESULTS -->" + suffix)
     paths = [tmp_path / f"{i}.json" for i in range(2)]
     result = {"benchmarks": [{"path": "demo.jsonl", "sha256": "hash"}],
               "results": {task: {"acc": 0.9, "acc_stderr": 0.01} for task, _ in module.TASKS}}
     for path in paths:
         path.write_text(json.dumps(result))
-    monkeypatch.setattr(module, "MODELS", [("A", paths[0], "#000000"), ("B", paths[1], "#ffffff")])
+    monkeypatch.setattr(module, "MODELS", [("A", paths[0], "#000000"), ("B", paths[1], "#ffffff"),
+                                         ("Unavailable", tmp_path / "missing.json", "#ff0000")])
     output = tmp_path / "chart.svg"
-    monkeypatch.setattr("sys.argv", ["render", "--out", str(output)])
+    monkeypatch.setattr("sys.argv", ["render", "--out", str(output), "--readme", str(readme)])
     module.main()
     ET.parse(output)
     text = output.read_text()
     assert "100%" in text and "inherits the 10M training budget" in text
+    published = readme.read_text(encoding="utf-8")
+    assert published.startswith(prefix) and published.endswith(suffix)
+    assert "| A |" in published and "| B |" in published and "Unavailable" not in published
+    assert "(chart.svg)" in published and "](runs/" not in published
+    module.main()
+    assert readme.read_text(encoding="utf-8") == published
     result["benchmarks"][0]["sha256"] = "different"
     paths[1].write_text(json.dumps(result))
     with pytest.raises(ValueError, match="hashes differ"):
         module.main()
+    assert readme.read_text(encoding="utf-8") == published
+    assert output.read_text() == text
+
+
+@pytest.mark.parametrize("markers", ["no markers", "<!-- END FSC SCALING BENCHMARK RESULTS -->\n<!-- BEGIN FSC SCALING BENCHMARK RESULTS -->"])
+def test_chart_rejects_invalid_readme_before_writing(tmp_path, monkeypatch, scripts, markers):
+    module = scripts("render_fsc_benchmark_chart")
+    readme, output = tmp_path / "README.md", tmp_path / "chart.svg"
+    readme.write_text(markers)
+    output.write_text("existing chart")
+    monkeypatch.setattr("sys.argv", ["render", "--out", str(output), "--readme", str(readme)])
+    with pytest.raises(ValueError, match="markers"):
+        module.main()
+    assert readme.read_text() == markers
+    assert output.read_text() == "existing chart"
+
+
+@pytest.mark.parametrize("completed", [["1m"], ["1m", "10m"]])
+def test_queue_only_compares_available_local_runs(tmp_path, completed):
+    powershell = shutil.which("powershell") or shutil.which("pwsh")
+    if not powershell:
+        pytest.skip("PowerShell is not installed")
+    queue = Path(__file__).resolve().parents[1] / "scripts/evaluate_fsc_scaling.ps1"
+    for name in completed:
+        checkpoint = tmp_path / f"runs/fsc-scaling/{name}-gated-s1234/checkpoints/step_00015000.pt"
+        checkpoint.parent.mkdir(parents=True)
+        checkpoint.touch()
+    command = r'''
+$ErrorActionPreference = 'Stop'
+$global:commands = [System.Collections.Generic.List[string]]::new()
+function python {
+  $global:commands.Add(($args -join ' '))
+  $global:LASTEXITCODE = 0
+  if ($args[0] -eq '-c') { 'mock-pytorch-lib' }
+}
+& $env:FSC_TEST_QUEUE
+$global:commands | ConvertTo-Json | Set-Content -LiteralPath 'commands.json' -Encoding utf8
+'''
+    import os
+    result = subprocess.run([powershell, "-NoProfile", "-Command", command], cwd=tmp_path,
+                            env={**os.environ, "FSC_TEST_QUEUE": str(queue)}, capture_output=True, text=True)
+    assert result.returncode == 0, result.stdout + result.stderr
+    commands = json.loads((tmp_path / "commands.json").read_text(encoding="utf-8-sig"))
+    comparisons = [command for command in commands if "scripts/compare_mc.py" in command]
+    assert len(comparisons) == (1 if len(completed) == 1 else 4)
+    assert all("25m" not in command for command in comparisons)
+    if len(completed) == 1:
+        assert "tiny1m" in comparisons[0] and "10m" not in comparisons[0]

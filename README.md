@@ -21,8 +21,8 @@ collection and Common Pile, and records the remaining rights checks in
 An EN/FR French-Science-Commons candidate has been filtered, deduplicated, decontaminated against
 the pinned benchmark files, split by document, and balanced to within 0.08% of the same tokenizer
 budget in train and validation. It remains exploratory and is not independently rights-cleared.
-The controlled 1M/10M/25M scaling series on this candidate is now running; see the [pilot review](docs/reviews/FSC-PILOT-2026-10-20.md)
-and [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md).
+The 1M and 10M runs are complete, the grown-25M run is paused, and same-harness evaluations are
+underway; see the [pilot review](docs/reviews/FSC-PILOT-2026-10-20.md) and [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md).
 
 The head-wise attention gate has a consistent bits-per-byte improvement and removes the observed
 attention sinks across two 10M seeds; its multiple-choice scores remain close to chance. The Muon
@@ -30,13 +30,43 @@ seed-1 result is promising but provisional. Seed 2 has completed training and ev
 document bits-per-byte gain repeats while multiple-choice scores remain inconclusive. The earlier
 gated+Muon queue remains stopped. The wiki-v1 replication in
 [EXP-0008](experiments/EXP-0008-wiki-v1-clean-replication.md) is paused after AdamW seed 1234 reached
-step 2,000; the checkpoint is retained. A new gated scaling series has started on the frozen FSC
-pilot corpus under [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md): 1M and 10M are complete,
-and 25M-grown has started; 25M-from-scratch is deferred. Same-harness evaluations of
-TinyStories-0.9M, Pythia-14M and SmolLM2-135M follow the remaining 25M-grown run.
+step 2,000; the checkpoint is retained. A gated scaling series on the frozen FSC pilot corpus is
+documented under [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md): 1M and 10M are complete;
+25M-grown is paused at step 3,050 and will resume from its latest durable step 3,000 checkpoint.
+25M-from-scratch is deferred. Same-harness evaluations of the completed 1M and 10M checkpoints and the
+TinyStories-0.9M, Pythia-14M and SmolLM2-135M references are underway while 25M is paused.
 These corpus-based results remain exploratory pending rights and privacy review.
 
-## Benchmark snapshot
+## Current FSC benchmark round
+
+The current round uses the repository evaluator on the same four pinned benchmark files for completed
+SLM-Tavenel 1M/10M checkpoints and pinned TinyStories-0.9M, Pythia-14M and SmolLM2-135M checkpoints.
+The 25M-grown run is paused and excluded until it reaches its final checkpoint. Results and the chart
+will be published from validated item-level outputs in [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md).
+
+| Model | Parameters | Current state | Comparison role |
+|---|---:|---|---|
+| SLM-Tavenel 1M | 1.2M | Checkpoint and evaluation complete | Internal small-scale point |
+| SLM-Tavenel 10M | 10M | Checkpoint complete; evaluation pending in queue | Internal size scaling |
+| SLM-Tavenel 25M grown | 25M | Paused at step 3,050; excluded from this round | Resume and evaluate later |
+| TinyStories tiny1m | 0.896M | Evaluation pending in queue | Near-1M parameter-count reference; English story training |
+| Pythia-14M | 14M | Evaluation pending in queue | Closest established size reference to 10M |
+| SmolLM2-135M | 135M | Evaluation pending in queue | Larger SLM reference |
+
+<!-- BEGIN FSC SCALING BENCHMARK RESULTS -->
+_Validated item-level results and the comparison chart will be inserted here when the current evaluation queue completes._
+<!-- END FSC SCALING BENCHMARK RESULTS -->
+
+Using one evaluator makes scoring more consistent; it does not make the reference models' training
+conditions equivalent. The references differ in data, tokenization, language mix, context limits,
+training tokens, compute and possible benchmark exposure. SLM-Tavenel's FSC pipeline records exact
+benchmark filtering, which reduces detectable overlap but cannot establish complete decontamination.
+The FSC source and derivative-weight rights review remains open. The internal 1M/10M comparison shares
+corpus, tokenizer, split and token budget, but currently has one seed at each scale. Paired item-level
+bootstrap intervals describe uncertainty conditional on those evaluated checkpoints and benchmark
+items; they do not measure variation across training runs. Treat differences as exploratory.
+
+## Legacy wiki-v0 benchmark snapshot
 
 The table reports raw multiple-choice accuracy (`acc`) from the project evaluator. Each run used the
 same prompts, scoring code and pinned dataset revisions. ARC-Easy has 2,376 items; HellaSwag 10,042;
@@ -76,7 +106,7 @@ and [EXP-0004](experiments/EXP-0004-gated-attention-seed2.md).
 
 Pythia-14M is the closest established open checkpoint in size to SLM-Tavenel 10M. Its model card
 identifies it as English-only and trained on the Pile, so English benchmark results are the most
-like-for-like; Belebele French is a cross-lingual probe. The queued evaluation pins revision
+like-for-like; Belebele French is a cross-lingual probe. The evaluation pins revision
 `d31f659f077f9ea500c4d7faa999893d7f28cbdf`. SmolLM2-135M adds a larger, modern SLM point, with the
 size difference stated rather than treated as a controlled comparison. TinyStories tiny1m gives a
 closer parameter-count reference for the current 1M run; its model card reports 896,256 parameters,
@@ -85,7 +115,7 @@ It is not a general-domain or bilingual peer. All references use this
 repository's evaluator, prompts, scoring rules and pinned benchmark files; published scores from
 other harnesses are not mixed into the chart. Same-harness scoring controls evaluation procedure, but
 not training data, token budget or contamination history, so external results are outcome references,
-not causal tests of architecture or training method. See the [Pythia model card](https://huggingface.co/EleutherAI/pythia-14m)
+not causal tests of architecture or training method. FSC's recorded filtering reduces detectable benchmark overlap, but cannot rule out paraphrase, translation or latent exposure; source and weight-release rights review also remains open. Within SLM-Tavenel, 1M versus 10M shares the corpus, tokenizer, held-out split and token budget, but uses one seed and different compute and tokens-per-parameter. The grown 25M condition has a distinct inherited training history. Paired intervals quantify uncertainty across benchmark items conditional on these checkpoints; repeated training seeds are needed to estimate training variability. Treat all current results as exploratory. See the [Pythia model card](https://huggingface.co/EleutherAI/pythia-14m)
 and [Pythia repository](https://github.com/EleutherAI/pythia) for its model and evaluation details.
 
 Detailed SLM-Tavenel run data and decisions are in [EXP-0001](experiments/EXP-0001-slm-10m-wiki.md),
