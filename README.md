@@ -37,6 +37,16 @@ documented under [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md):
 TinyStories-0.9M, Pythia-14M and SmolLM2-135M references are underway while 25M is paused.
 These corpus-based results remain exploratory pending rights and privacy review.
 
+An additional evaluation wave is queued after the current GPU queue: ARC-Challenge and WinoGrande XL,
+scored for SLM-Tavenel 1M/10M and the pinned TinyStories-0.9M, Pythia-14M, Pythia-31M and
+SmolLM2-135M references. Pythia-31M adds a general-domain checkpoint near the paused 25M scale.
+ARC-Challenge uses the test split; WinoGrande's public test labels are withheld, so its labeled XL
+validation split is explicitly exploratory. An exact 13-gram overlap audit against the FSC training
+split runs before scoring. These post-hoc results cannot be treated as clean held-out evidence for
+the already-trained models, and external pretraining exposure is unknown. The separate
+[FSC-pilot-v2 pipeline](configs/data/pipeline-fsc-pilot-v2.yaml) includes both tasks for future
+training corpora; it does not change existing v1 checkpoints.
+
 ## Current FSC benchmark round
 
 The current round uses the repository evaluator on the same four pinned benchmark files for completed
@@ -52,6 +62,7 @@ will be published from validated item-level outputs in [EXP-0009](experiments/EX
 | TinyStories tiny1m | 0.896M | Evaluation pending in queue | Near-1M parameter-count reference; English story training |
 | Pythia-14M | 14M | Evaluation pending in queue | Closest established size reference to 10M |
 | SmolLM2-135M | 135M | Evaluation pending in queue | Larger SLM reference |
+| [Pythia-31M](https://huggingface.co/EleutherAI/pythia-31m) | 31M | Queued in supplementary wave | General-domain reference near paused 25M scale |
 
 <!-- BEGIN FSC SCALING BENCHMARK RESULTS -->
 _Validated item-level results and the comparison chart will be inserted here when the current evaluation queue completes._
@@ -65,6 +76,24 @@ The FSC source and derivative-weight rights review remains open. The internal 1M
 corpus, tokenizer, split and token budget, but currently has one seed at each scale. Paired item-level
 bootstrap intervals describe uncertainty conditional on those evaluated checkpoints and benchmark
 items; they do not measure variation across training runs. Treat differences as exploratory.
+
+### Supplementary benchmark results
+
+ARC-Challenge and WinoGrande add a harder science-question set and a binary coreference/commonsense
+task. OpenBookQA is excluded because its official Hugging Face card lists its license as unknown.
+FrenchBench is not included yet: its MIT wrapper does not resolve rights for the underlying questions
+collected from external sites. A French benchmark with item-level provenance and clear redistribution
+terms is still needed.
+
+<!-- BEGIN FSC ADDITIONAL BENCHMARK RESULTS -->
+_Supplementary evaluations are queued after the current GPU evaluation finishes._
+<!-- END FSC ADDITIONAL BENCHMARK RESULTS -->
+
+The additional tasks use the same local log-likelihood scorer, but they do not extend the original
+four-task decontamination for already-trained checkpoints. The FSC training split receives a
+post-hoc exact word 13-gram audit before scores are reported; no exact match does not rule out
+paraphrases or indirect exposure. The future v2 pipeline filters these evaluation files during
+preprocessing. External models' training corpora and benchmark exposure are not controlled.
 
 ## Legacy wiki-v0 benchmark snapshot
 

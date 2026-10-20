@@ -66,6 +66,42 @@ pretraining corpora, compute and contamination histories differ. They are contex
 points, not controlled causal comparisons. Score BPB on the same FSC validation texts when the
 reference tokenizer permits it; keep MC outputs even if one reference's BPB has a format issue.
 
+### Supplementary benchmarks queued on 2026-10-20
+
+Add ARC-Challenge and WinoGrande XL as separate secondary tasks; keep them out of the original
+four-task chart so the two benchmark sets and their chance levels remain clear. ARC-Challenge uses
+the 1,172-item `test` split from `allenai/ai2_arc` revision
+`210d026faf9955653af8916fad021475a3f00453` (CC-BY-SA-4.0). WinoGrande uses the 1,267-item labeled
+XL `validation` split from `allenai/winogrande` revision
+`546d5aa0e42fc0fa9ad2c13260322ec969e083ee` (official repository Apache-2.0); test labels are
+withheld. WinoGrande chance is 50%, versus 25% for ARC-Challenge. Both use the project's log-likelihood
+scorer and retain item-level predictions.
+
+WinoGrande uses the sentence prefix before the blank as context and scores each candidate followed
+by the remaining sentence as a continuation. This includes both the candidate and suffix in the
+likelihood; it is a local cloze-scoring convention, not a claim of equivalence to published harness
+scores. Regenerate converted benchmark files and rerun their audit after changing this format.
+
+Score completed SLM-Tavenel 1M/10M, TinyStories-0.9M, Pythia-14M, SmolLM2-135M and EleutherAI
+Pythia-31M at pinned model revision `e556ace21b489575e94e9d50b6dad2fcc7419679` (Apache-2.0). Pythia-31M
+is a useful general-domain reference near the paused 25M model size. Its current checkpoint is the
+standard Pile-trained variant; it is not the former deduplicated variant. This is a broad reference,
+not a controlled size experiment.
+
+The new tasks were not part of the exact-match decontamination used to prepare the already-trained
+v1 corpus. Before scoring, `scripts/audit_fsc_additional_contamination.py` checks exact lowercased
+Unicode word 13-gram overlap between each task's context and choices and the FSC train documents.
+This is post-hoc evidence only: it cannot establish absence of paraphrase or indirect exposure, and
+it does not audit external models' training corpora. Future FSC corpus runs can use
+`configs/data/pipeline-fsc-pilot-v2.yaml`, which adds both benchmark files without changing the v1
+corpus or existing checkpoints. The labeled WinoGrande validation results and all comparisons remain
+exploratory.
+
+OpenBookQA is excluded because its official Hugging Face dataset card currently declares no known
+license. The FrenchBench wrapper declares MIT, but its source questions come from external websites;
+the wrapper license alone does not establish content rights. We will add a further French benchmark
+only after item-level provenance and an acceptable license are verified.
+
 ## Evaluation status and outputs
 
 The sequential training queue is `scripts/run_fsc_scaling.ps1`; configs are under `configs/train/fsc-pilot-v1-*`.

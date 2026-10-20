@@ -295,3 +295,48 @@ sources:
     attribution: Soldaini et al. (2024), arXiv:2402.00159
     languages: [en]
     domains: [web, code, science, books, social]
+
+  # ---- additional same-harness evaluation sets ----------------------------------------
+  - id: ai2-arc-challenge
+    name: AI2 Reasoning Challenge, Challenge test split
+    url: https://huggingface.co/datasets/allenai/ai2_arc
+    role: eval
+    license: CC-BY-SA-4.0
+    status: approved
+    revision: 210d026faf9955653af8916fad021475a3f00453
+    subset: ARC-Challenge/test
+    attribution: Clark et al. (2018), AI2 Reasoning Challenge
+    languages: [en]
+    domains: [science, reasoning]
+    review:
+      provenance_verified: true
+      license_verified: true
+      pii_reviewed: true
+      reviewer: "SLM-Tavenel benchmark source review"
+      date: "2026-10-20"
+      notes: >-
+        License is declared in the official Hugging Face dataset card. This is the test split,
+        pinned at the recorded repository commit. Preserve attribution and CC-BY-SA terms for
+        redistributed benchmark material.
+
+  - id: winogrande
+    name: WinoGrande XL validation split
+    url: https://github.com/allenai/winogrande
+    role: eval
+    license: Apache-2.0
+    status: approved
+    revision: 546d5aa0e42fc0fa9ad2c13260322ec969e083ee
+    subset: winogrande_xl/validation
+    attribution: Sakaguchi et al. (2020), WinoGrande
+    languages: [en]
+    domains: [commonsense, coreference]
+    review:
+      provenance_verified: true
+      license_verified: true
+      pii_reviewed: true
+      reviewer: "SLM-Tavenel benchmark source review"
+      date: "2026-10-20"
+      notes: >-
+        The official AllenAI repository carries an Apache-2.0 license. The pinned Hugging Face
+        conversion is used only as a transport format. The labeled validation split is exploratory
+        and may have appeared in model development data.

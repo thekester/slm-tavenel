@@ -4,7 +4,8 @@ Each benchmark is fetched at a pinned revision and converted to one JSONL format
 ``{"id", "context", "choices": [...], "label"}``. A model's answer is the choice with the highest
 log-probability given the context (``acc``), or the highest log-probability per byte of the choice
 (``acc_norm``), following the conventions of lm-evaluation-harness. Prompt templates follow that
-harness so that numbers are comparable in kind, though not guaranteed identical.
+harness for ARC, HellaSwag and Belebele so that numbers are comparable in kind, though not guaranteed
+identical. WinoGrande uses local cloze completion scoring over the candidate plus sentence suffix.
 
 Belebele is parallel across languages, which gives a like-for-like English/French comparison.
 Benchmark files are evaluation data: every one used in a reported result must also be listed in the
@@ -27,6 +28,10 @@ from slm.tokenizer import EOS
 BENCHMARKS: dict[str, dict[str, Any]] = {
     "arc_easy": {"repo": "allenai/ai2_arc", "revision": "210d026faf9955653af8916fad021475a3f00453",
                  "file": "ARC-Easy/test-00000-of-00001.parquet", "license": "CC-BY-SA-4.0"},
+    "arc_challenge": {"repo": "allenai/ai2_arc", "revision": "210d026faf9955653af8916fad021475a3f00453",
+                       "file": "ARC-Challenge/test-00000-of-00001.parquet", "license": "CC-BY-SA-4.0"},
+    "winogrande": {"repo": "allenai/winogrande", "revision": "546d5aa0e42fc0fa9ad2c13260322ec969e083ee",
+                   "file": "winogrande_xl/validation/0000.parquet", "license": "Apache-2.0"},
     "hellaswag": {"repo": "Rowan/hellaswag", "revision": "218ec52e09a7e7462a5400043bb9a69a41d06b76",
                   "file": "data/validation-00000-of-00001.parquet", "license": "MIT (declared in the original repository)"},
     "belebele_en": {"repo": "facebook/belebele", "revision": "7899cdfa4e1e0d733fd77c848e2c273cb1d32be2",
@@ -45,7 +50,7 @@ def _hellaswag_clean(text: str) -> str:
 def convert(name: str, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     items = []
     for i, r in enumerate(rows):
-        if name == "arc_easy":
+        if name in {"arc_easy", "arc_challenge"}:
             labels = list(r["choices"]["label"])
             items.append({"id": r["id"], "context": f"Question: {r['question']}\nAnswer:",
                           "choices": [f" {c}" for c in r["choices"]["text"]], "label": labels.index(r["answerKey"])})
@@ -53,6 +58,14 @@ def convert(name: str, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
             ctx = r["ctx_a"] + " " + r["ctx_b"].capitalize()
             items.append({"id": str(r.get("ind", i)), "context": _hellaswag_clean(r["activity_label"] + ": " + ctx),
                           "choices": [" " + _hellaswag_clean(e) for e in r["endings"]], "label": int(r["label"])})
+        elif name == "winogrande":
+            prefix, separator, suffix = r["sentence"].partition("_")
+            if not separator or "_" in suffix or str(r["answer"]) not in {"1", "2"}:
+                raise ValueError("WinoGrande requires one blank and a labeled answer (1 or 2)")
+            items.append({"id": str(r.get("__index_level_0__", i)),
+                          "context": prefix.rstrip(),
+                          "choices": [" " + r["option1"] + suffix, " " + r["option2"] + suffix],
+                          "label": int(r["answer"]) - 1})
         elif name.startswith("belebele"):
             items.append({"id": f"{r['link']}#{r['question_number']}",
                           "context": f"P: {r['flores_passage']}\nQ: {r['question']}\nA:",

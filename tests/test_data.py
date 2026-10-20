@@ -42,7 +42,8 @@ def test_project_registry_audit_is_consistent():
     decisions, errors = reg.audit()
     assert errors == []
     usable = {d.source_id for d in decisions if d.usable}
-    assert usable == {"synthetic-prose-v1", "synthetic-arithmetic-v1"}
+    assert usable == {"synthetic-prose-v1", "synthetic-arithmetic-v1", "ai2-arc-challenge", "winogrande"}
+    assert reg["ai2-arc-challenge"].role == reg["winogrande"].role == "eval"
     for source_id in ("wikipedia-en", "wikipedia-fr"):
         source = reg[source_id]
         assert source.license_options == ["CC-BY-SA-3.0", "GFDL"]
