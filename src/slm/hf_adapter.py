@@ -60,10 +60,14 @@ class HFModel(torch.nn.Module):
         return sum(p.numel() for p in self.model.parameters())
 
 
-def load(name: str, device: torch.device, revision: str | None = None, max_seq_len: int | None = 2048):
+def load(name: str, device: torch.device, revision: str | None = None, max_seq_len: int | None = 2048,
+         subfolder: str | None = None):
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    tok = AutoTokenizer.from_pretrained(name, revision=revision)
+    load_options = {"revision": revision}
+    if subfolder is not None:
+        load_options["subfolder"] = subfolder
+    tok = AutoTokenizer.from_pretrained(name, **load_options)
     dtype = torch.bfloat16 if device.type == "cuda" else torch.float32
-    model = AutoModelForCausalLM.from_pretrained(name, revision=revision, torch_dtype=dtype).to(device).eval()
+    model = AutoModelForCausalLM.from_pretrained(name, torch_dtype=dtype, **load_options).to(device).eval()
     return HFModel(model, max_seq_len), HFTokenizer(tok)

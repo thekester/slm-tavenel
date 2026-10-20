@@ -144,6 +144,26 @@ def test_evaluation_and_export(corpus, tmp_path):
     assert reference_tok.encode("La rivière").ids == tok.encode("La rivière").ids
     reference_bpb = bits_per_byte(reference, reference_tok, ["La rivière mesure le flux d'information."], cpu)
     assert reference_bpb["bits_per_byte"] == pytest.approx(bpb["bits_per_byte"], rel=1e-5)
+    nested, nested_tok = load_reference(str(tmp_path), cpu, subfolder="hf", max_seq_len=64)
+    torch.testing.assert_close(nested(x)[0], ours, atol=1e-4, rtol=1e-4)
+    assert nested.cfg.max_seq_len == 64
+    assert nested_tok.encode("test").ids == tok.encode("test").ids
+
+
+def test_training_records_optional_dataset_provenance(corpus, tmp_path):
+    import shutil
+    from slm.runlog import sha256_file
+
+    data_dir = tmp_path / "tokens"
+    shutil.copytree(corpus / "tokens", data_dir)
+    provenance = {"kind": "slm.dataset_provenance", "status": "candidate", "artifacts": {"example": "hash"}}
+    (data_dir / "provenance.json").write_text(json.dumps(provenance))
+    output = tmp_path / "run"
+    train(make_cfg(corpus, output, 1, data_dir=str(data_dir)))
+    recorded = json.loads((output / "run_manifest.json").read_text())["data"]
+    assert recorded["manifest_sha256"] == sha256_file(data_dir / "manifest.json")
+    assert recorded["provenance"] == provenance
+    assert recorded["provenance_path"] == str(data_dir / "provenance.json")
 
 
 @pytest.mark.parametrize("qk_norm,arch", [(False, "llama"), (True, "qwen3")])

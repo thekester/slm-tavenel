@@ -5,8 +5,8 @@ data_dir: data/tokens/fsc-pilot-v1-scaling
 out_dir: runs/fsc-scaling/25m-gated-grown-s1234
 seed: 1234
 seq_len: 1024
-micro_batch_size: 8
-grad_accum_steps: 4
+micro_batch_size: 4
+grad_accum_steps: 8
 max_steps: 15000
 lr: 3.0e-3
 min_lr: 3.0e-4

@@ -292,7 +292,10 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
         run_model = DDP(run_model, device_ids=[device.index] if device.type == "cuda" else None)
 
     if master:
-        data_manifest = read_json(Path(cfg.data_dir) / "manifest.json")
+        data_manifest_path = Path(cfg.data_dir) / "manifest.json"
+        data_manifest = read_json(data_manifest_path)
+        provenance_path = Path(cfg.data_dir) / "provenance.json"
+        data_provenance = read_json(provenance_path) if provenance_path.is_file() else None
         write_json(out_dir / "run_manifest.json", {
             "kind": "slm.train",
             "train_config": cfg.__dict__,
@@ -303,6 +306,9 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
             "params_non_embedding": model.num_params(non_embedding=True),
             "data": {
                 "dir": cfg.data_dir,
+                "manifest_sha256": sha256_file(data_manifest_path),
+                "provenance_path": str(provenance_path) if provenance_path.is_file() else None,
+                "provenance": data_provenance,
                 "tokenizer_sha256": data_manifest.get("tokenizer_sha256"),
                 "splits": {s: {"tokens": v["tokens"], "shards": [x["sha256"] for x in v["shards"]]}
                            for s, v in data_manifest["splits"].items()},

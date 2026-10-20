@@ -20,17 +20,21 @@ collection and Common Pile, and records the remaining rights checks in
 [docs/reviews/ALTERNATIVE-CORPORA.md](docs/reviews/ALTERNATIVE-CORPORA.md).
 An EN/FR French-Science-Commons candidate has been filtered, deduplicated, decontaminated against
 the pinned benchmark files, split by document, and balanced to within 0.08% of the same tokenizer
-budget in train and validation. It remains exploratory and is not independently rights-cleared;
-no model training has started on it. See the [pilot review](docs/reviews/FSC-PILOT-2026-10-20.md).
+budget in train and validation. It remains exploratory and is not independently rights-cleared.
+The controlled 1M/10M/25M scaling series on this candidate is now running; see the [pilot review](docs/reviews/FSC-PILOT-2026-10-20.md)
+and [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md).
 
 The head-wise attention gate has a consistent bits-per-byte improvement and removes the observed
 attention sinks across two 10M seeds; its multiple-choice scores remain close to chance. The Muon
 seed-1 result is promising but provisional. Seed 2 has completed training and evaluation; its fixed-
-document bits-per-byte gain repeats while multiple-choice scores remain inconclusive. The previous
-gated+Muon and 1M/25M scaling queue was stopped to prioritize data review. The wiki-v1 replication in
+document bits-per-byte gain repeats while multiple-choice scores remain inconclusive. The earlier
+gated+Muon queue remains stopped. The wiki-v1 replication in
 [EXP-0008](experiments/EXP-0008-wiki-v1-clean-replication.md) is paused after AdamW seed 1234 reached
-step 2,000; the checkpoint is retained. External reference evaluations remain paused. No training
-has started on the new candidate corpus.
+step 2,000; the checkpoint is retained. A new gated scaling series has started on the frozen FSC
+pilot corpus under [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md): 1M and 10M are complete,
+and 25M-grown has started; 25M-from-scratch is deferred. Same-harness evaluations of
+TinyStories-0.9M, Pythia-14M and SmolLM2-135M follow the remaining 25M-grown run.
+These corpus-based results remain exploratory pending rights and privacy review.
 
 ## Benchmark snapshot
 
@@ -66,14 +70,18 @@ and [EXP-0004](experiments/EXP-0004-gated-attention-seed2.md).
 
 | Existing SLM reference | Parameters | ARC-Easy | HellaSwag | Belebele EN | Belebele FR | Role |
 |---|---:|---:|---:|---:|---:|---|
-| [Pythia-14M](https://huggingface.co/EleutherAI/pythia-14m) | 14M | paused | paused | paused | paused | Primary size-near reference |
-| [SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M) | 135M | paused | paused | paused | paused | Secondary larger SLM reference |
+| [Pythia-14M](https://huggingface.co/EleutherAI/pythia-14m) | 14M | queued | queued | queued | queued | Primary size-near reference |
+| [SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M) | 135M | queued | queued | queued | queued | Secondary larger SLM reference |
+| [TinyStories tiny1m](https://huggingface.co/shibatch/tiny1m) | 0.896M | queued | queued | queued | queued | Near-1M scale reference; English story-training corpus |
 
 Pythia-14M is the closest established open checkpoint in size to SLM-Tavenel 10M. Its model card
 identifies it as English-only and trained on the Pile, so English benchmark results are the most
-like-for-like; Belebele French is a cross-lingual probe. The paused run pins revision
+like-for-like; Belebele French is a cross-lingual probe. The queued evaluation pins revision
 `d31f659f077f9ea500c4d7faa999893d7f28cbdf`. SmolLM2-135M adds a larger, modern SLM point, with the
-size difference stated rather than treated as a controlled comparison. Both references use this
+size difference stated rather than treated as a controlled comparison. TinyStories tiny1m gives a
+closer parameter-count reference for the current 1M run; its model card reports 896,256 parameters,
+MIT licensing, an English TinyStories training corpus, a 512-token vocabulary and 256-token context.
+It is not a general-domain or bilingual peer. All references use this
 repository's evaluator, prompts, scoring rules and pinned benchmark files; published scores from
 other harnesses are not mixed into the chart. Same-harness scoring controls evaluation procedure, but
 not training data, token budget or contamination history, so external results are outcome references,
