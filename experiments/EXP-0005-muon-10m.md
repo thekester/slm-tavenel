@@ -1,6 +1,6 @@
 # EXP-0005: Muon optimiser at 10M (ablation O1)
 
-*Status:* concluded, single seed; second seed queued (`runs/slm-10m-wiki-muon-s2`)
+*Status:* seed 1 concluded; seed 2 training complete, evaluation in progress (`runs/slm-10m-wiki-muon-s2`)
 *Dates:* 2026-10-19
 *Runs:* `runs/slm-10m-wiki` (AdamW, EXP-0001) and `runs/slm-10m-wiki-muon`
 
@@ -39,6 +39,27 @@ against 0.309. No difference beyond noise.
 
 The bits-per-byte gain (0.015-0.016) is larger than the gated attention gain at the same seed
 (0.012) and 7 to 13 times the seed-to-seed difference measured in EXP-0004 (0.001-0.002).
+
+### Seed 2 replication (preliminary)
+
+The second Muon seed completed 15,000 steps on 2026-10-20. This is a run record, not yet a paired
+seed-level comparison: the fixed-document BPB evaluation, benchmark evaluation and sink analysis
+are still running, and the corresponding AdamW seed-2 measurements need to be included before
+making a replication claim.
+
+| Metric | Muon seed 2 |
+|---|---:|
+| Run | `runs/slm-10m-wiki-muon-s2` |
+| Seed / steps / tokens | 2 / 15,000 / 491,520,000 |
+| Final training loss | 2.7590 |
+| Final validation loss | 2.6550 |
+| Wall time | 137.3 min |
+| Throughput / peak memory | ~60.6k tokens/s / 3.5 GB |
+| BPB EN (500 docs) | 1.3027 |
+| BPB FR, benchmarks, sink analysis | Pending |
+
+The run resumed from its step-1,000 checkpoint after shutdown. Its manifest records the code tree
+as dirty, so this result is exploratory under the experiment protocol.
 
 ## Internals
 

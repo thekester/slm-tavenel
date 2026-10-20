@@ -6,17 +6,57 @@ The central question is simple: how far can we push a compact model while keepin
 
 The project aims to develop a useful model for local deployment and to understand which techniques improve its capabilities under realistic resource constraints. Success means measurable progress in task completion, reliability, and efficiency, supported by experiments that others can inspect and reproduce.
 
-## Project status
+## Current status
 
-SLM-1B Challenge has completed its first infrastructure milestone. The repository now contains a tested model implementation, data pipeline, training loop and evaluation tools, verified end to end on synthetic data. It does not yet provide a trained model, an approved training corpus, or benchmark results. The methods described below are proposed directions whose value at this scale remains to be tested; [docs/ROADMAP.md](docs/ROADMAP.md) lists the next milestones and their exit criteria.
+The project has moved beyond infrastructure-only work: it has exploratory training results at about
+10M parameters, reproducible run records, and evaluation scripts for held-out text and multiple-choice
+benchmarks. The Wikipedia sources used so far are still under review. These runs are research
+prototypes, not release-ready weights or evidence about the 1B target. See the [experiment reports](experiments/)
+and [roadmap](docs/ROADMAP.md) for scope and next steps.
 
-Exploratory results at approximately 10M parameters are documented in [EXP-0001: Wikipedia training](experiments/EXP-0001-slm-10m-wiki.md), [EXP-0002: attention sink interventions](experiments/EXP-0002-sink-interventions-10m.md), [EXP-0003: gated attention](experiments/EXP-0003-gated-attention-10m.md), and [EXP-0004: replication with a second training seed](experiments/EXP-0004-gated-attention-seed2.md). These experiments use a corpus whose sources remain pending review. The gated comparison now covers two training seeds at 10M; confirmation at 135M and a controlled throughput comparison remain pending. The release includes the reports, configurations, and analysis script, but no trained weights or corpus.
+The head-wise attention gate has a consistent bits-per-byte improvement and removes the observed
+attention sinks across two 10M seeds; its multiple-choice scores remain close to chance. The Muon
+seed-1 result is promising but provisional. Seed 2 has finished training and its evaluation is being
+completed. The combined gated+Muon and 1M/25M scaling runs are in the experiment queue. A same-harness
+evaluation of SmolLM2-135M is queued as an external size reference.
 
-[EXP-0005: Muon at 10M](experiments/EXP-0005-muon-10m.md) reports a provisional improvement in loss and bits per byte with one training seed. Replication remains pending. A [combined gated attention and Muon configuration](configs/train/slm-10m-wiki-gated-muon.yaml) is available for a follow-up experiment; this release does not report results for that combination.
+## Benchmark snapshot
 
-Model growth is available through `slm grow`, which expands depth and MLP width while preserving the initial outputs for supported configurations. Training can start from the resulting checkpoint with `init_from`. The [1M configuration](configs/model/slm-1m-gated.yaml) and [25M configuration](configs/model/slm-25m-gated.yaml) support scaling experiments, including a comparison between grown and randomly initialized models.
+The table reports raw multiple-choice accuracy (`acc`) from the project evaluator. Each run used the
+same prompts, scoring code and pinned dataset revisions. ARC-Easy has 2,376 items; HellaSwag 10,042;
+each Belebele language split 900. Chance is about 25% for all four-choice sets. The runs use the
+exploratory wiki-v0 corpus and are not directly comparable to scores published with different
+prompts, splits or evaluation harnesses.
 
-The `eval bpb` and `eval mc` commands also accept `--hf-model` and `--hf-revision` for reference models. The [wiki-v1 pipeline](configs/data/pipeline-wiki-v1.yaml) expands the exploratory corpus and adds benchmark decontamination. These additions provide experiment infrastructure, without establishing new model quality results.
+| 10M model | Training seed | ARC-Easy | HellaSwag | Belebele EN | Belebele FR |
+|---|---:|---:|---:|---:|---:|
+| AdamW baseline | 1234 | 0.295 | 0.275 | 0.266 | 0.309 |
+| AdamW baseline | 2 | 0.296 | 0.272 | 0.270 | 0.314 |
+| Head-wise gate | 1234 | 0.293 | 0.273 | 0.277 | 0.319 |
+| Head-wise gate | 2 | 0.289 | 0.271 | 0.283 | 0.299 |
+| Muon | 1234 | 0.306 | 0.273 | 0.283 | 0.302 |
+| Muon | 2 | pending evaluation | pending evaluation | pending evaluation | pending evaluation |
+
+The small differences between these 10M runs are within the benchmarks' sampling uncertainty; these
+scores do not establish a downstream-task winner. The gate's current case rests on its repeated
+bits-per-byte gain and sink measurements, documented in [EXP-0003](experiments/EXP-0003-gated-attention-10m.md)
+and [EXP-0004](experiments/EXP-0004-gated-attention-seed2.md).
+
+| External reference | Parameters | ARC-Easy | HellaSwag | Belebele EN | Belebele FR |
+|---|---:|---:|---:|---:|---:|
+| SmolLM2-135M | 135M | evaluation queued | evaluation queued | evaluation queued | evaluation queued |
+
+SmolLM2 will be scored with this repository's evaluator and the same benchmark files. It is about
+13.5 times larger than the 10M models, so the comparison provides a scale reference rather than a
+controlled architecture or training comparison. Detailed run data and decisions are in [EXP-0001](experiments/EXP-0001-slm-10m-wiki.md),
+[EXP-0003](experiments/EXP-0003-gated-attention-10m.md), [EXP-0004](experiments/EXP-0004-gated-attention-seed2.md)
+and [EXP-0005](experiments/EXP-0005-muon-10m.md); raw evaluator outputs are stored under each run's
+`analysis/mc.json`.
+
+The `eval bpb` and `eval mc` commands accept `--hf-model` and `--hf-revision` for reference models.
+The [wiki-v1 pipeline](configs/data/pipeline-wiki-v1.yaml) expands the exploratory corpus and adds
+benchmark decontamination. Model growth is available through `slm grow`; the [1M](configs/model/slm-1m-gated.yaml)
+and [25M](configs/model/slm-25m-gated.yaml) configurations support the queued scaling comparison.
 
 What exists today:
 
