@@ -1,6 +1,9 @@
 # EXP-0008: decontaminated 10M replication on wiki-v1
 
-*Status:* nine-run replication started 2026-10-20; AdamW seed 1234 is training
+*Status:* paused on 2026-10-20 after AdamW seed 1234 reached step 2,000 / 15,000. The step-2,000
+checkpoint and logs are retained; no other arm was started. Work paused to prepare and audit a more
+traceable open-license corpus. The wiki-v1 run remains exploratory and will not be resumed as the
+primary comparison unless that corpus is deliberately retained.
 *Purpose:* replace the exploratory wiki-v0 benchmark comparison with a controlled replication on the
 same decontaminated corpus.
 
@@ -18,7 +21,7 @@ Multiple-choice accuracy is a secondary outcome; the earlier scores do not estab
 | Head-wise gate | 10M, head-wise gate | AdamW | attention gate only |
 | Muon | 10M, ungated | Muon | optimizer only |
 
-Each arm uses seeds 1234, 2 and 3. A new 8,192-token tokenizer is trained on a deterministic 120,000-
+Each arm would use seeds 1234, 2 and 3. A new 8,192-token tokenizer would be trained on a deterministic 120,000-
 document sample of filtered wiki-v1; wiki-v1 is then encoded again with that tokenizer. Within a seed,
 all arms use the same wiki-v1-clean token shards, tokenizer, sequence length, batch size, optimizer
 schedule, 15,000 steps and benchmark files. This is 491.52M training tokens per run (nine runs total).

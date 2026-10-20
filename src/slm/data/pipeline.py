@@ -105,11 +105,17 @@ class ExactDedupStep(Step):
 class MinHashStep(Step):
     name = "minhash_dedup"
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, max_words: int | None = None, **kwargs: Any) -> None:
+        if max_words is not None and (not isinstance(max_words, int) or max_words < 1):
+            raise ValueError("max_words must be a positive integer")
         self.lsh = MinHashLSH(**kwargs)
+        self.max_words = max_words
 
     def __call__(self, doc):
-        hit = self.lsh.check(doc["id"], doc["text"])
+        text = doc["text"]
+        if self.max_words is not None:
+            text = " ".join(text.split()[: self.max_words])
+        hit = self.lsh.check(doc["id"], text)
         if hit is None:
             return doc, None
         return None, ("near_duplicate", {"of": hit[0], "jaccard_estimate": round(hit[1], 4)})
@@ -162,6 +168,10 @@ def run(config_path: str | Path, allow_unapproved: bool = False) -> dict[str, An
 
     inputs = []
     for spec in cfg["inputs"]:
+        reserved = {"id", "text", "source", "source_revision", "source_doc_id", "license", "input_sha256"}
+        conflicts = reserved.intersection(spec.get("preserve_fields", []))
+        if conflicts:
+            raise ValueError(f"preserve_fields cannot overwrite pipeline fields: {sorted(conflicts)}")
         source = registry[spec["source"]]
         decision = evaluate(source)
         if not decision.usable and not allow_unapproved:
@@ -194,6 +204,8 @@ def run(config_path: str | Path, allow_unapproved: bool = False) -> dict[str, An
                     "license": source.license,
                     "input_sha256": hashlib.sha256(text.encode("utf-8")).hexdigest(),
                 }
+                for field in spec.get("preserve_fields", []):
+                    doc[field] = rec.get(field)
                 stats["docs_in"] += 1
                 stats["chars_in"] += len(text)
                 per_source[source.id]["in"] += 1

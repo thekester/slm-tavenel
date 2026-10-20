@@ -16,7 +16,7 @@ This policy is an engineering gate, not legal advice. Passing it means the recor
 
 | Category | Licenses | Treatment |
 |---|---|---|
-| Permissive | CC0-1.0, public domain, PDDL-1.0, MIT, BSD-2/3-Clause, Apache-2.0, ISC, Unlicense, CC-BY-3.0/4.0, ODC-By-1.0 | Allowed; attribution recorded where required |
+| Permissive | CC0-1.0, public domain, PDDL-1.0, MIT, BSD-2/3-Clause, Apache-2.0, ISC, Unlicense, CC-BY-3.0/4.0, ODC-By-1.0, Licence-Ouverte-2.0 | Allowed; attribution recorded where required |
 | Share-alike | CC-BY-SA-3.0/4.0, ODbL-1.0, GFDL-1.3 | Allowed; the obligation is listed in the release documentation |
 | Restricted | Anything containing NonCommercial or NoDerivatives terms | Excluded |
 | Unknown | Anything else, `mixed` without components, `other` | Blocked until reviewed and added explicitly |

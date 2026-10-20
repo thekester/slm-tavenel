@@ -1,0 +1,27 @@
+# Exploratory preprocessing candidate from the pinned French-Science-Commons subset.
+# The source selectors keep only exact CC0, CC-BY 4.0 and Licence Ouverte 2.0 records,
+# split by language. Sources remain candidates pending rights and privacy review.
+name: fsc-pilot-v1
+registry: configs/data/sources.yaml
+inputs:
+  - {source: fsc-fr-cc0, path: data/raw/french-science-commons-pilot/balanced/fr/cc0_1.0.jsonl.gz, text_field: text, id_field: id, preserve_fields: [source_metadata, source_content_sha256]}
+  - {source: fsc-fr-ccby4, path: data/raw/french-science-commons-pilot/balanced/fr/cc_by_4.0.jsonl.gz, text_field: text, id_field: id, preserve_fields: [source_metadata, source_content_sha256]}
+  - {source: fsc-fr-lo2, path: data/raw/french-science-commons-pilot/balanced/fr/licence_ouverte_2.0.jsonl.gz, text_field: text, id_field: id, preserve_fields: [source_metadata, source_content_sha256]}
+  - {source: fsc-en-cc0, path: data/raw/french-science-commons-pilot/balanced/en/cc0_1.0.jsonl.gz, text_field: text, id_field: id, preserve_fields: [source_metadata, source_content_sha256]}
+  - {source: fsc-en-ccby4, path: data/raw/french-science-commons-pilot/balanced/en/cc_by_4.0.jsonl.gz, text_field: text, id_field: id, preserve_fields: [source_metadata, source_content_sha256]}
+  - {source: fsc-en-lo2, path: data/raw/french-science-commons-pilot/balanced/en/licence_ouverte_2.0.jsonl.gz, text_field: text, id_field: id, preserve_fields: [source_metadata, source_content_sha256]}
+steps:
+  - normalize: {}
+  - min_length: {min_chars: 200}
+  - gopher_quality: {}
+  - pii: {}
+  - exact_dedup: {}
+  - minhash_dedup: {num_perm: 32, bands: 8, ngram: 5, threshold: 0.8, seed: 0, max_words: 512}
+  - decontaminate:
+      n: 13
+      eval_files:
+        - {path: data/benchmarks/arc_easy.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/hellaswag.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/belebele_en.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/belebele_fr.jsonl, fields: [context, choices]}
+output_dir: data/processed/fsc-pilot-v1

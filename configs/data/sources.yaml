@@ -63,6 +63,103 @@ sources:
       - Record attribution obligations for CC-BY and share-alike obligations for CC-BY-SA subsets.
       - Check how the per-document license metadata was established for each subset.
 
+  # Filtered page-level records from one pinned French-Science-Commons collection. These are
+  # still candidates: upstream metadata is retained, but each record's source rights and privacy
+  # status need review before any core-corpus approval or weight release.
+  - id: fsc-fr-cc0
+    name: French-Science-Commons, French pages declared CC0
+    url: https://huggingface.co/datasets/PleIAs/French-Science-Commons
+    role: pretrain
+    license: CC0-1.0
+    status: candidate
+    revision: bfa114c09d7c28dcd0a8a47fe445c64b4a3c6156
+    subset: french_open_science
+    attribution: Per-record publisher, author, title, DOI and date retained in source metadata
+    languages: [fr]
+    domains: [science]
+    open_questions:
+      - Verify the upstream source and exact rights for every selected article; the corpus card is not an independent rights audit.
+      - Review privacy in scientific papers and the effectiveness of the configured redaction step.
+      - Confirm an attribution method suitable for retained records and any intended weight distribution.
+
+  - id: fsc-fr-ccby4
+    name: French-Science-Commons, French pages declared CC BY 4.0
+    url: https://huggingface.co/datasets/PleIAs/French-Science-Commons
+    role: pretrain
+    license: CC-BY-4.0
+    status: candidate
+    revision: bfa114c09d7c28dcd0a8a47fe445c64b4a3c6156
+    subset: french_open_science
+    attribution: Per-record publisher, author, title, DOI and date retained in source metadata
+    languages: [fr]
+    domains: [science]
+    open_questions:
+      - Verify the upstream source and exact rights for every selected article; the corpus card is not an independent rights audit.
+      - Review privacy in scientific papers and the effectiveness of the configured redaction step.
+      - Confirm an attribution method suitable for retained records and any intended weight distribution.
+
+  - id: fsc-fr-lo2
+    name: French-Science-Commons, French pages declared Licence Ouverte 2.0
+    url: https://huggingface.co/datasets/PleIAs/French-Science-Commons
+    role: pretrain
+    license: Licence-Ouverte-2.0
+    status: candidate
+    revision: bfa114c09d7c28dcd0a8a47fe445c64b4a3c6156
+    subset: french_open_science
+    attribution: Per-record publisher, author, title, DOI and date retained in source metadata
+    languages: [fr]
+    domains: [science]
+    open_questions:
+      - Verify the upstream source and exact rights for every selected article; the corpus card is not an independent rights audit.
+      - Review privacy in scientific papers and the effectiveness of the configured redaction step.
+      - Confirm an attribution method suitable for retained records and any intended weight distribution.
+
+  - id: fsc-en-cc0
+    name: French-Science-Commons, English pages declared CC0
+    url: https://huggingface.co/datasets/PleIAs/French-Science-Commons
+    role: pretrain
+    license: CC0-1.0
+    status: candidate
+    revision: bfa114c09d7c28dcd0a8a47fe445c64b4a3c6156
+    subset: french_open_science
+    attribution: Per-record publisher, author, title, DOI and date retained in source metadata
+    languages: [en]
+    domains: [science]
+    open_questions:
+      - Verify the upstream source and exact rights for every selected article; the corpus card is not an independent rights audit.
+      - Review privacy in scientific papers and the effectiveness of the configured redaction step.
+
+  - id: fsc-en-ccby4
+    name: French-Science-Commons, English pages declared CC BY 4.0
+    url: https://huggingface.co/datasets/PleIAs/French-Science-Commons
+    role: pretrain
+    license: CC-BY-4.0
+    status: candidate
+    revision: bfa114c09d7c28dcd0a8a47fe445c64b4a3c6156
+    subset: french_open_science
+    attribution: Per-record publisher, author, title, DOI and date retained in source metadata
+    languages: [en]
+    domains: [science]
+    open_questions:
+      - Verify the upstream source and exact rights for every selected article; the corpus card is not an independent rights audit.
+      - Review privacy in scientific papers and the effectiveness of the configured redaction step.
+      - Confirm an attribution method suitable for retained records and any intended weight distribution.
+
+  - id: fsc-en-lo2
+    name: French-Science-Commons, English pages declared Licence Ouverte 2.0
+    url: https://huggingface.co/datasets/PleIAs/French-Science-Commons
+    role: pretrain
+    license: Licence-Ouverte-2.0
+    status: candidate
+    revision: bfa114c09d7c28dcd0a8a47fe445c64b4a3c6156
+    subset: french_open_science
+    attribution: Per-record publisher, author, title, DOI and date retained in source metadata
+    languages: [en]
+    domains: [science]
+    open_questions:
+      - Verify the upstream source and exact rights for every selected article; the corpus card is not an independent rights audit.
+      - Review privacy in scientific papers and the effectiveness of the configured redaction step.
+
   - id: the-stack-v2-permissive
     name: The Stack v2, permissively licensed files only
     url: https://huggingface.co/datasets/bigcode/the-stack-v2

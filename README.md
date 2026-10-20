@@ -15,15 +15,20 @@ prototypes, not release-ready weights or evidence about the 1B target. See the [
 and [roadmap](docs/ROADMAP.md) for scope and next steps. The current source review pins the wiki-v1
 input shards and records the publisher's dual CC BY-SA/GFDL declaration; privacy and model-weight
 license implications remain unresolved in [the review record](docs/reviews/WIKIPEDIA-WIKI-V1.md).
+The alternative-corpus review compares open-license candidates, including a filtered French science
+collection and Common Pile, and records the remaining rights checks in
+[docs/reviews/ALTERNATIVE-CORPORA.md](docs/reviews/ALTERNATIVE-CORPORA.md).
+An EN/FR balanced, per-document-license French-Science-Commons candidate has been prepared for an
+exploratory run; it is not yet rights-cleared. See the [pilot review](docs/reviews/FSC-PILOT-2026-10-20.md).
 
 The head-wise attention gate has a consistent bits-per-byte improvement and removes the observed
 attention sinks across two 10M seeds; its multiple-choice scores remain close to chance. The Muon
 seed-1 result is promising but provisional. Seed 2 has completed training and evaluation; its fixed-
 document bits-per-byte gain repeats while multiple-choice scores remain inconclusive. The previous
-gated+Muon and 1M/25M scaling queue was stopped to prioritize the controlled wiki-v1 replication in
-[EXP-0008](experiments/EXP-0008-wiki-v1-clean-replication.md). External reference evaluations are
-paused during this work. The new nine-run replication began on 2026-10-20 with AdamW seed 1234;
-Pythia-14M remains the primary size-near reference and SmolLM2-135M a larger context point.
+gated+Muon and 1M/25M scaling queue was stopped to prioritize data review. The wiki-v1 replication in
+[EXP-0008](experiments/EXP-0008-wiki-v1-clean-replication.md) is paused after AdamW seed 1234 reached
+step 2,000; the checkpoint is retained. External reference evaluations remain paused. No training
+has started on the new candidate corpus.
 
 ## Benchmark snapshot
 
@@ -80,8 +85,8 @@ and [EXP-0005](experiments/EXP-0005-muon-10m.md); raw evaluator outputs are stor
 
 The `eval bpb` and `eval mc` commands accept `--hf-model` and `--hf-revision` for reference models.
 The [wiki-v1 pipeline](configs/data/pipeline-wiki-v1.yaml) expands the exploratory corpus and adds
-benchmark decontamination. EXP-0008 is the current priority; 1M/25M scaling comparisons are
-postponed until it is complete. Model growth is available through `slm grow`; the
+benchmark decontamination. EXP-0008 is paused while the candidate French-Science-Commons corpus is
+reviewed; 1M/25M scaling comparisons remain postponed. Model growth is available through `slm grow`; the
 [1M](configs/model/slm-1m-gated.yaml) and [25M](configs/model/slm-25m-gated.yaml) configurations
 remain available for later work.
 

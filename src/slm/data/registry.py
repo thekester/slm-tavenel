@@ -32,6 +32,7 @@ PERMISSIVE = {
     "Unlicense",
     "CC-BY-3.0",
     "CC-BY-4.0",
+    "Licence-Ouverte-2.0",
     "ODC-By-1.0",
 }
 # Allowed, but carry obligations (share-alike) that must be documented in the release.
@@ -125,7 +126,7 @@ def evaluate(source: Source) -> Decision:
             blockers.append(f"license {lic} is not on the reviewed allow-list")
         elif kind == "share-alike":
             obligations.append(f"{lic}: share-alike terms apply to adapted material")
-        if lic.startswith(("CC-BY", "ODC-By", "ODbL")):
+        if lic.startswith(("CC-BY", "ODC-By", "ODbL")) or lic == "Licence-Ouverte-2.0":
             obligations.append(f"{lic}: attribution required")
 
     if not source.revision:
