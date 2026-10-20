@@ -1,0 +1,24 @@
+# EXP-0009: 25M grown from the FSC 10M checkpoint; the inherited 10M training budget is recorded separately.
+model: configs/model/slm-25m-gated.yaml
+init_from: runs/fsc-scaling/grown/25m-gated-from-10m.pt
+data_dir: data/tokens/fsc-pilot-v1-scaling
+out_dir: runs/fsc-scaling/25m-gated-grown-s1234
+seed: 1234
+seq_len: 1024
+micro_batch_size: 8
+grad_accum_steps: 4
+max_steps: 15000
+lr: 3.0e-3
+min_lr: 3.0e-4
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 500
+decay_fraction: 0.2
+dtype: bfloat16
+deterministic: false
+log_interval: 50
+eval_interval: 500
+eval_batches: 20
+observe_interval: 500
+ckpt_interval: 1000
+keep_checkpoints: 3

@@ -18,8 +18,10 @@ license implications remain unresolved in [the review record](docs/reviews/WIKIP
 The alternative-corpus review compares open-license candidates, including a filtered French science
 collection and Common Pile, and records the remaining rights checks in
 [docs/reviews/ALTERNATIVE-CORPORA.md](docs/reviews/ALTERNATIVE-CORPORA.md).
-An EN/FR balanced, per-document-license French-Science-Commons candidate has been prepared for an
-exploratory run; it is not yet rights-cleared. See the [pilot review](docs/reviews/FSC-PILOT-2026-10-20.md).
+An EN/FR French-Science-Commons candidate has been filtered, deduplicated, decontaminated against
+the pinned benchmark files, split by document, and balanced to within 0.08% of the same tokenizer
+budget in train and validation. It remains exploratory and is not independently rights-cleared;
+no model training has started on it. See the [pilot review](docs/reviews/FSC-PILOT-2026-10-20.md).
 
 The head-wise attention gate has a consistent bits-per-byte improvement and removes the observed
 attention sinks across two 10M seeds; its multiple-choice scores remain close to chance. The Muon

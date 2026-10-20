@@ -148,3 +148,59 @@ def test_fsc_registry_candidates_remain_blocked():
             assert "license not verified by a reviewer" in decision.blockers
             if license_key == "lo2":
                 assert "Licence-Ouverte-2.0: attribution required" in decision.obligations
+
+
+@pytest.fixture
+def final_manifest_inputs(tmp_path, scripts):
+    module = scripts("write_fsc_final_manifest")
+    balanced, tokenizer, tokens = (tmp_path / name for name in ("balanced", "tokenizer", "tokens"))
+    balanced.mkdir()
+    tokenizer.mkdir()
+    (tokenizer / "tokenizer.json").write_text("{}")
+    tok_hash = module.sha256_file(tokenizer / "tokenizer.json")
+    (tokenizer / "manifest.json").write_text(json.dumps({"tokenizer_sha256": tok_hash}))
+    for language in ("en", "fr"):
+        for split in ("train", "val"):
+            doc = balanced / f"{language}-{split}.jsonl"
+            doc.write_text(json.dumps({"id": f"{language}-{split}", "text": "text"}) + "\n")
+            path = tokens / language / split / "manifest.json"
+            path.parent.mkdir(parents=True)
+            path.write_text(json.dumps({
+                "tokenizer_sha256": tok_hash, "inputs": [{"path": str(doc), "sha256": module.sha256_file(doc)}],
+                "val_fraction": 0,
+                "splits": {"train": {"docs": 1, "tokens": 10 if language == "en" else 12, "shards": []},
+                           "val": {"docs": 0, "tokens": 0, "shards": []}},
+            }))
+    return module, balanced, tokenizer, tokens
+
+
+def test_final_manifest_joins_verified_counts(final_manifest_inputs):
+    module, balanced, tokenizer, tokens = final_manifest_inputs
+    manifest = module.build_manifest(balanced, tokenizer, tokens, 0.2)
+    assert manifest["validation_fraction"] == 0.2
+    assert manifest["splits"]["fr"]["val"]["documents"] == 1
+    assert manifest["language_token_balance"]["train"] == {
+        "en_tokens": 10, "fr_tokens": 12, "absolute_difference": 2,
+        "difference_fraction_of_mean": 2 / 11,
+    }
+
+
+@pytest.mark.parametrize("mismatch", ["documents", "tokenizer_file", "encoded_tokenizer", "resplit", "empty"])
+def test_final_manifest_rejects_incompatible_inputs(final_manifest_inputs, mismatch):
+    module, balanced, tokenizer, tokens = final_manifest_inputs
+    path = tokens / "en/train/manifest.json"
+    manifest = module.read(path)
+    if mismatch == "documents":
+        (balanced / "en-train.jsonl").write_text('{"id":"changed","text":"different"}\n')
+    elif mismatch == "tokenizer_file":
+        (tokenizer / "tokenizer.json").write_text('{"changed":true}')
+    elif mismatch == "encoded_tokenizer":
+        manifest["tokenizer_sha256"] = "different"
+    elif mismatch == "resplit":
+        manifest["val_fraction"] = 0.05
+        manifest["splits"]["val"]["docs"] = 1
+    else:
+        manifest["splits"]["train"]["tokens"] = 0
+    path.write_text(json.dumps(manifest))
+    with pytest.raises(ValueError):
+        module.build_manifest(balanced, tokenizer, tokens)
