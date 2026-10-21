@@ -66,7 +66,7 @@ pretraining corpora, compute and contamination histories differ. They are contex
 points, not controlled causal comparisons. Score BPB on the same FSC validation texts when the
 reference tokenizer permits it; keep MC outputs even if one reference's BPB has a format issue.
 
-### Supplementary benchmarks queued on 2026-10-20
+### Supplementary benchmarks (scored 2026-10-21)
 
 Add ARC-Challenge and WinoGrande XL as separate secondary tasks; keep them out of the original
 four-task chart so the two benchmark sets and their chance levels remain clear. ARC-Challenge uses
@@ -97,6 +97,24 @@ it does not audit external models' training corpora. Future FSC corpus runs can 
 corpus or existing checkpoints. The labeled WinoGrande validation results and all comparisons remain
 exploratory.
 
+#### Results and paired comparisons
+
+All six model runs completed on the same pinned inputs and local scorer. Raw accuracy and item counts
+are in the README chart/table. The post-hoc exact 13-gram audit found zero matched evaluation items
+and zero matched FSC train documents for both ARC-Challenge and WinoGrande. This check says nothing
+about paraphrases, translated overlap, validation text, or external models' pretraining data.
+
+| Paired comparison (treatment minus baseline) | ARC-Challenge | WinoGrande XL validation |
+|---|---:|---:|
+| SLM-Tavenel 10M vs 1M | -0.0145 [-0.0367, 0.0077] | +0.0095 [-0.0260, 0.0442] |
+| TinyStories 0.9M vs SLM-Tavenel 1M | -0.0102 [-0.0384, 0.0179] | +0.0158 [-0.0213, 0.0521] |
+
+Intervals are 95% paired item-bootstrap intervals with 20,000 draws and seed 20261020. Each includes
+zero; these data do not establish a reliable difference on either task. They condition on these
+checkpoints and sampled benchmark items and do not measure training-seed variation. Detailed outputs
+are under `runs/fsc-additional/comparisons/`; item-level model outputs and the contamination audit
+remain in the local `runs/fsc-additional/` directory.
+
 OpenBookQA is excluded because its official Hugging Face dataset card currently declares no known
 license. The FrenchBench wrapper declares MIT, but its source questions come from external websites;
 the wrapper license alone does not establish content rights. We will add a further French benchmark
@@ -111,4 +129,5 @@ BPB, item-level MC predictions, checkpoint/model revision, tokenizer or benchmar
 `analysis/` directory or `runs/reference/`. Paired bootstrap intervals quantify item-sampling
 uncertainty conditional on these particular checkpoints and benchmark items; they do not estimate
 training-seed or training-data variability. Keep comparisons exploratory and update the chart only
-from validated same-file outputs. Resume 25M with `scripts/resume_fsc_25m_grown.ps1` when ready.
+from validated same-file outputs. The supplementary ARC-Challenge/WinoGrande wave is complete and
+also remains exploratory. Resume 25M with `scripts/resume_fsc_25m_grown.ps1` when ready.

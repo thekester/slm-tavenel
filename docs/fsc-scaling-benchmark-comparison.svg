@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 600" role="img" aria-labelledby="title desc">
+<title id="title">SLM-Tavenel scaling and external reference benchmarks</title>
+<desc id="desc">Raw accuracy on four shared multiple-choice benchmarks for the available evaluated models; whiskers show plus or minus one standard error. Chance is approximately 25 percent.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="560" y="34" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#172033">SLM-Tavenel scale and SLM references</text>
+<text x="560" y="57" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" fill="#526078">Raw accuracy · same local evaluator and pinned benchmark files · error bars: ±1 SE</text>
+<line x1="70" y1="340.0" x2="1075" y2="340.0" stroke="#dce2eb"/>
+<text x="60" y="344.0" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#526078">0%</text>
+<line x1="70" y1="276.5" x2="1075" y2="276.5" stroke="#dce2eb"/>
+<text x="60" y="280.5" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#526078">18%</text>
+<line x1="70" y1="213.0" x2="1075" y2="213.0" stroke="#dce2eb"/>
+<text x="60" y="217.0" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#526078">35%</text>
+<line x1="70" y1="149.5" x2="1075" y2="149.5" stroke="#dce2eb"/>
+<text x="60" y="153.5" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#526078">52%</text>
+<line x1="70" y1="86.0" x2="1075" y2="86.0" stroke="#dce2eb"/>
+<text x="60" y="90.0" text-anchor="end" font-family="Arial,sans-serif" font-size="12" fill="#526078">70%</text>
+<line x1="70" y1="249.3" x2="1075" y2="249.3" stroke="#4b5563" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="1073" y="243.3" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#4b5563">four-choice chance · 25%</text>
+<rect x="140.6" y="236.3" width="18" height="103.7" rx="2" fill="#2563eb"/>
+<line x1="149.6" y1="232.9" x2="149.6" y2="239.7" stroke="#172033" stroke-width="1"/><line x1="145.6" y1="232.9" x2="153.6" y2="232.9" stroke="#172033"/><line x1="145.6" y1="239.7" x2="153.6" y2="239.7" stroke="#172033"/>
+<rect x="163.6" y="229.1" width="18" height="110.9" rx="2" fill="#059669"/>
+<line x1="172.6" y1="225.7" x2="172.6" y2="232.6" stroke="#172033" stroke-width="1"/><line x1="168.6" y1="225.7" x2="176.6" y2="225.7" stroke="#172033"/><line x1="168.6" y1="232.6" x2="176.6" y2="232.6" stroke="#172033"/>
+<rect x="186.6" y="220.4" width="18" height="119.6" rx="2" fill="#64748b"/>
+<line x1="195.6" y1="216.9" x2="195.6" y2="223.9" stroke="#172033" stroke-width="1"/><line x1="191.6" y1="216.9" x2="199.6" y2="216.9" stroke="#172033"/><line x1="191.6" y1="223.9" x2="199.6" y2="223.9" stroke="#172033"/>
+<rect x="209.6" y="106.6" width="18" height="233.4" rx="2" fill="#db2777"/>
+<line x1="218.6" y1="103.1" x2="218.6" y2="110.2" stroke="#172033" stroke-width="1"/><line x1="214.6" y1="103.1" x2="222.6" y2="103.1" stroke="#172033"/><line x1="214.6" y1="110.2" x2="222.6" y2="110.2" stroke="#172033"/>
+<rect x="232.6" y="247.1" width="18" height="92.9" rx="2" fill="#0891b2"/>
+<line x1="241.6" y1="243.9" x2="241.6" y2="250.4" stroke="#172033" stroke-width="1"/><line x1="237.6" y1="243.9" x2="245.6" y2="243.9" stroke="#172033"/><line x1="237.6" y1="250.4" x2="245.6" y2="250.4" stroke="#172033"/>
+<text x="195.6" y="370" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="600" fill="#172033">ARC-Easy</text>
+<rect x="391.9" y="243.1" width="18" height="96.9" rx="2" fill="#2563eb"/>
+<line x1="400.9" y1="241.5" x2="400.9" y2="244.7" stroke="#172033" stroke-width="1"/><line x1="396.9" y1="241.5" x2="404.9" y2="241.5" stroke="#172033"/><line x1="396.9" y1="244.7" x2="404.9" y2="244.7" stroke="#172033"/>
+<rect x="414.9" y="240.2" width="18" height="99.8" rx="2" fill="#059669"/>
+<line x1="423.9" y1="238.5" x2="423.9" y2="241.8" stroke="#172033" stroke-width="1"/><line x1="419.9" y1="238.5" x2="427.9" y2="238.5" stroke="#172033"/><line x1="419.9" y1="241.8" x2="427.9" y2="241.8" stroke="#172033"/>
+<rect x="437.9" y="244.9" width="18" height="95.1" rx="2" fill="#64748b"/>
+<line x1="446.9" y1="243.3" x2="446.9" y2="246.5" stroke="#172033" stroke-width="1"/><line x1="442.9" y1="243.3" x2="450.9" y2="243.3" stroke="#172033"/><line x1="442.9" y1="246.5" x2="450.9" y2="246.5" stroke="#172033"/>
+<rect x="460.9" y="210.7" width="18" height="129.3" rx="2" fill="#db2777"/>
+<line x1="469.9" y1="208.9" x2="469.9" y2="212.4" stroke="#172033" stroke-width="1"/><line x1="465.9" y1="208.9" x2="473.9" y2="208.9" stroke="#172033"/><line x1="465.9" y1="212.4" x2="473.9" y2="212.4" stroke="#172033"/>
+<rect x="483.9" y="245.5" width="18" height="94.5" rx="2" fill="#0891b2"/>
+<line x1="492.9" y1="244.0" x2="492.9" y2="247.1" stroke="#172033" stroke-width="1"/><line x1="488.9" y1="244.0" x2="496.9" y2="244.0" stroke="#172033"/><line x1="488.9" y1="247.1" x2="496.9" y2="247.1" stroke="#172033"/>
+<text x="446.9" y="370" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="600" fill="#172033">HellaSwag</text>
+<rect x="643.1" y="238.8" width="18" height="101.2" rx="2" fill="#2563eb"/>
+<line x1="652.1" y1="233.4" x2="652.1" y2="244.2" stroke="#172033" stroke-width="1"/><line x1="648.1" y1="233.4" x2="656.1" y2="233.4" stroke="#172033"/><line x1="648.1" y1="244.2" x2="656.1" y2="244.2" stroke="#172033"/>
+<rect x="666.1" y="232.8" width="18" height="107.2" rx="2" fill="#059669"/>
+<line x1="675.1" y1="227.2" x2="675.1" y2="238.3" stroke="#172033" stroke-width="1"/><line x1="671.1" y1="227.2" x2="679.1" y2="227.2" stroke="#172033"/><line x1="671.1" y1="238.3" x2="679.1" y2="238.3" stroke="#172033"/>
+<rect x="689.1" y="247.3" width="18" height="92.7" rx="2" fill="#64748b"/>
+<line x1="698.1" y1="242.0" x2="698.1" y2="252.5" stroke="#172033" stroke-width="1"/><line x1="694.1" y1="242.0" x2="702.1" y2="242.0" stroke="#172033"/><line x1="694.1" y1="252.5" x2="702.1" y2="252.5" stroke="#172033"/>
+<rect x="712.1" y="210.2" width="18" height="129.8" rx="2" fill="#db2777"/>
+<line x1="721.1" y1="204.4" x2="721.1" y2="216.0" stroke="#172033" stroke-width="1"/><line x1="717.1" y1="204.4" x2="725.1" y2="204.4" stroke="#172033"/><line x1="717.1" y1="216.0" x2="725.1" y2="216.0" stroke="#172033"/>
+<rect x="735.1" y="240.4" width="18" height="99.6" rx="2" fill="#0891b2"/>
+<line x1="744.1" y1="235.0" x2="744.1" y2="245.8" stroke="#172033" stroke-width="1"/><line x1="740.1" y1="235.0" x2="748.1" y2="235.0" stroke="#172033"/><line x1="740.1" y1="245.8" x2="748.1" y2="245.8" stroke="#172033"/>
+<text x="698.1" y="370" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="600" fill="#172033">Belebele EN</text>
+<rect x="894.4" y="234.0" width="18" height="106.0" rx="2" fill="#2563eb"/>
+<line x1="903.4" y1="228.5" x2="903.4" y2="239.5" stroke="#172033" stroke-width="1"/><line x1="899.4" y1="228.5" x2="907.4" y2="228.5" stroke="#172033"/><line x1="899.4" y1="239.5" x2="907.4" y2="239.5" stroke="#172033"/>
+<rect x="917.4" y="224.3" width="18" height="115.7" rx="2" fill="#059669"/>
+<line x1="926.4" y1="218.7" x2="926.4" y2="229.9" stroke="#172033" stroke-width="1"/><line x1="922.4" y1="218.7" x2="930.4" y2="218.7" stroke="#172033"/><line x1="922.4" y1="229.9" x2="930.4" y2="229.9" stroke="#172033"/>
+<rect x="940.4" y="227.9" width="18" height="112.1" rx="2" fill="#64748b"/>
+<line x1="949.4" y1="222.3" x2="949.4" y2="233.5" stroke="#172033" stroke-width="1"/><line x1="945.4" y1="222.3" x2="953.4" y2="222.3" stroke="#172033"/><line x1="945.4" y1="233.5" x2="953.4" y2="233.5" stroke="#172033"/>
+<rect x="963.4" y="225.9" width="18" height="114.1" rx="2" fill="#db2777"/>
+<line x1="972.4" y1="220.3" x2="972.4" y2="231.5" stroke="#172033" stroke-width="1"/><line x1="968.4" y1="220.3" x2="976.4" y2="220.3" stroke="#172033"/><line x1="968.4" y1="231.5" x2="976.4" y2="231.5" stroke="#172033"/>
+<rect x="986.4" y="234.8" width="18" height="105.2" rx="2" fill="#0891b2"/>
+<line x1="995.4" y1="229.3" x2="995.4" y2="240.3" stroke="#172033" stroke-width="1"/><line x1="991.4" y1="229.3" x2="999.4" y2="229.3" stroke="#172033"/><line x1="991.4" y1="240.3" x2="999.4" y2="240.3" stroke="#172033"/>
+<text x="949.4" y="370" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="600" fill="#172033">Belebele FR</text>
+<rect x="95" y="392" width="14" height="14" rx="2" fill="#2563eb"/>
+<text x="117" y="404" font-family="Arial,sans-serif" font-size="12" fill="#334155">SLM-Tavenel 1M</text>
+<rect x="425" y="392" width="14" height="14" rx="2" fill="#059669"/>
+<text x="447" y="404" font-family="Arial,sans-serif" font-size="12" fill="#334155">SLM-Tavenel 10M</text>
+<rect x="755" y="392" width="14" height="14" rx="2" fill="#64748b"/>
+<text x="777" y="404" font-family="Arial,sans-serif" font-size="12" fill="#334155">Pythia-14M (reference)</text>
+<rect x="95" y="419" width="14" height="14" rx="2" fill="#db2777"/>
+<text x="117" y="431" font-family="Arial,sans-serif" font-size="12" fill="#334155">SmolLM2-135M (reference)</text>
+<rect x="425" y="419" width="14" height="14" rx="2" fill="#0891b2"/>
+<text x="447" y="431" font-family="Arial,sans-serif" font-size="12" fill="#334155">TinyStories tiny1m, 0.9M (reference)</text>
+<text x="560" y="555" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#64748b">Internal runs share FSC data, tokenizer and split; 25M grown inherits the 10M training budget plus its own training.</text>
+<text x="560" y="575" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#64748b">External models have different training data, context limits and compute. Exploratory results.</text>
+</svg>

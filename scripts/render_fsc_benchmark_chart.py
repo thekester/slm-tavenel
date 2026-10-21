@@ -11,12 +11,12 @@ from pathlib import Path
 
 
 MODELS = [
-    ("1M", Path("runs/fsc-scaling/1m-gated-s1234/analysis/fsc-pilot-v1-mc.json"), "#2563eb"),
-    ("10M", Path("runs/fsc-scaling/10m-gated-s1234/analysis/fsc-pilot-v1-mc.json"), "#059669"),
-    ("25M grown", Path("runs/fsc-scaling/25m-gated-grown-s1234/analysis/fsc-pilot-v1-mc.json"), "#7c3aed"),
-    ("Pythia-14M", Path("runs/reference/pythia-14m/fsc-pilot-v1-mc.json"), "#64748b"),
-    ("SmolLM2-135M", Path("runs/reference/smollm2-135m/fsc-pilot-v1-mc.json"), "#db2777"),
-    ("TinyStories-0.9M", Path("runs/reference/tiny1m/fsc-pilot-v1-mc.json"), "#0891b2"),
+    ("SLM-Tavenel 1M", Path("runs/fsc-scaling/1m-gated-s1234/analysis/fsc-pilot-v1-mc.json"), "#2563eb"),
+    ("SLM-Tavenel 10M", Path("runs/fsc-scaling/10m-gated-s1234/analysis/fsc-pilot-v1-mc.json"), "#059669"),
+    ("SLM-Tavenel 25M grown", Path("runs/fsc-scaling/25m-gated-grown-s1234/analysis/fsc-pilot-v1-mc.json"), "#7c3aed"),
+    ("Pythia-14M (reference)", Path("runs/reference/pythia-14m/fsc-pilot-v1-mc.json"), "#64748b"),
+    ("SmolLM2-135M (reference)", Path("runs/reference/smollm2-135m/fsc-pilot-v1-mc.json"), "#db2777"),
+    ("TinyStories tiny1m, 0.9M (reference)", Path("runs/reference/tiny1m/fsc-pilot-v1-mc.json"), "#0891b2"),
 ]
 TASKS = [
     ("arc_easy", "ARC-Easy"), ("hellaswag", "HellaSwag"),

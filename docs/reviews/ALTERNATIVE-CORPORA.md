@@ -1,13 +1,16 @@
 # Candidate replacement corpora for wiki-v1
 
-**Reviewed:** 2026-10-20
+**Reviewed:** 2026-10-21
 
-**Recommendation:** use the prepared EN/FR balanced candidate from the `french_open_science` subset
-of [French-Science-Commons](https://huggingface.co/datasets/PleIAs/French-Science-Commons) for the
-next exploratory controlled run, after the remaining rights and privacy reviews. The pilot retains
-per-document source and attribution metadata and filters to exact CC0, CC BY 4.0, and Licence Ouverte
-2.0 entries. It is not yet an approved training corpus; see the
-[preparation review](FSC-PILOT-2026-10-20.md).
+**Recommendation:** no reviewed corpus is approved for the next confirmatory run or open-weight
+release. The prepared EN/FR `french_open_science` candidate from
+[French-Science-Commons](https://huggingface.co/datasets/PleIAs/French-Science-Commons) retains
+per-document source and attribution metadata and filters to CC0, CC BY 4.0, and Licence Ouverte 2.0,
+but its source audit still blocks training pending provenance and privacy review. See the
+[preparation review](FSC-PILOT-2026-10-20.md). MOT v1.11 has a documented 59.7% missing-author
+metadata rate in English; this is a limitation to disclose, not an automatic bar to corpus-level
+research. Its potential use for training and its suitability for public-weight redistribution are
+separate decisions; see the [MOT review](MOT-VOA-2026-10-21.md).
 For broader English pretraining, [Common Pile v0.1](https://common-pile.org/) is a documented,
 large-scale open-licensed corpus, but includes CC BY-SA material and needs a release-specific
 license review. No training or active run was changed during this source search.
@@ -20,7 +23,9 @@ license review. No training or active run was changed during this source search.
 | [Common Pile v0.1](https://common-pile.org/) | NeurIPS 2025 paper documents 8 TB from 30 sources, built from public-domain/open-licensed texts for pretraining, with released processing code and training mixtures. The paper excludes NC and ND material and explains its source-level due-diligence process. Strong English-heavy broad-domain candidate. | CC BY-SA is considered open and is included; its implications for the intended model-weight release need documented review. The paper says open licenses do not necessarily mean rights holders specifically contemplated LLM training. Large and diverse, but the complete mix is not a matched French-English parallel-domain design. Start with an audited subset and pinned version, not the entire 8 TB. |
 | French public-sector documents under [Licence Ouverte 2.0](https://www.data.gouv.fr/pages/legal/licences/etalab-2.0) | The official license permits free reuse, adaptation and commercial use worldwide, with attribution. It is compatible with CC BY and ODC-BY. A genuinely bilingual sample could be formed from separately verified public-sector sources. | This is a license, not a ready-made corpus. Each dataset must explicitly carry LO2 and be checked for third-party text and personal-data constraints. Government/admin language is a narrow domain and may not represent general French. |
 | [PleIAs English-PD](https://huggingface.co/datasets/PleIAs/English-PD) + [French-PD-Books](https://huggingface.co/datasets/PleIAs/French-PD-Books) | Same broad genre in both languages; public-domain curation; author/title/source metadata; reported scale of 78.6B English words and 16.4B French words, ample for the 491.52M-token 10M runs. English books were limited to publications before 1884 to reduce rights-verification risk. BnF says academic/scientific use is free with source attribution. | French-PD-Books says the texts may be used for training and republished; BnF separately requires authorization/fees for defined commercial uses of its reproductions, even if the underlying work is public domain. Resolve this for model-weight distribution before any commercial release. Both collections have OCR and historical-language limitations. |
-| [Multilingual Open Text (MOT) Release 1](https://github.com/bltlab/mot/) | Peer-reviewed corpus with a documented VOA public-domain source, an explicit CC BY 4.0 corpus license, and documented removal of AP, AFP and Reuters material. It includes English and French. | Only 193.1M English and 20.0M French tokens in the paper's reported tokenized counts; French is primarily for African audiences. News-only, and far too little French text for a 491.52M-token bilingual run without heavy repetition. Useful as a small clean-domain robustness check, not the primary replacement. |
+| [Multilingual Open Text (MOT) v1.11](https://github.com/bltlab/mot/releases/tag/v1.11) | Peer-reviewed English/French corpus; collection described as CC BY 4.0; pinned release and archive hashes provide corpus-level traceability. An empty author field can be reported as supplied, without inventing attribution or automatically excluding the article from corpus-level research. | Audit found 191,736 of 321,258 English articles (59.7%) lack author metadata. Disclose this limitation; author-dependent analyses must account for it. Public-weight distribution is a separate rights review because VOA terms restrict third-party/AP material. Corpus is news-domain, French is smaller, and privacy/quality/contamination checks remain necessary; see [the audit](MOT-VOA-2026-10-21.md). |
+| [Digital Corpus of the European Parliament (DCEP)](https://joint-research-centre.ec.europa.eu/language-technology-resources/dcep-digital-corpus-european-parliament_en) | Official bilingual/multilingual institutional text; 1.37B words across 23 languages, including English and French; document and sentence alignment support careful language-pair or temporal studies. | The official usage terms grant reuse only for research purposes and require source attribution. That is not sufficient for unrestricted open-weight distribution; request clarification before considering it for a release. |
+| [Open Bilbio corpus](https://www.data.gouv.fr/datasets/open-bilbio-corpus-for-content-analysis) | Dataset record declares CC BY and describes full-text scientific publications in mathematics, computing and statistics. Potentially useful for narrow science-domain evaluation or training. | The record describes a 650,000-publication corpus but exposes only two downloadable archives (28.6 MB and 14.6 MB); inspect their contents, source-level permissions and actual language/volume before relying on the dataset-level license for model training or weights. |
 | [Common Corpus](https://huggingface.co/datasets/PleIAs/common_corpus) as a whole | Very large and multilingual, with document-level source and license fields in the newer release. | It mixes collections and terms. A 2025 NeurIPS dataset paper notes that Common Corpus does not retain complete per-document licensing across all sources and that OpenAlex license metadata can be inaccurate. Do not use the aggregate blindly. |
 
 ## Recommended audit path
@@ -41,7 +46,11 @@ use only CC0, CC BY, and Licence Ouverte 2.0 records with confirmed provenance.
 
 The French-Science-Commons card explicitly says that its `hal_open_access` section includes
 copyrighted documents and separate publisher conditions. Exclude that section. The recommendation
-above is limited to `french_open_science` rows whose license and terms can be verified individually.
+above is limited to `french_open_science` rows whose license and terms can be verified individually;
+that filter is necessary but has not cleared the current review gates. For MOT, missing author
+metadata should be described accurately in the experiment/data card; it is not, by itself, a
+scientific-validity veto. Decide separately whether the corpus and source terms permit distributing
+the resulting weights.
 
 ## Why the book collections remain a separate option
 

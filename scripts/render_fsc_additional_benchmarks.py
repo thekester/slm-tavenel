@@ -13,9 +13,6 @@ MODELS = ["slm-tavenel-1m", "tiny1m", "slm-tavenel-10m", "pythia-14m", "pythia-3
 LABELS = {"slm-tavenel-1m": "SLM-Tavenel 1M", "tiny1m": "TinyStories 0.9M",
           "slm-tavenel-10m": "SLM-Tavenel 10M", "pythia-14m": "Pythia 14M",
           "pythia-31m": "Pythia 31M", "smollm2-135m": "SmolLM2 135M"}
-SHORT_LABELS = {"slm-tavenel-1m": "Tav 1M", "tiny1m": "Tiny 0.9M",
-                "slm-tavenel-10m": "Tav 10M", "pythia-14m": "Pythia 14M",
-                "pythia-31m": "Pythia 31M", "smollm2-135m": "SmolLM 135M"}
 COLORS = ["#2563eb", "#0891b2", "#059669", "#64748b", "#7c3aed", "#db2777"]
 TASKS = [("arc_challenge", "ARC-Challenge", 0.25), ("winogrande", "WinoGrande XL validation", 0.5)]
 BEGIN = "<!-- BEGIN FSC ADDITIONAL BENCHMARK RESULTS -->"
@@ -46,14 +43,14 @@ def main() -> int:
     if len(results) < 2:
         raise FileNotFoundError("At least two evaluated models are required")
 
-    width, height = 1120, 560
+    width, height = 1120, 590
     panel_w, left, top, plot_h = 470, 75, 85, 300
     parts = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {width} {height}" role="img">',
-             '<title>SLM-Tavenel supplementary benchmark results</title>',
-             '<desc>Accuracy on ARC-Challenge and WinoGrande XL validation for models scored with the SLM-Tavenel local evaluator. Chance baselines are 25 and 50 percent.</desc>',
+             '<title>SLM-Tavenel and reference SLM benchmark results</title>',
+             '<desc>Bar colors map to full model names in the legend below. SLM-Tavenel 1M and 10M are project models; TinyStories, Pythia and SmolLM2 are external reference checkpoints. Accuracy is scored with the SLM-Tavenel local evaluator. Chance baselines are 25 and 50 percent.</desc>',
              '<rect width="100%" height="100%" fill="white"/>',
-             '<text x="560" y="35" text-anchor="middle" font-family="Arial" font-size="21" font-weight="bold" fill="#172033">Additional same-harness benchmark results</text>',
-             '<text x="560" y="58" text-anchor="middle" font-family="Arial" font-size="12" fill="#526078">Exploratory comparisons · whiskers show ±1 standard error</text>']
+             '<text x="560" y="35" text-anchor="middle" font-family="Arial" font-size="21" font-weight="bold" fill="#172033">SLM-Tavenel and reference SLM benchmark results</text>',
+             '<text x="560" y="58" text-anchor="middle" font-family="Arial" font-size="12" fill="#526078">Same local evaluator; exploratory scores; whiskers show plus or minus one standard error</text>']
     for ti, (task, label, chance) in enumerate(TASKS):
         x0 = 65 + ti * 545
         parts.append(f'<text x="{x0+panel_w/2}" y="82" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="#172033">{escape(label)}</text>')
@@ -76,8 +73,14 @@ def main() -> int:
             cx = x+bar_w/2
             ya, yb = top+plot_h*(1-min(1,acc+se)), top+plot_h*(1-max(0,acc-se))
             parts.append(f'<line x1="{cx:.1f}" y1="{ya:.1f}" x2="{cx:.1f}" y2="{yb:.1f}" stroke="#172033"/><line x1="{cx-4:.1f}" y1="{ya:.1f}" x2="{cx+4:.1f}" y2="{ya:.1f}" stroke="#172033"/><line x1="{cx-4:.1f}" y1="{yb:.1f}" x2="{cx+4:.1f}" y2="{yb:.1f}" stroke="#172033"/>')
-            parts.append(f'<text x="{cx:.1f}" y="{base+17}" text-anchor="middle" font-family="Arial" font-size="8" fill="#334155">{escape(SHORT_LABELS[name])}</text>')
-    parts.append('<text x="560" y="525" text-anchor="middle" font-family="Arial" font-size="11" fill="#64748b">Same scoring code does not equalize model training data, token budgets, exposure, or tokenizer/context limits.</text>')
+    parts.append('<text x="560" y="423" text-anchor="middle" font-family="Arial" font-size="12" font-weight="bold" fill="#334155">Model key; colors match the bars above</text>')
+    for mi, name in enumerate(results):
+        col, row = mi % 3, mi // 3
+        x, y = 95 + col * 325, 450 + row * 25
+        parts.append(f'<rect x="{x}" y="{y-12}" width="14" height="14" rx="2" fill="{COLORS[MODELS.index(name)]}"/>')
+        parts.append(f'<text x="{x+22}" y="{y}" font-family="Arial" font-size="12" fill="#334155">{escape(LABELS[name])}</text>')
+    parts.append('<text x="560" y="520" text-anchor="middle" font-family="Arial" font-size="11" fill="#64748b">Same scoring code does not equalize training data, token budgets, pretraining exposure, or context limits.</text>')
+    parts.append('<text x="560" y="542" text-anchor="middle" font-family="Arial" font-size="11" fill="#64748b">Whiskers are plus or minus one standard error across evaluation items, conditional on each checkpoint.</text>')
     parts.append('</svg>')
     out = Path("docs/fsc-additional-benchmark-comparison.svg")
 

@@ -25,6 +25,12 @@ Writing the decision rule first prevents choosing the metric after seeing the re
 
 Every training run writes `run_manifest.json` (configuration hashes, data hashes, code revision, environment), `metrics.jsonl`, `eval.jsonl` and `observability.jsonl`. The code revision includes a `dirty` flag; results from a dirty tree are exploratory and must be rerun from a clean revision before being reported.
 
+After the final checkpoint and evaluations are written, generate a supplementary integrity index with
+`python scripts/write_run_artifact_index.py <run-dir> --output <index.json>`. It hashes the latest
+checkpoint, run manifest, logs, matching tokenizer and data manifests. Use repeatable `--include
+<path>` options to bind related evaluation outputs and comparisons to the same checkpoint. The index
+identifies files; it does not establish scientific validity, source rights, or artifact availability.
+
 Smoke and test runs set `deterministic: true`, which forces deterministic kernels so a run resumed from a checkpoint matches an uninterrupted run bit for bit (checked in the test suite). Large runs disable it for speed; their reproducibility claim is then statistical, supported by repeated seeds.
 
 ## Measurements

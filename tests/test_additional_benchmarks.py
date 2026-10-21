@@ -96,7 +96,8 @@ def test_additional_chart_preserves_readme_and_rejects_bad_inputs(tmp_path, monk
     assert readme.read_text(encoding="utf-8") == published
 
 
-def test_queue_fetches_before_auditing_and_does_not_refetch_before_scoring(tmp_path):
+@pytest.mark.parametrize("failure", ["none", "fetch", "log"])
+def test_queue_fetches_before_auditing_and_stops_on_failures(tmp_path, failure):
     shell = shutil.which("powershell") or shutil.which("pwsh")
     if not shell:
         pytest.skip("PowerShell is not installed")
@@ -113,14 +114,33 @@ function python {
   $global:commands.Add(($args -join ' '))
   $global:LASTEXITCODE = 0
   if ($args[0] -eq '-c') { 'mock-lib' }
+  if ($env:FSC_TEST_FAILURE -eq 'fetch' -and $args -contains '--fetch-only') {
+    $global:LASTEXITCODE = 7
+  }
 }
-& $env:FSC_TEST_QUEUE
-$global:commands | ConvertTo-Json | Set-Content commands.json -Encoding utf8
+if ($env:FSC_TEST_FAILURE -eq 'log') {
+  New-Item -ItemType Directory -Force runs/fsc-additional/queue.log | Out-Null
+}
+try {
+  & $env:FSC_TEST_QUEUE
+} finally {
+  $global:commands | ConvertTo-Json | Set-Content commands.json -Encoding utf8
+}
 '''
     result = subprocess.run([shell, "-NoProfile", "-Command", command], cwd=tmp_path,
-                            env={**os.environ, "FSC_TEST_QUEUE": str(queue)}, capture_output=True, text=True)
-    assert result.returncode == 0, result.stdout + result.stderr
+                            env={**os.environ, "FSC_TEST_QUEUE": str(queue), "FSC_TEST_FAILURE": failure},
+                            capture_output=True, text=True)
     commands = json.loads((tmp_path / "commands.json").read_text(encoding="utf-8-sig"))
+    if failure != "none":
+        assert result.returncode != 0
+        assert not (tmp_path / "runs/fsc-additional/complete.txt").exists()
+        if failure == "fetch":
+            assert len(commands) == 2
+            assert "fetch failed with exit code 7" in result.stderr
+        else:
+            assert "--fetch-only" not in str(commands)
+        return
+    assert result.returncode == 0, result.stdout + result.stderr
     assert "--fetch-only" in commands[1]
     assert "audit_fsc_additional_contamination.py" in commands[2]
     assert "--skip-fetch" in commands[3]

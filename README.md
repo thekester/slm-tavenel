@@ -21,8 +21,9 @@ collection and Common Pile, and records the remaining rights checks in
 An EN/FR French-Science-Commons candidate has been filtered, deduplicated, decontaminated against
 the pinned benchmark files, split by document, and balanced to within 0.08% of the same tokenizer
 budget in train and validation. It remains exploratory and is not independently rights-cleared.
-The 1M and 10M runs are complete, the grown-25M run is paused, and same-harness evaluations are
-underway; see the [pilot review](docs/reviews/FSC-PILOT-2026-10-20.md) and [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md).
+The 1M and 10M runs are complete, the grown-25M run is paused, and same-harness evaluations of the
+completed checkpoints and reference models are complete; see the [pilot review](docs/reviews/FSC-PILOT-2026-10-20.md)
+and [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md).
 
 The head-wise attention gate has a consistent bits-per-byte improvement and removes the observed
 attention sinks across two 10M seeds; its multiple-choice scores remain close to chance. The Muon
@@ -33,16 +34,30 @@ gated+Muon queue remains stopped. The wiki-v1 replication in
 step 2,000; the checkpoint is retained. A gated scaling series on the frozen FSC pilot corpus is
 documented under [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md): 1M and 10M are complete;
 25M-grown is paused at step 3,050 and will resume from its latest durable step 3,000 checkpoint.
-25M-from-scratch is deferred. Same-harness evaluations of the completed 1M and 10M checkpoints and the
-TinyStories-0.9M, Pythia-14M and SmolLM2-135M references are underway while 25M is paused.
+25M-from-scratch is deferred. Same-harness evaluations of the completed 1M and 10M checkpoints and
+the TinyStories-0.9M, Pythia-14M and SmolLM2-135M references are complete for the original four
+benchmarks while 25M is paused.
 These corpus-based results remain exploratory pending rights and privacy review.
 
-An additional evaluation wave is queued after the current GPU queue: ARC-Challenge and WinoGrande XL,
+The 1M FSC checkpoint is not confirmatory evidence or approved for public weight release: its
+training sources are blocked in the source audit, it has one seed, its run manifest marks the code
+tree dirty, and its validation/benchmark results have already been inspected. A prospective
+multi-seed protocol with explicit data, experiment, and evaluation gates is recorded in
+[EXP-0010](experiments/EXP-0010-confirmatory-validation-1m.md). Supplementary post-hoc scoring is
+tracked separately: it can add descriptive comparisons but cannot replace a new sealed test or
+multi-seed replication.
+
+The validation dossier also defines separate requirements for traceable run/evaluation artifacts,
+intervention-based interpretability, and open-weight usability. A draft research model card for the
+existing 1M checkpoint is available at [docs/model-cards/slm-tavenel-1m-draft.md](docs/model-cards/slm-tavenel-1m-draft.md);
+it records current evidence and blockers and does not authorize distribution.
+
+An additional exploratory evaluation wave is complete: ARC-Challenge and WinoGrande XL,
 scored for SLM-Tavenel 1M/10M and the pinned TinyStories-0.9M, Pythia-14M, Pythia-31M and
 SmolLM2-135M references. Pythia-31M adds a general-domain checkpoint near the paused 25M scale.
 ARC-Challenge uses the test split; WinoGrande's public test labels are withheld, so its labeled XL
-validation split is explicitly exploratory. An exact 13-gram overlap audit against the FSC training
-split runs before scoring. These post-hoc results cannot be treated as clean held-out evidence for
+validation split is explicitly exploratory. A post-hoc exact 13-gram overlap audit found zero matches
+against the FSC training split. These results cannot be treated as clean held-out evidence for
 the already-trained models, and external pretraining exposure is unknown. The separate
 [FSC-pilot-v2 pipeline](configs/data/pipeline-fsc-pilot-v2.yaml) includes both tasks for future
 training corpora; it does not change existing v1 checkpoints.
@@ -52,20 +67,35 @@ training corpora; it does not change existing v1 checkpoints.
 The current round uses the repository evaluator on the same four pinned benchmark files for completed
 SLM-Tavenel 1M/10M checkpoints and pinned TinyStories-0.9M, Pythia-14M and SmolLM2-135M checkpoints.
 The 25M-grown run is paused and excluded until it reaches its final checkpoint. Results and the chart
-will be published from validated item-level outputs in [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md).
+below are generated from validated item-level outputs documented in [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md).
 
 | Model | Parameters | Current state | Comparison role |
 |---|---:|---|---|
-| SLM-Tavenel 1M | 1.2M | Checkpoint and evaluation complete | Internal small-scale point |
-| SLM-Tavenel 10M | 10M | Checkpoint complete; evaluation pending in queue | Internal size scaling |
+| SLM-Tavenel 1M | 1.2M | Checkpoint and original four-task evaluation complete | Internal small-scale point |
+| SLM-Tavenel 10M | 10M | Checkpoint and original four-task evaluation complete | Internal size scaling |
 | SLM-Tavenel 25M grown | 25M | Paused at step 3,050; excluded from this round | Resume and evaluate later |
-| TinyStories tiny1m | 0.896M | Evaluation pending in queue | Near-1M parameter-count reference; English story training |
-| Pythia-14M | 14M | Evaluation pending in queue | Closest established size reference to 10M |
-| SmolLM2-135M | 135M | Evaluation pending in queue | Larger SLM reference |
-| [Pythia-31M](https://huggingface.co/EleutherAI/pythia-31m) | 31M | Queued in supplementary wave | General-domain reference near paused 25M scale |
+| TinyStories tiny1m | 0.896M | Original four-task evaluation complete | Near-1M parameter-count reference; English story training |
+| Pythia-14M | 14M | Original four-task evaluation complete | Closest established size reference to 10M |
+| SmolLM2-135M | 135M | Original four-task evaluation complete | Larger SLM reference |
+| [Pythia-31M](https://huggingface.co/EleutherAI/pythia-31m) | 31M | Supplementary evaluation complete | General-domain reference near paused 25M scale |
 
 <!-- BEGIN FSC SCALING BENCHMARK RESULTS -->
-_Validated item-level results and the comparison chart will be inserted here when the current evaluation queue completes._
+### Same-harness multiple-choice results
+
+Raw accuracy (`acc`) on the same pinned benchmark files; values are proportions.
+
+| Model | Parameters | ARC-Easy | HellaSwag | Belebele EN | Belebele FR |
+|---|---:|---:|---:|---:|---:|
+| SLM-Tavenel 1M | 1.18M | 0.286 | 0.267 | 0.279 | 0.292 |
+| SLM-Tavenel 10M | 9.98M | 0.306 | 0.275 | 0.296 | 0.319 |
+| Pythia-14M (reference) | 14.1M | 0.330 | 0.262 | 0.256 | 0.309 |
+| SmolLM2-135M (reference) | 135M | 0.643 | 0.356 | 0.358 | 0.314 |
+| TinyStories tiny1m, 0.9M (reference) | 0.935M | 0.256 | 0.260 | 0.274 | 0.290 |
+
+![Same-harness benchmark comparison across SLM-Tavenel and SLM references](docs/fsc-scaling-benchmark-comparison.svg)
+
+Whiskers show ±1 standard error for each model's accuracy. Paired bootstrap reports, when generated, are stored locally under `runs/fsc-scaling/comparisons/` and are not distributed in this repository. These intervals condition on the evaluated checkpoints and do not measure training-run variation.
+
 <!-- END FSC SCALING BENCHMARK RESULTS -->
 
 Using one evaluator makes scoring more consistent; it does not make the reference models' training
@@ -86,7 +116,24 @@ collected from external sites. A French benchmark with item-level provenance and
 terms is still needed.
 
 <!-- BEGIN FSC ADDITIONAL BENCHMARK RESULTS -->
-_Supplementary evaluations are queued after the current GPU evaluation finishes._
+### Supplementary benchmark results
+
+ARC-Challenge uses the pinned test split; WinoGrande uses the labeled XL validation split because the public test labels are withheld.
+Scores are same-harness, post-hoc and exploratory. The exact-overlap audit is stored locally at `runs/fsc-additional/contamination-audit.json`; exposure in external models' pretraining remains unknown.
+
+| Model | Parameters | ARC-Challenge | WinoGrande XL validation |
+|---|---:|---:|---:|
+| SLM-Tavenel 1M | 1.18M | 0.199 | 0.502 |
+| TinyStories 0.9M | 0.935M | 0.189 | 0.518 |
+| SLM-Tavenel 10M | 9.98M | 0.184 | 0.511 |
+| Pythia 14M | 14.1M | 0.161 | 0.520 |
+| Pythia 31M | 30.5M | 0.167 | 0.505 |
+| SmolLM2 135M | 135M | 0.278 | 0.530 |
+
+![Additional SLM benchmark comparison](docs/fsc-additional-benchmark-comparison.svg)
+
+Error bars show ±1 standard error across evaluation items, conditional on each checkpoint. They do not measure training-seed variation.
+Paired item-bootstrap reports for the predeclared comparisons are stored under `runs/fsc-additional/comparisons/` and are not committed.
 <!-- END FSC ADDITIONAL BENCHMARK RESULTS -->
 
 The additional tasks use the same local log-likelihood scorer, but they do not extend the original

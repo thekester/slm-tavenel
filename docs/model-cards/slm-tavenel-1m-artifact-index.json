@@ -1,0 +1,86 @@
+{
+  "schema": "slm.run_artifact_index.v1",
+  "created_at_utc": "2026-10-21T15:30:23.189410+00:00",
+  "python_version": "3.11.9",
+  "index_script": "write_run_artifact_index.py",
+  "index_script_sha256": "d92a1c044fd2258fba2786991147d88c6c6bd62ebf9010cd48b898c47c35ea15",
+  "status": "integrity index only; does not validate scientific claims or redistribution rights",
+  "run": {
+    "name": "1m-gated-s1234",
+    "code_commit": "be00a59fe4a8b76a6b82b5ee8a9cd5ddbda748a8",
+    "code_dirty": true,
+    "seed": 1234,
+    "steps_completed": 15000,
+    "tokens_seen": 491520000,
+    "parameters": 1181920,
+    "model_config_hash": "d0f8525160e46dd2",
+    "train_config_hash": "99026d6562af1c2a",
+    "tokenizer_sha256": "558bab3421bc9ee280f2aa9d0c6a82a9bc482e2ecb72a75837e9c3ee7d2dbd39"
+  },
+  "artifacts": [
+    {
+      "path": "runs/fsc-scaling/1m-gated-s1234/checkpoints/step_00015000.pt",
+      "bytes": 14255371,
+      "sha256": "58f42147b63d27311e4ebf767d0f588e52d026026bf105cf919bfb694df0eb36"
+    },
+    {
+      "path": "runs/fsc-scaling/1m-gated-s1234/run_manifest.json",
+      "bytes": 6500,
+      "sha256": "8b91c792214dc639ffc5ff6adce6c4b3e04baa44b00049934d94fee0d40e83aa"
+    },
+    {
+      "path": "runs/fsc-scaling/1m-gated-s1234/metrics.jsonl",
+      "bytes": 48375,
+      "sha256": "506120132ceb40cdffdecd755c9fa4495744a12caf00886d66a0dff2860656b6"
+    },
+    {
+      "path": "runs/fsc-scaling/1m-gated-s1234/eval.jsonl",
+      "bytes": 1830,
+      "sha256": "98095663a17cf8e9e112d0a6214e20a8a9bd44803c522b78d6ab515076f4acfe"
+    },
+    {
+      "path": "runs/fsc-scaling/1m-gated-s1234/observability.jsonl",
+      "bytes": 93594,
+      "sha256": "68217dabd0e8c4f78fa4690562b98246a5449a441c3b0c1ed308372b1ac783e9"
+    },
+    {
+      "path": "data/tokens/fsc-pilot-v1-scaling/provenance.json",
+      "bytes": 3118,
+      "sha256": "bf343c85c9e92c5c308fe485365daa7e14716f0c276c615b020c7c4ca9f0034b"
+    },
+    {
+      "path": "data/tokens/fsc-pilot-v1-scaling/manifest.json",
+      "bytes": 2539,
+      "sha256": "c0a2dc650c077c3d9ec3d1866edfb6e467a064ec2c19f71ae9694a4e58374939"
+    },
+    {
+      "path": "data/tokenizer/fsc-pilot-v1-train-only/tokenizer.json",
+      "bytes": 553547,
+      "sha256": "558bab3421bc9ee280f2aa9d0c6a82a9bc482e2ecb72a75837e9c3ee7d2dbd39"
+    },
+    {
+      "path": "runs/fsc-additional/slm-tavenel-1m/fsc-pilot-v2-mc.json",
+      "bytes": 485358,
+      "sha256": "9e770a5cf9a5ac356e7d3a1954c915ce0eaac5a6c83e1f0991c2db748c829f65"
+    },
+    {
+      "path": "runs/fsc-additional/contamination-audit.json",
+      "bytes": 1352,
+      "sha256": "353a98c28a6a8f42c1ba3809eff573b89a429925bbe865c1efeb00f576eb02e2"
+    },
+    {
+      "path": "runs/fsc-additional/comparisons/slm-tavenel-1m-vs-slm-tavenel-10m.json",
+      "bytes": 1077,
+      "sha256": "c0cab0120a4e571a87cfea7bbba3971594c1cbf08dc79929ab8db1d7a70dee4c"
+    },
+    {
+      "path": "runs/fsc-additional/comparisons/slm-tavenel-1m-vs-tiny1m.json",
+      "bytes": 1069,
+      "sha256": "6c2851f5037501b9b71723c34fce7517a7cf5542946aaf141bb2cd704f60e9cf"
+    }
+  ],
+  "limitations": [
+    "Artifact hashes establish file identity, not scientific validity or data rights.",
+    "The run manifest may omit the checkpoint hash; this index binds the selected checkpoint to its recorded logs."
+  ]
+}
