@@ -129,6 +129,60 @@ sources:
       - Verify the upstream source and exact rights for every selected article; the corpus card is not an independent rights audit.
       - Review privacy in scientific papers and the effectiveness of the configured redaction step.
 
+  # This exact CC0-only subset is cross-checked against each version returned by the HAL API.
+  # It remains a candidate because a privacy review and corpus-level maintainer sign-off are pending.
+  - id: fsc-hal-cc0-audited-en
+    name: French-Science-Commons English records, HAL-version-checked CC0 subset
+    url: https://huggingface.co/datasets/PleIAs/French-Science-Commons
+    role: pretrain
+    license: CC0-1.0
+    status: candidate
+    revision: bfa114c09d7c28dcd0a8a47fe445c64b4a3c6156
+    subset: french_open_science, English, exact CC0 rows whose every HAL API version reports CC0
+    attribution: Retain HAL record ID and URI; CC0 has no attribution condition, source is still cited
+    languages: [en]
+    domains: [science]
+    review:
+      provenance_verified: true
+      license_verified: true
+      pii_reviewed: false
+      reviewer: "Automated record-level comparison against HAL API; maintainer review pending"
+      date: "2026-10-21"
+      notes: >-
+        1,767 of 1,789 English CC0-labeled candidate documents matched CC0 on every version
+        returned by HAL's records API. 22 unresolved or non-CC0 records were excluded. See
+        docs/reviews/OPEN-WEIGHTS-1M-2026-10-21.md and the ignored local audit report. This
+        verifies the recorded license metadata for the exact candidate, not independent copyright
+        ownership or privacy. The historical API query did not verify pagination completeness;
+        rerun the corrected paginated audit before source sign-off. Do not mark approved until
+        those reviews are complete.
+
+  - id: fsc-hal-cc0-audited-fr
+    name: French-Science-Commons French records, HAL-version-checked CC0 subset
+    url: https://huggingface.co/datasets/PleIAs/French-Science-Commons
+    role: pretrain
+    license: CC0-1.0
+    status: candidate
+    revision: bfa114c09d7c28dcd0a8a47fe445c64b4a3c6156
+    subset: french_open_science, French, exact CC0 rows whose every HAL API version reports CC0
+    attribution: Retain HAL record ID and URI; CC0 has no attribution condition, source is still cited
+    languages: [fr]
+    domains: [science]
+    review:
+      provenance_verified: true
+      license_verified: true
+      pii_reviewed: false
+      reviewer: "Automated record-level comparison against HAL API; maintainer review pending"
+      date: "2026-10-21"
+      notes: >-
+        1,683 of 1,694 French CC0-labeled candidate documents matched CC0 on every version
+        returned by HAL's records API. 11 unresolved or non-CC0 records were excluded. See
+        docs/reviews/OPEN-WEIGHTS-1M-2026-10-21.md and the ignored local audit report. This
+        verifies the recorded license metadata for the exact candidate, not independent copyright
+        ownership or privacy. The historical API query did not verify pagination completeness;
+        rerun the corrected paginated audit before source sign-off. Do not mark approved until
+        those reviews are complete.
+
   - id: fsc-en-ccby4
     name: French-Science-Commons, English pages declared CC BY 4.0
     url: https://huggingface.co/datasets/PleIAs/French-Science-Commons

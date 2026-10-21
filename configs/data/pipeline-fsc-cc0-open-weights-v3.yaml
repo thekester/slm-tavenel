@@ -1,0 +1,60 @@
+# Privacy-risk-reduced retraining candidate. Exclusions are deliberately conservative metadata rules.
+name: fsc-cc0-open-weights-v3
+registry: configs/data/sources.yaml
+inputs:
+  - {source: fsc-hal-cc0-audited-en, path: data/corpus-audits/fsc-cc0-hal-cleared/en.jsonl.gz, text_field: text, id_field: id, preserve_fields: [source_metadata]}
+  - {source: fsc-hal-cc0-audited-fr, path: data/corpus-audits/fsc-cc0-hal-cleared/fr.jsonl.gz, text_field: text, id_field: id, preserve_fields: [source_metadata]}
+steps:
+  - publication_risk_metadata:
+      excluded_disciplines:
+        - Sciences humaines et sociales
+        - Sciences du Vivant
+        - Sciences cognitives
+        - Économie et finance quantitative
+      title_patterns:
+        - "\\bpatient(s)?\\b"
+        - "\\bclinical\\b"
+        - "\\bcase report(s)?\\b"
+        - "\\bcase series\\b"
+        - "\\binterview(s)?\\b"
+        - "\\bsurvey(s)?\\b"
+        - "\\bquestionnaire(s)?\\b"
+        - "\\bparticipant(s)?\\b"
+        - "\\bcohort(s)?\\b"
+        - "\\brandomi[sz]ed\\b"
+        - "\\bclinical trial(s)?\\b"
+        - "\\bhospital(s)?\\b"
+        - "\\bepidemiolog(y|ical)\\b"
+        - "\\bclinical case\\b"
+        - "\\bhuman subject(s)?\\b"
+        - "\\bvolunteer(s)?\\b"
+        - "\\bmedical\\b"
+        - "\\bbiomedical\\b"
+        - "\\btumou?r(s)?\\b"
+        - "\\bcancer(s)?\\b"
+        - "\\bimmunotherapy\\b"
+        - "\\bradiotherapy\\b"
+        - "\\bmedecine\\b"
+        - "\\bm\\u00e9decine\\b"
+        - "\\bclinique(s)?\\b"
+        - "\\bentretien(s)?\\b"
+        - "\\benqu\\u00eate(s)?\\b"
+        - "\\bessai(s)? clinique(s)?\\b"
+        - "\\bcas clinique(s)?\\b"
+        - "\\bsujet(s)? humain(s)?\\b"
+  - normalize: {}
+  - min_length: {min_chars: 200}
+  - gopher_quality: {}
+  - pii: {}
+  - exact_dedup: {}
+  - minhash_dedup: {num_perm: 32, bands: 8, ngram: 5, threshold: 0.8, seed: 0, max_words: 512}
+  - decontaminate:
+      n: 13
+      eval_files:
+        - {path: data/benchmarks/arc_easy.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/arc_challenge.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/hellaswag.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/belebele_en.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/belebele_fr.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/winogrande.jsonl, fields: [context, choices]}
+output_dir: data/processed/fsc-cc0-open-weights-v3

@@ -126,13 +126,17 @@ publish attribution/NOTICE material for all included sources. The current FSC so
 the present checkpoint cannot be cleared by documentation alone. Document exactly what data,
 tokenizer, checkpoints, and logs are included or omitted and why.
 
-The gated 1M architecture needs a faithful public inference path. The current HF exporter does not
-support the gated attention checkpoint; either preserve the native SLM implementation and provide a
-tested loader/inference example, or implement a compatible adapter. Verify exported/reloaded logits
-against the source checkpoint on fixed token sequences within a declared numerical tolerance, then
-rerun the locked evaluations from the released artifact. Include the model card, data card, experiment
-protocol/results, provenance hashes, environment/command record, known limitations, and a license
-decision. Do not label the model “open weights” until both the rights and usability checks pass.
+The gated 1M architecture has no standard Llama/Qwen equivalent. A local Transformers custom-code
+candidate is now implemented in `src/slm/hf_config.py` and `src/slm/hf_model.py`; generate the bundle
+with `scripts/prepare_hf_candidate.py`. The one-probe CPU check in
+`docs/model-cards/slm-tavenel-1m-hf-parity-report.json` found exact tokenizer IDs and logits
+(maximum absolute error 0.0) and confirmed a short greedy generation. This is a narrow smoke check,
+not broad dtype/device conformance or independent review. The implementation has no KV cache and
+requires `trust_remote_code=True`; users should pin an immutable Hub revision before executing it.
+Before upload, run broader parity and rerun the locked evaluations from the final packaged artifact.
+Include the model card, data card, experiment protocol/results, provenance hashes,
+environment/command record, known limitations, and a license decision. Do not label the model “open
+weights” until both the rights and usability checks pass.
 
 ## Completion and release criteria
 
@@ -157,8 +161,9 @@ declaration does not resolve the data-rights gate.
 - Existing capture/intervention primitives are implemented in `src/slm/observe.py` and
   `src/slm/interp.py`; a preregistered probe set, controls, uncertainty analysis and multi-seed
   replication are still required for confirmatory interpretability claims.
-- The gated checkpoint has no supported standard HF export path yet, so code-level availability is
-  not sufficient for a usable open-weight release.
+- A local Hugging Face custom-code candidate and single-probe exact CPU parity report now exist; the
+  bundle is not publicly released, broad conformance is pending, and the implementation uses no KV
+  cache.
 - The supplementary post-hoc benchmark queue is a separate exploratory comparison. Its outputs do
   not satisfy the confirmatory data, replication, or sealed-test gates in this protocol.
 

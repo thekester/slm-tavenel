@@ -47,10 +47,29 @@ multi-seed protocol with explicit data, experiment, and evaluation gates is reco
 tracked separately: it can add descriptive comparisons but cannot replace a new sealed test or
 multi-seed replication.
 
+An open-weight retraining route is being prepared. A record-level check compared 3,483
+English/French CC0-labeled science documents with every version returned by the HAL records API;
+3,450 matched CC0 and 33 ambiguous or non-CC0 records were excluded. That historical audit did
+not verify API pagination completeness; the corrected audit must be rerun before source sign-off.
+A further conservative
+discipline/title screen leaves 1,535 documents for the latest 1M pilot and excludes selected
+human-subject and medical categories. The dataset remains a small science-domain sample; source
+sign-off and manual privacy review are not signed, and automated filters cannot certify privacy.
+The versioned audit, filtering recipe and pilot runs are in
+[the open-weight review](docs/reviews/OPEN-WEIGHTS-1M-2026-10-21.md). The existing 1M and 10M
+checkpoints remain uncleared. The latest 1M candidate is packaged locally under MIT terms but is
+not uploaded; its scores are single-seed exploratory results, not confirmatory evidence.
+
 The validation dossier also defines separate requirements for traceable run/evaluation artifacts,
 intervention-based interpretability, and open-weight usability. A draft research model card for the
 existing 1M checkpoint is available at [docs/model-cards/slm-tavenel-1m-draft.md](docs/model-cards/slm-tavenel-1m-draft.md);
-it records current evidence and blockers and does not authorize distribution.
+it records current evidence and blockers and does not authorize distribution. A Hub-oriented
+[research card](docs/model-cards/slm-tavenel-1m-hf-card.md) and local candidate packager
+(`python scripts/prepare_hf_candidate.py`) are also available. The generated bundle remains local:
+source rights/privacy review are required before upload. A one-probe native-to-Hub inference parity
+check is recorded by `python scripts/verify_hf_candidate.py`; it is a smoke check, not scientific validation.
+The latest filtered-retraining pilot has a separate [v3 research card](docs/model-cards/slm-tavenel-1m-cc0-v3-candidate.md)
+and local-only export; it is still blocked from public upload by the unsigned reviews described above.
 
 An additional exploratory evaluation wave is complete: ARC-Challenge and WinoGrande XL,
 scored for SLM-Tavenel 1M/10M and the pinned TinyStories-0.9M, Pythia-14M, Pythia-31M and
@@ -82,19 +101,22 @@ below are generated from validated item-level outputs documented in [EXP-0009](e
 <!-- BEGIN FSC SCALING BENCHMARK RESULTS -->
 ### Same-harness multiple-choice results
 
-Raw accuracy (`acc`) on the same pinned benchmark files; values are proportions.
+Raw accuracy (`acc`) on the same pinned benchmark files; values are proportions. All scores are exploratory; training data, token budgets and model histories differ.
 
 | Model | Parameters | ARC-Easy | HellaSwag | Belebele EN | Belebele FR |
 |---|---:|---:|---:|---:|---:|
-| SLM-Tavenel 1M | 1.18M | 0.286 | 0.267 | 0.279 | 0.292 |
+| SLM-Tavenel 1M FSC pilot | 1.18M | 0.286 | 0.267 | 0.279 | 0.292 |
+| SLM-Tavenel 1M CC0 retrain pilot | 1.18M | 0.290 | 0.270 | 0.284 | 0.316 |
+| SLM-Tavenel 1M CC0 v2 privacy-filtered pilot | 1.18M | 0.281 | 0.264 | 0.254 | 0.267 |
+| SLM-Tavenel 1M CC0 v3 metadata-filtered pilot | 1.18M | 0.293 | 0.261 | 0.253 | 0.276 |
 | SLM-Tavenel 10M | 9.98M | 0.306 | 0.275 | 0.296 | 0.319 |
 | Pythia-14M (reference) | 14.1M | 0.330 | 0.262 | 0.256 | 0.309 |
 | SmolLM2-135M (reference) | 135M | 0.643 | 0.356 | 0.358 | 0.314 |
 | TinyStories tiny1m, 0.9M (reference) | 0.935M | 0.256 | 0.260 | 0.274 | 0.290 |
 
-![Same-harness benchmark comparison across SLM-Tavenel and SLM references](docs/fsc-scaling-benchmark-comparison.svg)
+![Same-harness benchmark comparison across SLM-Tavenel and SLM references](docs/open-weight-1m-benchmark-comparison.svg)
 
-Whiskers show ±1 standard error for each model's accuracy. Paired bootstrap reports, when generated, are stored locally under `runs/fsc-scaling/comparisons/` and are not distributed in this repository. These intervals condition on the evaluated checkpoints and do not measure training-run variation.
+Whiskers show one standard error across items for each checkpoint; they do not measure training-run variation. CC0 retraining pilots are single-seed runs; v2/v3 add conservative metadata exclusions but still await manual privacy review and source sign-off. Paired item-bootstrap intervals are conditional, post-hoc and unadjusted for multiple comparisons.
 
 <!-- END FSC SCALING BENCHMARK RESULTS -->
 

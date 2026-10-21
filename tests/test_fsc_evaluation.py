@@ -78,7 +78,8 @@ def test_chart_validates_hashes_and_supports_high_accuracy(tmp_path, monkeypatch
     module.main()
     ET.parse(output)
     text = output.read_text()
-    assert "100%" in text and "inherits the 10M training budget" in text
+    assert "100%" in text and "All cross-model scores are exploratory" in text
+    assert "different training data and compute" in text
     published = readme.read_text(encoding="utf-8")
     assert published.startswith(prefix) and published.endswith(suffix)
     assert "| A |" in published and "| B |" in published and "Unavailable" not in published

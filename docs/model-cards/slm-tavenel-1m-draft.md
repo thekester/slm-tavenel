@@ -22,9 +22,11 @@ documentation only; it does not grant rights to training data or derived weights
 review is unresolved, and public weight distribution is not approved. The tokenizer and any other
 derived artifacts require the same explicit review.
 
-The gated architecture does not currently have a supported standard Hugging Face export path. A
-future release must include faithful inference code and verify source-versus-reloaded logits and
-evaluation results. See [EXP-0010](../../experiments/EXP-0010-confirmatory-validation-1m.md).
+The gated architecture does not map to standard Llama/Qwen attention. A local Transformers custom
+model candidate now exists; a fixed CPU probe showed exact tokenizer/logit parity and greedy
+generation. The report is [here](slm-tavenel-1m-hf-parity-report.json). This narrow smoke check
+does not clear rights or replace broader parity/evaluation review. See
+[EXP-0010](../../experiments/EXP-0010-confirmatory-validation-1m.md).
 
 ## Training and provenance
 

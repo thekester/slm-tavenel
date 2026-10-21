@@ -139,6 +139,35 @@ class DecontaminateStep(Step):
         return None, ("benchmark_overlap", {"items": dict(top)})
 
 
+class PublicationRiskMetadataStep(Step):
+    """Exclude source records with high-level human-subject risk signals in metadata."""
+
+    name = "publication_risk_metadata"
+
+    def __init__(self, excluded_disciplines: list[str], title_patterns: list[str]) -> None:
+        import re
+
+        self.excluded_disciplines = {value.casefold() for value in excluded_disciplines}
+        self.title_patterns = [(value, re.compile(value, re.IGNORECASE)) for value in title_patterns]
+
+    def __call__(self, doc):
+        metadata = doc.get("source_metadata") or {}
+        raw = metadata.get("discipline")
+        if not isinstance(raw, str) or not raw.strip():
+            return None, ("missing_discipline_metadata", None)
+        disciplines = {value.strip().casefold() for value in raw.split(";") if value.strip()}
+        matched_disciplines = sorted(disciplines & self.excluded_disciplines)
+        if matched_disciplines:
+            return None, ("excluded_discipline", {"values": matched_disciplines})
+        title = metadata.get("title")
+        if not isinstance(title, str) or not title.strip():
+            return None, ("missing_title_metadata", None)
+        matches = [label for label, pattern in self.title_patterns if pattern.search(title)]
+        if matches:
+            return None, ("human_subject_title_signal", {"patterns": matches})
+        return doc, None
+
+
 def build_step(spec: dict[str, Any]) -> Step:
     if len(spec) != 1:
         raise ValueError(f"each step must have exactly one key, got {list(spec)}")
@@ -156,6 +185,8 @@ def build_step(spec: dict[str, Any]) -> Step:
         return MinHashStep(**params)
     if kind == "decontaminate":
         return DecontaminateStep(**params)
+    if kind == "publication_risk_metadata":
+        return PublicationRiskMetadataStep(**params)
     raise ValueError(f"unknown step {kind!r}")
 
 

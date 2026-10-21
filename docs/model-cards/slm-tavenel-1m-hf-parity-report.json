@@ -1,0 +1,50 @@
+{
+  "generation_smoke": {
+    "continuation_token_ids": [
+      230,
+      230,
+      59,
+      510
+    ],
+    "kv_cache": false,
+    "method": "greedy",
+    "new_tokens_requested": 4,
+    "new_tokens_returned": 4
+  },
+  "limitations": [
+    "single fixed probe on CPU; not a broad numerical conformance suite",
+    "does not establish scientific validity, rights clearance, or generation quality"
+  ],
+  "max_abs_tolerance": 1e-06,
+  "native_hf_max_abs_logit_error": 0.0,
+  "native_hf_mean_abs_logit_error": 0.0,
+  "parameter_count": 1181920,
+  "probe_text": "La recherche scientifique. Scientific research.",
+  "probe_token_ids": [
+    0,
+    1228,
+    1373,
+    3845,
+    45,
+    1293,
+    3039,
+    1175,
+    45
+  ],
+  "schema": "slm.hf_candidate_parity.v1",
+  "scope": "local CPU tokenizer and fixed-input native-versus-Hub inference parity",
+  "sha256": {
+    "hub_config_code": "639280016095ccd9e6d69223c8615f9cf084ca8bd6c1828097ca290be6e772cb",
+    "hub_model_code": "1955fd439533ce63a1d4c58d2382e840e26b83087cfae4958f64ee9f8677deb4",
+    "hub_weights": "eeabf40e24a9904fe3df2f7f62617b3e1c723b28c5703b957a1a34a4b4a66dfa",
+    "native_checkpoint": "58f42147b63d27311e4ebf767d0f588e52d026026bf105cf919bfb694df0eb36",
+    "tokenizer": "558bab3421bc9ee280f2aa9d0c6a82a9bc482e2ecb72a75837e9c3ee7d2dbd39",
+    "verification_script": "dfe7f522a6f404b6e92bb02eb33a9f2fa5ac9884c9385d383617bbe44dde5ad7"
+  },
+  "status": "passed",
+  "tokenizer_ids_equal": true,
+  "versions": {
+    "torch": "2.10.0+cu130",
+    "transformers": "4.57.6"
+  }
+}
