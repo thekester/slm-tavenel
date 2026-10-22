@@ -313,6 +313,38 @@ sources:
         exact page-level license choices and obligations for trained weights have not been
         established. Keep candidate and block release approval pending legal and privacy review.
 
+  - id: mot-v1.11-en
+    name: Multilingual Open Text v1.11, English Voice of America collection
+    url: https://github.com/bltlab/mot/releases/tag/v1.11
+    role: pretrain
+    license: CC-BY-4.0
+    status: candidate
+    revision: 9204cad746dfff0921e7a8f64c0cc0917bc75554
+    subset: eng_voanews.tgz, article records
+    attribution: MOT v1.11 and Voice of America; preserve supplied article URL, title, date and author/byline when present
+    languages: [en]
+    domains: [news]
+    open_questions:
+      - The MOT collection license and VOA source terms do not establish that every record is exclusively VOA-authored.
+      - The metadata audit found the English author/byline field missing for 59.7% of records; preserve missing values without inference.
+      - Privacy, record-level provenance and rights for any public model-weight distribution remain unresolved.
+
+  - id: mot-v1.11-fr
+    name: Multilingual Open Text v1.11, French VOA Afrique collection
+    url: https://github.com/bltlab/mot/releases/tag/v1.11
+    role: pretrain
+    license: CC-BY-4.0
+    status: candidate
+    revision: 9204cad746dfff0921e7a8f64c0cc0917bc75554
+    subset: fra_voaafrique.tgz, article records
+    attribution: MOT v1.11 and Voice of America Afrique; preserve supplied article URL, title, date and author/byline when present
+    languages: [fr]
+    domains: [news]
+    open_questions:
+      - The MOT collection license and VOA source terms do not establish that every record is exclusively VOA-authored.
+      - Some VOA Afrique pages may contain third-party agency content; the existing byline scan is not a full ownership check.
+      - Privacy and rights for any public model-weight distribution remain unresolved.
+
   # ---- comparison references ------------------------------------------------------------
   # Web-crawl corpora: the compilation license (ODC-By) does not establish permission for the
   # underlying pages, so they fail the README's "recorded permissions" requirement for the

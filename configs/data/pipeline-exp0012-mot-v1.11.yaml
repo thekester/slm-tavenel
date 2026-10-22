@@ -1,0 +1,23 @@
+# Exploratory MOT news preparation for EXP-0012. The source remains candidate; use is recorded.
+name: exp0012-mot-v1.11-news
+registry: configs/data/sources.yaml
+inputs:
+  - {source: mot-v1.11-en, path: data/raw/mot-v1.11/prepared/en.jsonl, text_field: text, id_field: id, preserve_fields: [source_metadata]}
+  - {source: mot-v1.11-fr, path: data/raw/mot-v1.11/prepared/fr.jsonl, text_field: text, id_field: id, preserve_fields: [source_metadata]}
+steps:
+  - normalize: {}
+  - min_length: {min_chars: 200}
+  - gopher_quality: {}
+  - pii: {}
+  - exact_dedup: {}
+  - minhash_dedup: {num_perm: 32, bands: 8, ngram: 5, threshold: 0.8, seed: 0, max_words: 512}
+  - decontaminate:
+      n: 13
+      eval_files:
+        - {path: data/benchmarks/arc_easy.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/arc_challenge.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/hellaswag.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/belebele_en.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/belebele_fr.jsonl, fields: [context, choices]}
+        - {path: data/benchmarks/winogrande.jsonl, fields: [context, choices]}
+output_dir: data/processed/exp0012-mot-v1.11

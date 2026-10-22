@@ -1,0 +1,25 @@
+# Exploratory one-pass continuation from the preselected EXP-0010 gated seed-421101 checkpoint.
+# This does not replace the EXP-0010 candidate or reuse its sealed-test result for selection.
+model: configs/model/slm-1m-gated.yaml
+data_dir: data/tokens/fsc-cc0-open-weights-v4/training
+out_dir: runs/EXP-0011-1m-low-lr-continuation-2026-10-22
+seed: 421111
+seq_len: 1024
+micro_batch_size: 16
+grad_accum_steps: 2
+max_steps: 488 # one additional pass: 15,990,784 token presentations
+init_from: runs/EXP-0010-1m-paired-replication-2026-10-22/seed-421101/gated/checkpoints/step_00000488.pt
+lr: 5.0e-4
+min_lr: 5.0e-5
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 24
+decay_fraction: 0.2
+dtype: bfloat16
+deterministic: true
+log_interval: 25
+eval_interval: 122
+eval_batches: 20
+observe_interval: 122
+ckpt_interval: 244
+keep_checkpoints: 2
