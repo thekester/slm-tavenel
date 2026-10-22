@@ -1,0 +1,24 @@
+# EXP-0013 paired 1M treatment; same recipe and budget, with 20% MOT train tokens.
+model: configs/model/slm-1m-gated.yaml
+data_dir: data/tokens/exp0013-1m-fsc-mot-mixture
+out_dir: runs/EXP-0013-1m-fsc-mot-mixture-2026-10-22
+seed: 421021
+seq_len: 1024
+micro_batch_size: 16
+grad_accum_steps: 2
+max_steps: 488
+lr: 3.0e-3
+min_lr: 3.0e-4
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 48
+decay_fraction: 0.2
+dtype: bfloat16
+deterministic: false
+log_interval: 25
+eval_interval: 122
+eval_batches: 20
+observe_interval: 61
+ckpt_interval: 122
+keep_checkpoints: 3
+resume: false

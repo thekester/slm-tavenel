@@ -1,6 +1,6 @@
 # EXP-0012: 10M specialist/general-text mixture pilot
 
-**Status (2026-10-22):** data preparation completed. An initial control in Python 3.12/PyTorch 2.4 was stopped at step 400 after clear loss divergence. Its logs are retained but excluded from analysis. The matched control has restarted in the reference Python 3.11/PyTorch 2.10 environment; the 20% MOT arm and paired held-out evaluations are queued behind it.
+**Status (2026-10-22):** data preparation completed. An initial control in Python 3.12/PyTorch 2.4 was stopped at step 400 after clear loss divergence. Its logs are retained but excluded from analysis. The matched control has restarted in the reference Python 3.11/PyTorch 2.10 environment with a recorded progress snapshot at step 6,050/15,000; the 20% MOT arm and paired held-out evaluations are queued behind it.
 
 ## Research motivation
 
@@ -80,8 +80,8 @@ checkpoint. Its metrics and manifest remain under
 model or a valid comparison arm.
 
 The matched control restarted at 2026-10-22 07:46 in Python 3.11/PyTorch 2.10, matching the
-reference run's software versions. At step 250 it measured 73,422 tokens/s and loss 4.09193;
-the reference run's step-250 loss was 4.09412. `scripts/run_exp0012_py311_queue.ps1` runs the FSC control,
+reference run's software versions. At step 6,050 it measured 60,993 tokens/s with training loss
+2.73289. `scripts/run_exp0012_py311_queue.ps1` runs the FSC control,
 then the 20% MOT treatment, then evaluates both checkpoints; queue events are logged in
 `runs/EXP-0012-py311-queue.log`. This runner sets `resume: false` in both configs. Before the
 restart, the older PyTorch 2.10 run measured about 52,000 tokens/s. The current run's first interval
