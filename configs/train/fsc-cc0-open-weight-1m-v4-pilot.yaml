@@ -1,0 +1,23 @@
+# Single-pass v4 privacy/integrity-screened CC0 pilot; not a confirmatory gate study.
+model: configs/model/slm-1m-gated.yaml
+data_dir: data/tokens/fsc-cc0-open-weights-v4/training
+out_dir: runs/open-weight-candidate/1m-gated-s421021-v4-pilot
+seed: 421021
+seq_len: 1024
+micro_batch_size: 16
+grad_accum_steps: 2
+max_steps: 488 # 15,976,924 train tokens / 32,768 tokens per optimizer step; approximately one pass
+lr: 3.0e-3
+min_lr: 3.0e-4
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 48
+decay_fraction: 0.2
+dtype: bfloat16
+deterministic: false
+log_interval: 25
+eval_interval: 122
+eval_batches: 20
+observe_interval: 61
+ckpt_interval: 122
+keep_checkpoints: 3

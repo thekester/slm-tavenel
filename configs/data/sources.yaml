@@ -129,8 +129,8 @@ sources:
       - Verify the upstream source and exact rights for every selected article; the corpus card is not an independent rights audit.
       - Review privacy in scientific papers and the effectiveness of the configured redaction step.
 
-  # This exact CC0-only subset is cross-checked against each version returned by the HAL API.
-  # It remains a candidate because a privacy review and corpus-level maintainer sign-off are pending.
+  # HAL metadata was checked across all returned API pages/versions, but human source and privacy
+  # reviews remain unsigned. Do not treat an automated metadata match as a rights clearance.
   - id: fsc-hal-cc0-audited-en
     name: French-Science-Commons English records, HAL-version-checked CC0 subset
     url: https://huggingface.co/datasets/PleIAs/French-Science-Commons
@@ -144,18 +144,17 @@ sources:
     domains: [science]
     review:
       provenance_verified: true
-      license_verified: true
+      license_verified: false
       pii_reviewed: false
-      reviewer: "Automated record-level comparison against HAL API; maintainer review pending"
+      reviewer: "Automated metadata audit only; no human reviewer assigned"
       date: "2026-10-21"
       notes: >-
-        1,767 of 1,789 English CC0-labeled candidate documents matched CC0 on every version
-        returned by HAL's records API. 22 unresolved or non-CC0 records were excluded. See
-        docs/reviews/OPEN-WEIGHTS-1M-2026-10-21.md and the ignored local audit report. This
-        verifies the recorded license metadata for the exact candidate, not independent copyright
-        ownership or privacy. The historical API query did not verify pagination completeness;
-        rerun the corrected paginated audit before source sign-off. Do not mark approved until
-        those reviews are complete.
+        The paginated HAL metadata audit dated 2026-10-21 found that all 1,767 selected English
+        records had CC0 labels on every returned HAL version; 22 of the 1,789 dataset rows labeled
+        CC0 were excluded because HAL metadata was missing, conflicting, or non-CC0. The audit
+        checks metadata only, not depositor authority or privacy. Source-rights and manual privacy
+        reviews remain unsigned. See docs/reviews/OPEN-WEIGHTS-1M-2026-10-21.md and the audit
+        report included in the local candidate bundle.
 
   - id: fsc-hal-cc0-audited-fr
     name: French-Science-Commons French records, HAL-version-checked CC0 subset
@@ -170,18 +169,17 @@ sources:
     domains: [science]
     review:
       provenance_verified: true
-      license_verified: true
+      license_verified: false
       pii_reviewed: false
-      reviewer: "Automated record-level comparison against HAL API; maintainer review pending"
+      reviewer: "Automated metadata audit only; no human reviewer assigned"
       date: "2026-10-21"
       notes: >-
-        1,683 of 1,694 French CC0-labeled candidate documents matched CC0 on every version
-        returned by HAL's records API. 11 unresolved or non-CC0 records were excluded. See
-        docs/reviews/OPEN-WEIGHTS-1M-2026-10-21.md and the ignored local audit report. This
-        verifies the recorded license metadata for the exact candidate, not independent copyright
-        ownership or privacy. The historical API query did not verify pagination completeness;
-        rerun the corrected paginated audit before source sign-off. Do not mark approved until
-        those reviews are complete.
+        The paginated HAL metadata audit dated 2026-10-21 found that all 1,683 selected French
+        records had CC0 labels on every returned HAL version; 11 of the 1,694 dataset rows labeled
+        CC0 were excluded because HAL metadata was missing, conflicting, or non-CC0. The audit
+        checks metadata only, not depositor authority or privacy. Source-rights and manual privacy
+        reviews remain unsigned. See docs/reviews/OPEN-WEIGHTS-1M-2026-10-21.md and the audit
+        report included in the local candidate bundle.
 
   - id: fsc-en-ccby4
     name: French-Science-Commons, English pages declared CC BY 4.0

@@ -1,8 +1,11 @@
 # EXP-0010: Scientific validation and open-weight readiness of the 1M model
 
-**Status:** protocol design; no confirmatory training or evaluation has started. Existing 1M and
-10M FSC checkpoints and all results already inspected remain exploratory. No public weight release
-is approved.
+**Archive status:** this initial protocol was superseded on 2026-10-22 by the prospective
+[paired 1M replication protocol](EXP-0010-1m-paired-replication-2026-10-22.md). The text below
+records the earlier, broader design and its decision point; it is not the active run plan. The
+maintainer later authorized preparation of an experimental v4 weight candidate, while source-rights
+and manual privacy review flags remain unsigned. That authorization is not a rights or privacy
+sign-off.
 
 This dossier covers four connected but distinct questions: whether a scientific claim replicates,
 whether the evidence can be traced and reproduced, whether internal-behavior claims are supported

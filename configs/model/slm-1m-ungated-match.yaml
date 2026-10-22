@@ -1,0 +1,13 @@
+# Parameter-matched control for EXP-0010. All architecture and training settings
+# match slm-1m-gated.yaml; the head-wise attention gate is disabled.
+vocab_size: 8192
+d_model: 96
+n_layers: 4
+n_heads: 3
+n_kv_heads: 1
+ffn_hidden: 256
+max_seq_len: 1024
+rope_theta: 10000.0
+qk_norm: true
+attn_gate: none
+window_pattern: []

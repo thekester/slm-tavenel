@@ -1,0 +1,286 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1480 1090" role="img" aria-labelledby="title desc">
+<title id="title">SLM-Tavenel EXP-0010 and small-model benchmark comparison</title>
+<desc id="desc">Six separate benchmark panels compare one selected SLM-Tavenel 1 million parameter checkpoint with an exploratory 10 million parameter checkpoint and public references. Each dot is raw accuracy; whiskers are 95 percent Wilson intervals across items and do not estimate run-to-run variation. Pythia-31M was scored only on ARC-Challenge and WinoGrande.</desc>
+<rect width="100%" height="100%" fill="#f8fafc"/>
+<text x="740" y="34" text-anchor="middle" font-family="Arial,sans-serif" font-size="26" font-weight="700" fill="#172033">SLM-Tavenel 1M benchmark comparison</text>
+<text x="740" y="60" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#526078">Same local evaluator and pinned items where scored · raw accuracy with 95% Wilson intervals</text>
+<rect x="26" y="82" width="704" height="296" rx="12" fill="#ffffff" stroke="#dbe3ef"/>
+<text x="44" y="109" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#172033">ARC-Easy</text>
+<text x="714" y="108" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#526078">n = 2,376 · chance 25%</text>
+<line x1="272.0" y1="147" x2="272.0" y2="310" stroke="#e5eaf2"/>
+<text x="272.0" y="329" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">0%</text>
+<line x1="417.0" y1="147" x2="417.0" y2="310" stroke="#e5eaf2"/>
+<text x="417.0" y="329" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">25%</text>
+<line x1="562.0" y1="147" x2="562.0" y2="310" stroke="#e5eaf2"/>
+<text x="562.0" y="329" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">50%</text>
+<line x1="678.0" y1="147" x2="678.0" y2="310" stroke="#e5eaf2"/>
+<text x="678.0" y="329" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">70%</text>
+<line x1="417.0" y1="147" x2="417.0" y2="310" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="42" y="168.5" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#155eef">SLM-Tavenel 1M (selected)</text>
+<line x1="424.3" y1="164.5" x2="445.2" y2="164.5" stroke="#155eef" stroke-width="2"/>
+<line x1="424.3" y1="160.5" x2="424.3" y2="168.5" stroke="#155eef"/>
+<line x1="445.2" y1="160.5" x2="445.2" y2="168.5" stroke="#155eef"/>
+<circle cx="434.6" cy="164.5" r="5" fill="#155eef" stroke="#ffffff" stroke-width="1.5"/>
+<text x="442.6" y="168.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#172033">28.0%</text>
+<text x="42" y="193.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">SLM-Tavenel 10M (exploratory)</text>
+<line x1="438.7" y1="189.5" x2="460.1" y2="189.5" stroke="#16a34a" stroke-width="2"/>
+<line x1="438.7" y1="185.5" x2="438.7" y2="193.5" stroke="#16a34a"/>
+<line x1="460.1" y1="185.5" x2="460.1" y2="193.5" stroke="#16a34a"/>
+<circle cx="449.2" cy="189.5" r="4" fill="#16a34a" stroke="#ffffff" stroke-width="1.5"/>
+<text x="457.2" y="193.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">30.6%</text>
+<text x="42" y="218.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">TinyStories tiny1m (0.935M)</text>
+<line x1="410.5" y1="214.5" x2="430.8" y2="214.5" stroke="#d97706" stroke-width="2"/>
+<line x1="410.5" y1="210.5" x2="410.5" y2="218.5" stroke="#d97706"/>
+<line x1="430.8" y1="210.5" x2="430.8" y2="218.5" stroke="#d97706"/>
+<circle cx="420.4" cy="214.5" r="4" fill="#d97706" stroke="#ffffff" stroke-width="1.5"/>
+<text x="428.4" y="218.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">25.6%</text>
+<text x="42" y="243.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">Pythia-14M</text>
+<line x1="452.3" y1="239.5" x2="474.3" y2="239.5" stroke="#7c3aed" stroke-width="2"/>
+<line x1="452.3" y1="235.5" x2="452.3" y2="243.5" stroke="#7c3aed"/>
+<line x1="474.3" y1="235.5" x2="474.3" y2="243.5" stroke="#7c3aed"/>
+<circle cx="463.1" cy="239.5" r="4" fill="#7c3aed" stroke="#ffffff" stroke-width="1.5"/>
+<text x="471.1" y="243.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">33.0%</text>
+<text x="42" y="268.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">Pythia-31M</text>
+<text x="280" y="268.5" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8">not scored</text>
+<text x="42" y="293.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">SmolLM2-135M</text>
+<line x1="633.7" y1="289.5" x2="656.0" y2="289.5" stroke="#db2777" stroke-width="2"/>
+<line x1="633.7" y1="285.5" x2="633.7" y2="293.5" stroke="#db2777"/>
+<line x1="656.0" y1="285.5" x2="656.0" y2="293.5" stroke="#db2777"/>
+<circle cx="645.0" cy="289.5" r="4" fill="#db2777" stroke="#ffffff" stroke-width="1.5"/>
+<text x="637.0" y="293.0" text-anchor="end" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">64.3%</text>
+<text x="475.0" y="348" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">Raw accuracy (dashed line = four-choice or binary chance)</text>
+<rect x="750" y="82" width="704" height="296" rx="12" fill="#ffffff" stroke="#dbe3ef"/>
+<text x="768" y="109" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#172033">ARC-Challenge</text>
+<text x="1438" y="108" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#526078">n = 1,172 · chance 25%</text>
+<line x1="996.0" y1="147" x2="996.0" y2="310" stroke="#e5eaf2"/>
+<text x="996.0" y="329" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">0%</text>
+<line x1="1141.0" y1="147" x2="1141.0" y2="310" stroke="#e5eaf2"/>
+<text x="1141.0" y="329" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">25%</text>
+<line x1="1286.0" y1="147" x2="1286.0" y2="310" stroke="#e5eaf2"/>
+<text x="1286.0" y="329" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">50%</text>
+<line x1="1402.0" y1="147" x2="1402.0" y2="310" stroke="#e5eaf2"/>
+<text x="1402.0" y="329" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">70%</text>
+<line x1="1141.0" y1="147" x2="1141.0" y2="310" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="766" y="168.5" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#155eef">SLM-Tavenel 1M (selected)</text>
+<line x1="1097.2" y1="164.5" x2="1123.6" y2="164.5" stroke="#155eef" stroke-width="2"/>
+<line x1="1097.2" y1="160.5" x2="1097.2" y2="168.5" stroke="#155eef"/>
+<line x1="1123.6" y1="160.5" x2="1123.6" y2="168.5" stroke="#155eef"/>
+<circle cx="1109.8" cy="164.5" r="5" fill="#155eef" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1117.8" y="168.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#172033">19.6%</text>
+<text x="766" y="193.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">SLM-Tavenel 10M (exploratory)</text>
+<line x1="1090.6" y1="189.5" x2="1116.4" y2="189.5" stroke="#16a34a" stroke-width="2"/>
+<line x1="1090.6" y1="185.5" x2="1090.6" y2="193.5" stroke="#16a34a"/>
+<line x1="1116.4" y1="185.5" x2="1116.4" y2="193.5" stroke="#16a34a"/>
+<circle cx="1102.9" cy="189.5" r="4" fill="#16a34a" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1110.9" y="193.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">18.4%</text>
+<text x="766" y="218.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">TinyStories tiny1m (0.935M)</text>
+<line x1="1093.0" y1="214.5" x2="1118.9" y2="214.5" stroke="#d97706" stroke-width="2"/>
+<line x1="1093.0" y1="210.5" x2="1093.0" y2="218.5" stroke="#d97706"/>
+<line x1="1118.9" y1="210.5" x2="1118.9" y2="218.5" stroke="#d97706"/>
+<circle cx="1105.4" cy="214.5" r="4" fill="#d97706" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1113.4" y="218.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">18.9%</text>
+<text x="766" y="243.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">Pythia-14M</text>
+<line x1="1078.0" y1="239.5" x2="1102.4" y2="239.5" stroke="#7c3aed" stroke-width="2"/>
+<line x1="1078.0" y1="235.5" x2="1078.0" y2="243.5" stroke="#7c3aed"/>
+<line x1="1102.4" y1="235.5" x2="1102.4" y2="243.5" stroke="#7c3aed"/>
+<circle cx="1089.5" cy="239.5" r="4" fill="#7c3aed" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1097.5" y="243.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">16.1%</text>
+<text x="766" y="268.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">Pythia-31M</text>
+<line x1="1081.2" y1="264.5" x2="1106.0" y2="264.5" stroke="#9333ea" stroke-width="2"/>
+<line x1="1081.2" y1="260.5" x2="1081.2" y2="268.5" stroke="#9333ea"/>
+<line x1="1106.0" y1="260.5" x2="1106.0" y2="268.5" stroke="#9333ea"/>
+<circle cx="1093.0" cy="264.5" r="4" fill="#9333ea" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1101.0" y="268.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">16.7%</text>
+<text x="766" y="293.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">SmolLM2-135M</text>
+<line x1="1142.9" y1="289.5" x2="1172.6" y2="289.5" stroke="#db2777" stroke-width="2"/>
+<line x1="1142.9" y1="285.5" x2="1142.9" y2="293.5" stroke="#db2777"/>
+<line x1="1172.6" y1="285.5" x2="1172.6" y2="293.5" stroke="#db2777"/>
+<circle cx="1157.3" cy="289.5" r="4" fill="#db2777" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1165.3" y="293.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">27.8%</text>
+<text x="1199.0" y="348" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">Raw accuracy (dashed line = four-choice or binary chance)</text>
+<rect x="26" y="396" width="704" height="296" rx="12" fill="#ffffff" stroke="#dbe3ef"/>
+<text x="44" y="423" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#172033">HellaSwag</text>
+<text x="714" y="422" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#526078">n = 10,042 · chance 25%</text>
+<line x1="272.0" y1="461" x2="272.0" y2="624" stroke="#e5eaf2"/>
+<text x="272.0" y="643" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">0%</text>
+<line x1="417.0" y1="461" x2="417.0" y2="624" stroke="#e5eaf2"/>
+<text x="417.0" y="643" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">25%</text>
+<line x1="562.0" y1="461" x2="562.0" y2="624" stroke="#e5eaf2"/>
+<text x="562.0" y="643" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">50%</text>
+<line x1="678.0" y1="461" x2="678.0" y2="624" stroke="#e5eaf2"/>
+<text x="678.0" y="643" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">70%</text>
+<line x1="417.0" y1="461" x2="417.0" y2="624" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="42" y="482.5" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#155eef">SLM-Tavenel 1M (selected)</text>
+<line x1="417.1" y1="478.5" x2="427.1" y2="478.5" stroke="#155eef" stroke-width="2"/>
+<line x1="417.1" y1="474.5" x2="417.1" y2="482.5" stroke="#155eef"/>
+<line x1="427.1" y1="474.5" x2="427.1" y2="482.5" stroke="#155eef"/>
+<circle cx="422.1" cy="478.5" r="5" fill="#155eef" stroke="#ffffff" stroke-width="1.5"/>
+<text x="430.1" y="482.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#172033">25.9%</text>
+<text x="42" y="507.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">SLM-Tavenel 10M (exploratory)</text>
+<line x1="426.6" y1="503.5" x2="436.7" y2="503.5" stroke="#16a34a" stroke-width="2"/>
+<line x1="426.6" y1="499.5" x2="426.6" y2="507.5" stroke="#16a34a"/>
+<line x1="436.7" y1="499.5" x2="436.7" y2="507.5" stroke="#16a34a"/>
+<circle cx="431.6" cy="503.5" r="4" fill="#16a34a" stroke="#ffffff" stroke-width="1.5"/>
+<text x="439.6" y="507.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">27.5%</text>
+<text x="42" y="532.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">TinyStories tiny1m (0.935M)</text>
+<line x1="418.1" y1="528.5" x2="428.0" y2="528.5" stroke="#d97706" stroke-width="2"/>
+<line x1="418.1" y1="524.5" x2="418.1" y2="532.5" stroke="#d97706"/>
+<line x1="428.0" y1="524.5" x2="428.0" y2="532.5" stroke="#d97706"/>
+<circle cx="423.0" cy="528.5" r="4" fill="#d97706" stroke="#ffffff" stroke-width="1.5"/>
+<text x="431.0" y="532.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">26.0%</text>
+<text x="42" y="557.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">Pythia-14M</text>
+<line x1="419.1" y1="553.5" x2="429.1" y2="553.5" stroke="#7c3aed" stroke-width="2"/>
+<line x1="419.1" y1="549.5" x2="419.1" y2="557.5" stroke="#7c3aed"/>
+<line x1="429.1" y1="549.5" x2="429.1" y2="557.5" stroke="#7c3aed"/>
+<circle cx="424.0" cy="553.5" r="4" fill="#7c3aed" stroke="#ffffff" stroke-width="1.5"/>
+<text x="432.0" y="557.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">26.2%</text>
+<text x="42" y="582.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">Pythia-31M</text>
+<text x="280" y="582.5" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8">not scored</text>
+<text x="42" y="607.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">SmolLM2-135M</text>
+<line x1="473.3" y1="603.5" x2="484.2" y2="603.5" stroke="#db2777" stroke-width="2"/>
+<line x1="473.3" y1="599.5" x2="473.3" y2="607.5" stroke="#db2777"/>
+<line x1="484.2" y1="599.5" x2="484.2" y2="607.5" stroke="#db2777"/>
+<circle cx="478.7" cy="603.5" r="4" fill="#db2777" stroke="#ffffff" stroke-width="1.5"/>
+<text x="486.7" y="607.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">35.6%</text>
+<text x="475.0" y="662" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">Raw accuracy (dashed line = four-choice or binary chance)</text>
+<rect x="750" y="396" width="704" height="296" rx="12" fill="#ffffff" stroke="#dbe3ef"/>
+<text x="768" y="423" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#172033">Belebele English</text>
+<text x="1438" y="422" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#526078">n = 900 · chance 25%</text>
+<line x1="996.0" y1="461" x2="996.0" y2="624" stroke="#e5eaf2"/>
+<text x="996.0" y="643" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">0%</text>
+<line x1="1141.0" y1="461" x2="1141.0" y2="624" stroke="#e5eaf2"/>
+<text x="1141.0" y="643" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">25%</text>
+<line x1="1286.0" y1="461" x2="1286.0" y2="624" stroke="#e5eaf2"/>
+<text x="1286.0" y="643" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">50%</text>
+<line x1="1402.0" y1="461" x2="1402.0" y2="624" stroke="#e5eaf2"/>
+<text x="1402.0" y="643" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">70%</text>
+<line x1="1141.0" y1="461" x2="1141.0" y2="624" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="766" y="482.5" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#155eef">SLM-Tavenel 1M (selected)</text>
+<line x1="1133.3" y1="478.5" x2="1166.6" y2="478.5" stroke="#155eef" stroke-width="2"/>
+<line x1="1133.3" y1="474.5" x2="1133.3" y2="482.5" stroke="#155eef"/>
+<line x1="1166.6" y1="474.5" x2="1166.6" y2="482.5" stroke="#155eef"/>
+<circle cx="1149.4" cy="478.5" r="5" fill="#155eef" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1157.4" y="482.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#172033">26.4%</text>
+<text x="766" y="507.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">SLM-Tavenel 10M (exploratory)</text>
+<line x1="1150.7" y1="503.5" x2="1185.2" y2="503.5" stroke="#16a34a" stroke-width="2"/>
+<line x1="1150.7" y1="499.5" x2="1150.7" y2="507.5" stroke="#16a34a"/>
+<line x1="1185.2" y1="499.5" x2="1185.2" y2="507.5" stroke="#16a34a"/>
+<circle cx="1167.4" cy="503.5" r="4" fill="#16a34a" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1175.4" y="507.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">29.6%</text>
+<text x="766" y="532.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">TinyStories tiny1m (0.935M)</text>
+<line x1="1138.9" y1="528.5" x2="1172.6" y2="528.5" stroke="#d97706" stroke-width="2"/>
+<line x1="1138.9" y1="524.5" x2="1138.9" y2="532.5" stroke="#d97706"/>
+<line x1="1172.6" y1="524.5" x2="1172.6" y2="532.5" stroke="#d97706"/>
+<circle cx="1155.2" cy="528.5" r="4" fill="#d97706" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1163.2" y="532.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">27.4%</text>
+<text x="766" y="557.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">Pythia-14M</text>
+<line x1="1128.3" y1="553.5" x2="1161.3" y2="553.5" stroke="#7c3aed" stroke-width="2"/>
+<line x1="1128.3" y1="549.5" x2="1128.3" y2="557.5" stroke="#7c3aed"/>
+<line x1="1161.3" y1="549.5" x2="1161.3" y2="557.5" stroke="#7c3aed"/>
+<circle cx="1144.2" cy="553.5" r="4" fill="#7c3aed" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1152.2" y="557.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">25.6%</text>
+<text x="766" y="582.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">Pythia-31M</text>
+<text x="1004" y="582.5" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8">not scored</text>
+<text x="766" y="607.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">SmolLM2-135M</text>
+<line x1="1185.7" y1="603.5" x2="1222.0" y2="603.5" stroke="#db2777" stroke-width="2"/>
+<line x1="1185.7" y1="599.5" x2="1185.7" y2="607.5" stroke="#db2777"/>
+<line x1="1222.0" y1="599.5" x2="1222.0" y2="607.5" stroke="#db2777"/>
+<circle cx="1203.5" cy="603.5" r="4" fill="#db2777" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1211.5" y="607.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">35.8%</text>
+<text x="1199.0" y="662" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">Raw accuracy (dashed line = four-choice or binary chance)</text>
+<rect x="26" y="710" width="704" height="296" rx="12" fill="#ffffff" stroke="#dbe3ef"/>
+<text x="44" y="737" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#172033">Belebele French</text>
+<text x="714" y="736" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#526078">n = 900 · chance 25%</text>
+<line x1="272.0" y1="775" x2="272.0" y2="938" stroke="#e5eaf2"/>
+<text x="272.0" y="957" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">0%</text>
+<line x1="417.0" y1="775" x2="417.0" y2="938" stroke="#e5eaf2"/>
+<text x="417.0" y="957" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">25%</text>
+<line x1="562.0" y1="775" x2="562.0" y2="938" stroke="#e5eaf2"/>
+<text x="562.0" y="957" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">50%</text>
+<line x1="678.0" y1="775" x2="678.0" y2="938" stroke="#e5eaf2"/>
+<text x="678.0" y="957" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">70%</text>
+<line x1="417.0" y1="775" x2="417.0" y2="938" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="42" y="796.5" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#155eef">SLM-Tavenel 1M (selected)</text>
+<line x1="409.9" y1="792.5" x2="443.3" y2="792.5" stroke="#155eef" stroke-width="2"/>
+<line x1="409.9" y1="788.5" x2="409.9" y2="796.5" stroke="#155eef"/>
+<line x1="443.3" y1="788.5" x2="443.3" y2="796.5" stroke="#155eef"/>
+<circle cx="426.0" cy="792.5" r="5" fill="#155eef" stroke="#ffffff" stroke-width="1.5"/>
+<text x="434.0" y="796.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#172033">26.6%</text>
+<text x="42" y="821.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">SLM-Tavenel 10M (exploratory)</text>
+<line x1="439.8" y1="817.5" x2="475.0" y2="817.5" stroke="#16a34a" stroke-width="2"/>
+<line x1="439.8" y1="813.5" x2="439.8" y2="821.5" stroke="#16a34a"/>
+<line x1="475.0" y1="813.5" x2="475.0" y2="821.5" stroke="#16a34a"/>
+<circle cx="457.0" cy="817.5" r="4" fill="#16a34a" stroke="#ffffff" stroke-width="1.5"/>
+<text x="465.0" y="821.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">31.9%</text>
+<text x="42" y="846.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">TinyStories tiny1m (0.935M)</text>
+<line x1="423.6" y1="842.5" x2="457.9" y2="842.5" stroke="#d97706" stroke-width="2"/>
+<line x1="423.6" y1="838.5" x2="423.6" y2="846.5" stroke="#d97706"/>
+<line x1="457.9" y1="838.5" x2="457.9" y2="846.5" stroke="#d97706"/>
+<circle cx="440.2" cy="842.5" r="4" fill="#d97706" stroke="#ffffff" stroke-width="1.5"/>
+<text x="448.2" y="846.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">29.0%</text>
+<text x="42" y="871.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">Pythia-14M</text>
+<line x1="434.1" y1="867.5" x2="469.1" y2="867.5" stroke="#7c3aed" stroke-width="2"/>
+<line x1="434.1" y1="863.5" x2="434.1" y2="871.5" stroke="#7c3aed"/>
+<line x1="469.1" y1="863.5" x2="469.1" y2="871.5" stroke="#7c3aed"/>
+<circle cx="451.2" cy="867.5" r="4" fill="#7c3aed" stroke="#ffffff" stroke-width="1.5"/>
+<text x="459.2" y="871.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">30.9%</text>
+<text x="42" y="896.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">Pythia-31M</text>
+<text x="280" y="896.5" font-family="Arial,sans-serif" font-size="10" fill="#94a3b8">not scored</text>
+<text x="42" y="921.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">SmolLM2-135M</text>
+<line x1="437.3" y1="917.5" x2="472.4" y2="917.5" stroke="#db2777" stroke-width="2"/>
+<line x1="437.3" y1="913.5" x2="437.3" y2="921.5" stroke="#db2777"/>
+<line x1="472.4" y1="913.5" x2="472.4" y2="921.5" stroke="#db2777"/>
+<circle cx="454.4" cy="917.5" r="4" fill="#db2777" stroke="#ffffff" stroke-width="1.5"/>
+<text x="462.4" y="921.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">31.4%</text>
+<text x="475.0" y="976" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">Raw accuracy (dashed line = four-choice or binary chance)</text>
+<rect x="750" y="710" width="704" height="296" rx="12" fill="#ffffff" stroke="#dbe3ef"/>
+<text x="768" y="737" font-family="Arial,sans-serif" font-size="17" font-weight="700" fill="#172033">WinoGrande XL validation</text>
+<text x="1438" y="736" text-anchor="end" font-family="Arial,sans-serif" font-size="11" fill="#526078">n = 1,267 · chance 50%</text>
+<line x1="996.0" y1="775" x2="996.0" y2="938" stroke="#e5eaf2"/>
+<text x="996.0" y="957" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">0%</text>
+<line x1="1141.0" y1="775" x2="1141.0" y2="938" stroke="#e5eaf2"/>
+<text x="1141.0" y="957" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">25%</text>
+<line x1="1286.0" y1="775" x2="1286.0" y2="938" stroke="#e5eaf2"/>
+<text x="1286.0" y="957" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">50%</text>
+<line x1="1402.0" y1="775" x2="1402.0" y2="938" stroke="#e5eaf2"/>
+<text x="1402.0" y="957" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">70%</text>
+<line x1="1286.0" y1="775" x2="1286.0" y2="938" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="766" y="796.5" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#155eef">SLM-Tavenel 1M (selected)</text>
+<line x1="1265.7" y1="792.5" x2="1297.6" y2="792.5" stroke="#155eef" stroke-width="2"/>
+<line x1="1265.7" y1="788.5" x2="1265.7" y2="796.5" stroke="#155eef"/>
+<line x1="1297.6" y1="788.5" x2="1297.6" y2="796.5" stroke="#155eef"/>
+<circle cx="1281.7" cy="792.5" r="5" fill="#155eef" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1289.7" y="796.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="700" fill="#172033">49.3%</text>
+<text x="766" y="821.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">SLM-Tavenel 10M (exploratory)</text>
+<line x1="1276.7" y1="817.5" x2="1308.6" y2="817.5" stroke="#16a34a" stroke-width="2"/>
+<line x1="1276.7" y1="813.5" x2="1276.7" y2="821.5" stroke="#16a34a"/>
+<line x1="1308.6" y1="813.5" x2="1308.6" y2="821.5" stroke="#16a34a"/>
+<circle cx="1292.6" cy="817.5" r="4" fill="#16a34a" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1300.6" y="821.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">51.1%</text>
+<text x="766" y="846.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">TinyStories tiny1m (0.935M)</text>
+<line x1="1280.3" y1="842.5" x2="1312.2" y2="842.5" stroke="#d97706" stroke-width="2"/>
+<line x1="1280.3" y1="838.5" x2="1280.3" y2="846.5" stroke="#d97706"/>
+<line x1="1312.2" y1="838.5" x2="1312.2" y2="846.5" stroke="#d97706"/>
+<circle cx="1296.3" cy="842.5" r="4" fill="#d97706" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1304.3" y="846.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">51.8%</text>
+<text x="766" y="871.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">Pythia-14M</text>
+<line x1="1281.7" y1="867.5" x2="1313.6" y2="867.5" stroke="#7c3aed" stroke-width="2"/>
+<line x1="1281.7" y1="863.5" x2="1281.7" y2="871.5" stroke="#7c3aed"/>
+<line x1="1313.6" y1="863.5" x2="1313.6" y2="871.5" stroke="#7c3aed"/>
+<circle cx="1297.7" cy="867.5" r="4" fill="#7c3aed" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1305.7" y="871.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">52.0%</text>
+<text x="766" y="896.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">Pythia-31M</text>
+<line x1="1273.0" y1="892.5" x2="1304.9" y2="892.5" stroke="#9333ea" stroke-width="2"/>
+<line x1="1273.0" y1="888.5" x2="1273.0" y2="896.5" stroke="#9333ea"/>
+<line x1="1304.9" y1="888.5" x2="1304.9" y2="896.5" stroke="#9333ea"/>
+<circle cx="1289.0" cy="892.5" r="4" fill="#9333ea" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1297.0" y="896.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">50.5%</text>
+<text x="766" y="921.5" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#334155">SmolLM2-135M</text>
+<line x1="1287.2" y1="917.5" x2="1319.0" y2="917.5" stroke="#db2777" stroke-width="2"/>
+<line x1="1287.2" y1="913.5" x2="1287.2" y2="921.5" stroke="#db2777"/>
+<line x1="1319.0" y1="913.5" x2="1319.0" y2="921.5" stroke="#db2777"/>
+<circle cx="1303.2" cy="917.5" r="4" fill="#db2777" stroke="#ffffff" stroke-width="1.5"/>
+<text x="1311.2" y="921.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#172033">53.0%</text>
+<text x="1199.0" y="976" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#64748b">Raw accuracy (dashed line = four-choice or binary chance)</text>
+<text x="740" y="1054" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#526078">Intervals are conditional on benchmark items; they do not measure training-seed variability. Cross-model gaps do not control data, tokenizers or compute.</text>
+</svg>

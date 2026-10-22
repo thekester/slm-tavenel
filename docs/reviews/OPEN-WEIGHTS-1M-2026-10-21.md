@@ -153,21 +153,6 @@ cognitive sciences and quantitative economics), missing title/discipline metadat
 human-subject title terms. This is risk reduction, not privacy certification; text-level manual
 review remains pending.
 
-### Maintainer release attestations
-
-These fields must be completed by the project maintainer; the preparation work does not constitute
-their signature.
-
-| Gate | Current state | Required record |
-|---|---|---|
-| Source/license review | **Pending; unsigned** | Reviewer identity, date, decision on the CC0/HAL evidence and any exceptions |
-| Privacy review | **Pending; unsigned** | Reviewer identity, date, sampling/inspection scope, findings, exclusions and residual-risk decision |
-| Public release decision | **Pending** | Hugging Face namespace/repository and release version tied to the reviewed hashes |
-
-Do not change the `*_signed` flags in the candidate provenance unless a maintainer records these
-decisions. If a review requests any corpus changes, regenerate the v3 data/tokenizer/model artifacts
-and their hashes before release.
-
 The v2 pipeline began with the same 3,450 record-level CC0/HAL-matched rows. It removed 1,848 on
 discipline metadata and 7 on title signals; subsequent quality and length filters removed 52 more,
 leaving 1,543 documents (910 English, 633 French). Pattern matching redacted 2,447 email, 135 phone
@@ -212,3 +197,40 @@ TinyStories tiny1m, the paired unadjusted ARC-Easy delta was +0.037 (95% item-bo
 comparisons across four shared tasks were post-hoc and unadjusted for multiplicity. These results
 remain descriptive, not evidence of superiority or a causal gate effect. The source tree was dirty
 and this is one seed; the sealed text test remains untouched.
+
+## V3 post-training integrity audit
+
+A local scan of the exact v3 processed training corpus found release-blocking issues after the pilot had already trained: 530 retained documents contain Unicode replacement characters (`U+FFFD`, 3,900 occurrences total); five documents contain 12 residual email-shaped strings after the configured redaction step; and one retained French title explicitly concerns tumor biomarkers and immunotherapy. A broad scan also found human-subject vocabulary in 145 records; this is a screening signal, not proof that each record contains sensitive personal data. The document IDs and match counts remain in local ignored audit files; article text and contact strings are not included in this review.
+
+These findings mean the v3 tokenizer and checkpoint cannot be treated as cleared for public release. Filtering those records after training would not remove their contribution from the weights. The next candidate must be rebuilt from the corrected, completely paginated HAL license audit, exclude malformed or risk-flagged documents before tokenizer training, rerun PII redaction, and verify that no residual identifiers remain. A full source-rights review and a human privacy review remain distinct maintainer decisions; automated scans do not sign either review.
+
+## V4 privacy-screened research pilot
+
+The complete paginated HAL audit returned 3,450 CC0-matched IDs (1,767 English and 1,683 French); no missing IDs or version-license conflicts appeared in this API snapshot. This remains a metadata check rather than proof of submitter authority. The frozen v4 candidate pipeline then processed those rows and retained 1,229 documents (748 EN, 481 FR). It excluded 1,848 on discipline metadata, 23 on title signals, 312 on text risk/integrity signals (including human-subject, medical/biometric, malformed-text and residual-email patterns), and 38 for length/quality. PII rules redacted 2,579 email, 158 phone and 3 IP-pattern occurrences. The final retained corpus had zero matches for replacement characters, email-shaped strings, configured risk terms, or the configured residual PII redactor. Full counts and decision logs are in the local ignored data; the public candidate bundle includes only non-text review metadata and hashes.
+
+A deterministic sample selected 10 document IDs per language by a fixed salted SHA-256 order. Short excerpts were inspected; public scholarly bylines appeared, and no individual case narrative or non-public contact detail was observed in those excerpts. This is a limited sample, not a corpus-wide human privacy certification. Initial sample findings led to the added facial-recognition/biometric and vocal-fold/laryngeal filters before the v4 corpus was frozen. The sample IDs and text hashes, but no source text, are in `data/corpus-audits/v4-privacy-screen-report.json` (local) and the candidate's `training_record/privacy-screen-report.json`.
+
+The document-disjoint split contains 15,976,924 train tokens, 931,435 dev tokens and 2,032,436 sealed-test tokens. The tokenizer was fit on train documents only. The v4 pilot used seed `421021`, 488 steps and 15,990,784 token presentations, approximately one pass over unique train tokens; final train/dev losses were 3.5985/3.6584. The sealed test remains unscored. The working tree was dirty and there is one seed, so this is an exploratory release candidate, not confirmatory evidence for the gate.
+
+Same-harness results were ARC-Easy 0.282, ARC-Challenge 0.208, HellaSwag 0.260, Belebele EN 0.272, Belebele FR 0.278 and WinoGrande 0.488. Against the 1.18M v3 candidate, all four shared-task paired 95% intervals include zero. Against TinyStories tiny1m, the unadjusted ARC-Easy delta was +0.027 (95% item-bootstrap interval [+0.004, +0.049]); intervals for the other three shared tasks include zero. These post-hoc intervals are not corrected for multiple comparisons, and neither comparison controls training data or budget. The scores are descriptive and close to chance; no general capability or superiority claim is supported.
+
+The local HF-ready bundle is `exports/slm-tavenel-1m-cc0-v4-candidate-ready/`; parity passed on CPU float32, CUDA float32 and CUDA bfloat16, with exact logits on the fixed probe and eight greedy tokens generated. Bundle parity does not sign source/privacy review. The provenance flags `source_review_signed`, `manual_privacy_review_signed` and `public_release_approved` remain false pending maintainer attestation tied to the final hashes.
+
+### Maintainer release attestations
+
+These fields must be completed by the project maintainer; the preparation work does not constitute
+their signature.
+
+| Gate | Current state | Required record |
+|---|---|---|
+| Source/license review | **Pending; unsigned** | Reviewer identity, date, decision on the CC0/HAL evidence and any exceptions |
+| Privacy review | **Pending; unsigned** | Reviewer identity, date, sampling/inspection scope, findings, exclusions and residual-risk decision |
+| Public release decision | **Pending** | Hugging Face namespace/repository and release version tied to the reviewed hashes |
+
+Do not change the `*_signed` flags in the candidate provenance unless a maintainer records these
+decisions. If a review requests any corpus changes, regenerate the v3 data/tokenizer/model artifacts
+and their hashes before release.
+
+## Corrected complete HAL pagination audit
+
+The corrected audit queried every page for all 3,450 previously selected HAL IDs and recorded `numFound` pagination counts. All returned versions for all 3,450 IDs report CC0: 1,767 English and 1,683 French. No IDs were missing and no license conflicts were observed in this API snapshot. This improves completeness of the metadata comparison; it does not independently prove that each submitter had authority to apply CC0. The filtered outputs are now separated by the record language, and the audit code and report hashes are retained locally.

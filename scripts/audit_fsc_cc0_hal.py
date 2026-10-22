@@ -13,6 +13,7 @@ import hashlib
 import io
 import json
 import time
+from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlencode
@@ -31,29 +32,43 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def read_input_rows(path: Path):
+    opener = gzip.open if path.suffix == ".gz" else open
+    with opener(path, "rt", encoding="utf-8") as stream:
+        for line in stream:
+            if line.strip():
+                yield json.loads(line)
+
+
+def document_language(row: dict, path: Path) -> str:
+    metadata = row.get("source_metadata") or {}
+    language = str(row.get("language") or metadata.get("language") or path.parent.name).casefold()
+    if language not in {"en", "fr"}:
+        raise ValueError(f"Unsupported document language: {language!r}")
+    return language
+
+
 def load_documents(paths: list[Path]) -> list[dict]:
     documents: list[dict] = []
     seen: set[str] = set()
     for path in paths:
-        with gzip.open(path, "rt", encoding="utf-8") as stream:
-            for line_number, line in enumerate(stream, 1):
-                row = json.loads(line)
-                identifier = str(row.get("id", ""))
-                metadata = row.get("source_metadata") or {}
-                if not identifier or identifier in seen:
-                    raise ValueError(f"Missing or duplicate document ID in {path}:{line_number}: {identifier!r}")
-                if str(metadata.get("license", "")).strip().casefold() not in {"cc0", "cc0-1.0"}:
-                    raise ValueError(f"Non-CC0 row in CC0 input {path}:{line_number}: {identifier}")
-                if not str(metadata.get("source", "")).strip().casefold() in {"hal", "halshs", "tel", "dumas", "hprints", "pasteur", "inserm", "cea", "cel", "lirmm", "inria", "irsn", "obspm", "insu", "mnhn", "ird", "anses", "cirad"}:
-                    raise ValueError(f"Unrecognized repository label for {identifier}: {metadata.get('source')!r}")
-                seen.add(identifier)
-                documents.append({
-                    "id": identifier,
-                    "language": row.get("language") or path.parent.name,
-                    "source_label": metadata.get("source"),
-                    "dataset_license": metadata.get("license"),
-                    "text_sha256": hashlib.sha256(str(row.get("text", "")).encode("utf-8")).hexdigest(),
-                })
+        for line_number, row in enumerate(read_input_rows(path), 1):
+            identifier = str(row.get("id", ""))
+            metadata = row.get("source_metadata") or {}
+            if not identifier or identifier in seen:
+                raise ValueError(f"Missing or duplicate document ID in {path}:{line_number}: {identifier!r}")
+            if str(metadata.get("license", "")).strip().casefold() not in {"cc0", "cc0-1.0"}:
+                raise ValueError(f"Non-CC0 row in CC0 input {path}:{line_number}: {identifier}")
+            if not str(metadata.get("source", "")).strip().casefold() in {"hal", "halshs", "tel", "dumas", "hprints", "pasteur", "inserm", "cea", "cel", "lirmm", "inria", "irsn", "obspm", "insu", "mnhn", "ird", "anses", "cirad"}:
+                raise ValueError(f"Unrecognized repository label for {identifier}: {metadata.get('source')!r}")
+            seen.add(identifier)
+            documents.append({
+                "id": identifier,
+                "language": document_language(row, path),
+                "source_label": metadata.get("source"),
+                "dataset_license": metadata.get("license"),
+                "text_sha256": hashlib.sha256(str(row.get("text", "")).encode("utf-8")).hexdigest(),
+            })
     return documents
 
 
@@ -139,21 +154,25 @@ def main() -> int:
     accepted_ids = {row["id"] for row in audited if row["outcome"] == "cc0_all_versions"}
     filtered_files: list[dict] = []
     if args.filtered_output_dir:
+        if args.filtered_output_dir.exists() and any(args.filtered_output_dir.iterdir()):
+            raise FileExistsError("Filtered corpus output must be empty to avoid mixing audit results")
         args.filtered_output_dir.mkdir(parents=True, exist_ok=True)
+        rows_by_language: dict[str, list[dict]] = defaultdict(list)
         for source_path in args.inputs:
-            language = source_path.parent.name
+            for row in read_input_rows(source_path):
+                if row["id"] in accepted_ids:
+                    metadata = row.get("source_metadata") or {}
+                    language = document_language(row, source_path)
+                    rows_by_language[language].append(row)
+        for language, rows in sorted(rows_by_language.items()):
             target_path = args.filtered_output_dir / f"{language}.jsonl.gz"
-            row_count = 0
-            with gzip.open(source_path, "rt", encoding="utf-8") as source, target_path.open("wb") as raw_target:
+            with target_path.open("wb") as raw_target:
                 with gzip.GzipFile(fileobj=raw_target, mode="wb", filename="", mtime=0) as compressed:
                     with io.TextIOWrapper(compressed, encoding="utf-8", newline="\n") as target:
-                        for line in source:
-                            row = json.loads(line)
-                            if row["id"] in accepted_ids:
-                                target.write(json.dumps(row, ensure_ascii=False, separators=(",", ":")) + "\n")
-                                row_count += 1
+                        for row in rows:
+                            target.write(json.dumps(row, ensure_ascii=False, separators=(",", ":")) + "\n")
             filtered_files.append({"path": str(target_path), "sha256": sha256_file(target_path),
-                                   "bytes": target_path.stat().st_size, "documents": row_count})
+                                   "bytes": target_path.stat().st_size, "documents": len(rows)})
     report = {
         "kind": "slm.fsc_cc0_hal_license_audit",
         "created_utc": datetime.now(timezone.utc).isoformat(),

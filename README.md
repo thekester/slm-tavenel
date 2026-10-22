@@ -1,168 +1,76 @@
-# SLM-1B Challenge
+# SLM-Tavenel
 
-An open research project exploring how much a language model with approximately one billion parameters can achieve through better data, efficient computation, reasoning, and tools.
-
-The central question is simple: how far can we push a compact model while keeping its development reproducible, its behavior observable, and its artifacts openly reusable?
-
-The project aims to develop a useful model for local deployment and to understand which techniques improve its capabilities under realistic resource constraints. Success means measurable progress in task completion, reliability, and efficiency, supported by experiments that others can inspect and reproduce.
+An open research project on small language models, reproducible training, observable behavior and
+careful evaluation under limited compute. The 1B goal is a longer-term direction; the current
+release work concerns a roughly 1M-parameter bilingual research model.
 
 ## Current status
 
-The project has moved beyond infrastructure-only work: it has exploratory training results at about
-10M parameters, reproducible run records, and evaluation scripts for held-out text and multiple-choice
-benchmarks. The Wikipedia sources used so far are still under review. These runs are research
-prototypes, not release-ready weights or evidence about the 1B target. See the [experiment reports](experiments/)
-and [roadmap](docs/ROADMAP.md) for scope and next steps. The current source review pins the wiki-v1
-input shards and records the publisher's dual CC BY-SA/GFDL declaration; privacy and model-weight
-license implications remain unresolved in [the review record](docs/reviews/WIKIPEDIA-WIKI-V1.md).
-The alternative-corpus review compares open-license candidates, including a filtered French science
-collection and Common Pile, and records the remaining rights checks in
-[docs/reviews/ALTERNATIVE-CORPORA.md](docs/reviews/ALTERNATIVE-CORPORA.md).
-An EN/FR French-Science-Commons candidate has been filtered, deduplicated, decontaminated against
-the pinned benchmark files, split by document, and balanced to within 0.08% of the same tokenizer
-budget in train and validation. It remains exploratory and is not independently rights-cleared.
-The 1M and 10M runs are complete, the grown-25M run is paused, and same-harness evaluations of the
-completed checkpoints and reference models are complete; see the [pilot review](docs/reviews/FSC-PILOT-2026-10-20.md)
-and [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md).
+The repository contains historical 1M/10M pilots and same-harness comparisons with TinyStories,
+Pythia and SmolLM2. They remain exploratory records because the models have different data,
+tokenization and training budgets. Older pilot cards and benchmark tables are retained for audit;
+they are not interchangeable release versions.
 
-The head-wise attention gate has a consistent bits-per-byte improvement and removes the observed
-attention sinks across two 10M seeds; its multiple-choice scores remain close to chance. The Muon
-seed-1 result is promising but provisional. Seed 2 has completed training and evaluation; its fixed-
-document bits-per-byte gain repeats while multiple-choice scores remain inconclusive. The earlier
-gated+Muon queue remains stopped. The wiki-v1 replication in
-[EXP-0008](experiments/EXP-0008-wiki-v1-clean-replication.md) is paused after AdamW seed 1234 reached
-step 2,000; the checkpoint is retained. A gated scaling series on the frozen FSC pilot corpus is
-documented under [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md): 1M and 10M are complete;
-25M-grown is paused at step 3,050 and will resume from its latest durable step 3,000 checkpoint.
-25M-from-scratch is deferred. Same-harness evaluations of the completed 1M and 10M checkpoints and
-the TinyStories-0.9M, Pythia-14M and SmolLM2-135M references are complete for the original four
-benchmarks while 25M is paused.
-These corpus-based results remain exploratory pending rights and privacy review.
+The current scientific study is [EXP-0010](experiments/EXP-0010-1m-paired-replication-2026-10-22.md):
+ten paired seeds compare the 1.18M-parameter gated model with a matched ungated model, using shared
+initialization and data order. The primary outcome is English/French bits per byte on document-held-
+out text, with a predeclared hierarchical interval and decision threshold. All twenty runs, the
+locked test analysis, selected-checkpoint benchmarks and exact data-pipeline replay are complete.
+The predeclared gate effect is +0.0275 BPB (95% hierarchical bootstrap interval +0.0168 to +0.0395),
+supporting the +0.01 practical threshold for this corpus, tokenizer and one-pass budget. This does
+not establish general model quality. See the [results report](experiments/EXP-0010-results-2026-10-22.md)
+and its [benchmark comparison](docs/exp0010-benchmark-comparison.svg), [paired-seed effect plot](docs/exp0010-paired-seed-effects.svg),
+[training curves](docs/exp0010-training-curves.svg) and [data split chart](docs/exp0010-data-splits.svg).
+The presentation structure takes inspiration from Hugging Face's [SmolLM report](https://huggingface.co/blog/smollm); these figures are original and generated from SLM-Tavenel's recorded results.
 
-The 1M FSC checkpoint is not confirmatory evidence or approved for public weight release: its
-training sources are blocked in the source audit, it has one seed, its run manifest marks the code
-tree dirty, and its validation/benchmark results have already been inspected. A prospective
-multi-seed protocol with explicit data, experiment, and evaluation gates is recorded in
-[EXP-0010](experiments/EXP-0010-confirmatory-validation-1m.md). Supplementary post-hoc scoring is
-tracked separately: it can add descriptive comparisons but cannot replace a new sealed test or
-multi-seed replication.
+The proposed model weights and code use MIT terms. The training-data record pins
+PleIAs/French-Science-Commons revision `bfa114c09d7c28dcd0a8a47fe445c64b4a3c6156`, documents the
+filtered records, split, source IDs, declared CC0 metadata, processing and hashes, and excludes
+article text from the model bundle. The dataset and HAL metadata trail is not independent proof of
+each depositor's authority. Source-rights review and manual privacy sign-off remain unsigned. The
+OSAID does not require a specific legal instrument for model parameters; this project uses MIT for
+the weights and code. We do not claim full conformance to the [OSI Open Source AI Definition 1.0](https://opensource.org/ai/open-source-ai-definition)
+because the authority behind the source records and the applicable data-information terms have not
+been independently established. This is stated in the candidate release documentation.
 
-An open-weight retraining route is being prepared. A record-level check compared 3,483
-English/French CC0-labeled science documents with every version returned by the HAL records API;
-3,450 matched CC0 and 33 ambiguous or non-CC0 records were excluded. That historical audit did
-not verify API pagination completeness; the corrected audit must be rerun before source sign-off.
-A further conservative
-discipline/title screen leaves 1,535 documents for the latest 1M pilot and excludes selected
-human-subject and medical categories. The dataset remains a small science-domain sample; source
-sign-off and manual privacy review are not signed, and automated filters cannot certify privacy.
-The versioned audit, filtering recipe and pilot runs are in
-[the open-weight review](docs/reviews/OPEN-WEIGHTS-1M-2026-10-21.md). The existing 1M and 10M
-checkpoints remain uncleared. The latest 1M candidate is packaged locally under MIT terms but is
-not uploaded; its scores are single-seed exploratory results, not confirmatory evidence.
+The data-preparation manifest records a dirty worktree at preprocessing time. Before packaging, the
+pipeline was replayed into a separate scratch directory; the retained-document and filtering
+decision hashes and processing statistics matched the recorded outputs exactly. The replay
+configuration and report are included in the candidate package. The subsequent paired
+model-training runs use a recorded clean code commit.
 
-The validation dossier also defines separate requirements for traceable run/evaluation artifacts,
-intervention-based interpretability, and open-weight usability. A draft research model card for the
-existing 1M checkpoint is available at [docs/model-cards/slm-tavenel-1m-draft.md](docs/model-cards/slm-tavenel-1m-draft.md);
-it records current evidence and blockers and does not authorize distribution. A Hub-oriented
-[research card](docs/model-cards/slm-tavenel-1m-hf-card.md) and local candidate packager
-(`python scripts/prepare_hf_candidate.py`) are also available. The generated bundle remains local:
-source rights/privacy review are required before upload. A one-probe native-to-Hub inference parity
-check is recorded by `python scripts/verify_hf_candidate.py`; it is a smoke check, not scientific validation.
-The latest filtered-retraining pilot has a separate [v3 research card](docs/model-cards/slm-tavenel-1m-cc0-v3-candidate.md)
-and local-only export; it is still blocked from public upload by the unsigned reviews described above.
+The local Hub candidate contains a runnable Transformers implementation, selected weights, training
+code and configurations, per-run metrics and observability logs, data-source manifest, benchmark
+records, licenses, provenance and SHA-256 file inventory. It has not been uploaded. The selected
+seed, scope, evaluation limits and unresolved source review are documented in the [EXP-0010 model card](docs/model-cards/slm-tavenel-1m-exp0010-candidate.md),
+[EXP-0010 data card](docs/model-cards/slm-tavenel-1m-exp0010-data-card.md),
+[protocol](experiments/EXP-0010-1m-paired-replication-2026-10-22.md), [experiment archive](experiments/)
+and [roadmap](docs/ROADMAP.md).
 
-An additional exploratory evaluation wave is complete: ARC-Challenge and WinoGrande XL,
-scored for SLM-Tavenel 1M/10M and the pinned TinyStories-0.9M, Pythia-14M, Pythia-31M and
-SmolLM2-135M references. Pythia-31M adds a general-domain checkpoint near the paused 25M scale.
-ARC-Challenge uses the test split; WinoGrande's public test labels are withheld, so its labeled XL
-validation split is explicitly exploratory. A post-hoc exact 13-gram overlap audit found zero matches
-against the FSC training split. These results cannot be treated as clean held-out evidence for
-the already-trained models, and external pretraining exposure is unknown. The separate
-[FSC-pilot-v2 pipeline](configs/data/pipeline-fsc-pilot-v2.yaml) includes both tasks for future
-training corpora; it does not change existing v1 checkpoints.
+Older wiki and FSC runs, including prior 1M pilots, 10M studies and the paused grown-25M run, remain
+in the repository as historical records. The 25M run is paused. Their scores are not used as evidence
+for the new paired experiment.
+## Current SLM benchmark comparison
 
-## Current FSC benchmark round
+The current comparison shows exactly one SLM-Tavenel 1M: the preselected EXP-0010 candidate,
+validated with ten paired training seeds for the gate ablation. Earlier single-seed 1M pilots remain
+in the experiment archive; they are not presented here as competing current versions. The exploratory
+SLM-Tavenel 10M checkpoint and public models provide context across model sizes.
 
-The current round uses the repository evaluator on the same four pinned benchmark files for completed
-SLM-Tavenel 1M/10M checkpoints and pinned TinyStories-0.9M, Pythia-14M and SmolLM2-135M checkpoints.
-The 25M-grown run is paused and excluded until it reaches its final checkpoint. Results and the chart
-below are generated from validated item-level outputs documented in [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md).
+![SLM-Tavenel 1M selected candidate and small-model benchmark references](docs/exp0010-benchmark-comparison.svg)
 
-| Model | Parameters | Current state | Comparison role |
-|---|---:|---|---|
-| SLM-Tavenel 1M | 1.2M | Checkpoint and original four-task evaluation complete | Internal small-scale point |
-| SLM-Tavenel 10M | 10M | Checkpoint and original four-task evaluation complete | Internal size scaling |
-| SLM-Tavenel 25M grown | 25M | Paused at step 3,050; excluded from this round | Resume and evaluate later |
-| TinyStories tiny1m | 0.896M | Original four-task evaluation complete | Near-1M parameter-count reference; English story training |
-| Pythia-14M | 14M | Original four-task evaluation complete | Closest established size reference to 10M |
-| SmolLM2-135M | 135M | Original four-task evaluation complete | Larger SLM reference |
-| [Pythia-31M](https://huggingface.co/EleutherAI/pythia-31m) | 31M | Supplementary evaluation complete | General-domain reference near paused 25M scale |
+The chart reports raw accuracy on six pinned tasks with 95% Wilson intervals over items. Those
+intervals do not measure training-seed variability. Pythia-31M has scores only for ARC-Challenge and
+WinoGrande XL validation. The other models were scored on the corresponding identical pinned inputs
+where results are available. Different training data, tokenizers, language mixes, budgets and possible
+benchmark exposure make these descriptive references, not controlled comparisons. See the [EXP-0010
+results report](experiments/EXP-0010-results-2026-10-22.md) for the score table, paired intervals,
+provenance and limitations. OpenBookQA and FrenchBench are omitted because their question-source terms
+are unresolved for redistribution.
 
-<!-- BEGIN FSC SCALING BENCHMARK RESULTS -->
-### Same-harness multiple-choice results
-
-Raw accuracy (`acc`) on the same pinned benchmark files; values are proportions. All scores are exploratory; training data, token budgets and model histories differ.
-
-| Model | Parameters | ARC-Easy | HellaSwag | Belebele EN | Belebele FR |
-|---|---:|---:|---:|---:|---:|
-| SLM-Tavenel 1M FSC pilot | 1.18M | 0.286 | 0.267 | 0.279 | 0.292 |
-| SLM-Tavenel 1M CC0 retrain pilot | 1.18M | 0.290 | 0.270 | 0.284 | 0.316 |
-| SLM-Tavenel 1M CC0 v2 privacy-filtered pilot | 1.18M | 0.281 | 0.264 | 0.254 | 0.267 |
-| SLM-Tavenel 1M CC0 v3 metadata-filtered pilot | 1.18M | 0.293 | 0.261 | 0.253 | 0.276 |
-| SLM-Tavenel 10M | 9.98M | 0.306 | 0.275 | 0.296 | 0.319 |
-| Pythia-14M (reference) | 14.1M | 0.330 | 0.262 | 0.256 | 0.309 |
-| SmolLM2-135M (reference) | 135M | 0.643 | 0.356 | 0.358 | 0.314 |
-| TinyStories tiny1m, 0.9M (reference) | 0.935M | 0.256 | 0.260 | 0.274 | 0.290 |
-
-![Same-harness benchmark comparison across SLM-Tavenel and SLM references](docs/open-weight-1m-benchmark-comparison.svg)
-
-Whiskers show one standard error across items for each checkpoint; they do not measure training-run variation. CC0 retraining pilots are single-seed runs; v2/v3 add conservative metadata exclusions but still await manual privacy review and source sign-off. Paired item-bootstrap intervals are conditional, post-hoc and unadjusted for multiple comparisons.
-
-<!-- END FSC SCALING BENCHMARK RESULTS -->
-
-Using one evaluator makes scoring more consistent; it does not make the reference models' training
-conditions equivalent. The references differ in data, tokenization, language mix, context limits,
-training tokens, compute and possible benchmark exposure. SLM-Tavenel's FSC pipeline records exact
-benchmark filtering, which reduces detectable overlap but cannot establish complete decontamination.
-The FSC source and derivative-weight rights review remains open. The internal 1M/10M comparison shares
-corpus, tokenizer, split and token budget, but currently has one seed at each scale. Paired item-level
-bootstrap intervals describe uncertainty conditional on those evaluated checkpoints and benchmark
-items; they do not measure variation across training runs. Treat differences as exploratory.
-
-### Supplementary benchmark results
-
-ARC-Challenge and WinoGrande add a harder science-question set and a binary coreference/commonsense
-task. OpenBookQA is excluded because its official Hugging Face card lists its license as unknown.
-FrenchBench is not included yet: its MIT wrapper does not resolve rights for the underlying questions
-collected from external sites. A French benchmark with item-level provenance and clear redistribution
-terms is still needed.
-
-<!-- BEGIN FSC ADDITIONAL BENCHMARK RESULTS -->
-### Supplementary benchmark results
-
-ARC-Challenge uses the pinned test split; WinoGrande uses the labeled XL validation split because the public test labels are withheld.
-Scores are same-harness, post-hoc and exploratory. The exact-overlap audit is stored locally at `runs/fsc-additional/contamination-audit.json`; exposure in external models' pretraining remains unknown.
-
-| Model | Parameters | ARC-Challenge | WinoGrande XL validation |
-|---|---:|---:|---:|
-| SLM-Tavenel 1M | 1.18M | 0.199 | 0.502 |
-| TinyStories 0.9M | 0.935M | 0.189 | 0.518 |
-| SLM-Tavenel 10M | 9.98M | 0.184 | 0.511 |
-| Pythia 14M | 14.1M | 0.161 | 0.520 |
-| Pythia 31M | 30.5M | 0.167 | 0.505 |
-| SmolLM2 135M | 135M | 0.278 | 0.530 |
-
-![Additional SLM benchmark comparison](docs/fsc-additional-benchmark-comparison.svg)
-
-Error bars show ±1 standard error across evaluation items, conditional on each checkpoint. They do not measure training-seed variation.
-Paired item-bootstrap reports for the predeclared comparisons are stored under `runs/fsc-additional/comparisons/` and are not committed.
-<!-- END FSC ADDITIONAL BENCHMARK RESULTS -->
-
-The additional tasks use the same local log-likelihood scorer, but they do not extend the original
-four-task decontamination for already-trained checkpoints. The FSC training split receives a
-post-hoc exact word 13-gram audit before scores are reported; no exact match does not rule out
-paraphrases or indirect exposure. The future v2 pipeline filters these evaluation files during
-preprocessing. External models' training corpora and benchmark exposure are not controlled.
+The paused 25M-grown run is excluded. Earlier 1M benchmark results and raw item records remain archived
+under [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md) and the corresponding run records;
+their different dataset versions and training conditions are not mixed into this current comparison.
 
 ## Legacy wiki-v0 benchmark snapshot
 
@@ -198,9 +106,9 @@ and [EXP-0004](experiments/EXP-0004-gated-attention-seed2.md).
 
 | Existing SLM reference | Parameters | ARC-Easy | HellaSwag | Belebele EN | Belebele FR | Role |
 |---|---:|---:|---:|---:|---:|---|
-| [Pythia-14M](https://huggingface.co/EleutherAI/pythia-14m) | 14M | queued | queued | queued | queued | Primary size-near reference |
-| [SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M) | 135M | queued | queued | queued | queued | Secondary larger SLM reference |
-| [TinyStories tiny1m](https://huggingface.co/shibatch/tiny1m) | 0.896M | queued | queued | queued | queued | Near-1M scale reference; English story-training corpus |
+| [Pythia-14M](https://huggingface.co/EleutherAI/pythia-14m) | 14M | not scored in this wiki-v0 snapshot | not scored in this wiki-v0 snapshot | not scored in this wiki-v0 snapshot | not scored in this wiki-v0 snapshot | Primary size-near reference |
+| [SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M) | 135M | not scored in this wiki-v0 snapshot | not scored in this wiki-v0 snapshot | not scored in this wiki-v0 snapshot | not scored in this wiki-v0 snapshot | Secondary larger SLM reference |
+| [TinyStories tiny1m](https://huggingface.co/shibatch/tiny1m) | 0.896M | not scored in this wiki-v0 snapshot | not scored in this wiki-v0 snapshot | not scored in this wiki-v0 snapshot | not scored in this wiki-v0 snapshot | Near-1M scale reference; English story-training corpus |
 
 Pythia-14M is the closest established open checkpoint in size to SLM-Tavenel 10M. Its model card
 identifies it as English-only and trained on the Pile, so English benchmark results are the most

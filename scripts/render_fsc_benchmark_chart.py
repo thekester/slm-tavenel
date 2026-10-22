@@ -15,6 +15,7 @@ MODELS = [
     ("SLM-Tavenel 1M CC0 retrain pilot", Path("runs/open-weight-candidate/1m-gated-s20261021-pilot/analysis/mc-four-shared.json"), "#f59e0b"),
     ("SLM-Tavenel 1M CC0 v2 privacy-filtered pilot", Path("runs/open-weight-candidate/1m-gated-s20261022-v2-pilot/analysis/mc-four-shared.json"), "#ea580c"),
     ("SLM-Tavenel 1M CC0 v3 metadata-filtered pilot", Path("runs/open-weight-candidate/1m-gated-s20261023-v3-pilot/analysis/mc-four-shared.json"), "#c2410c"),
+    ("SLM-Tavenel 1M CC0 v4 integrity-screened pilot", Path("runs/open-weight-candidate/1m-gated-s421021-v4-pilot/analysis/mc-four-shared.json"), "#7c2d12"),
     ("SLM-Tavenel 10M", Path("runs/fsc-scaling/10m-gated-s1234/analysis/fsc-pilot-v1-mc.json"), "#059669"),
     ("SLM-Tavenel 25M grown", Path("runs/fsc-scaling/25m-gated-grown-s1234/analysis/fsc-pilot-v1-mc.json"), "#7c3aed"),
     ("Pythia-14M (reference)", Path("runs/reference/pythia-14m/fsc-pilot-v1-mc.json"), "#64748b"),
@@ -112,7 +113,7 @@ def main() -> int:
         xx, yy = legend_x0 + col * 330, legend_y + row * 27
         parts.append(f'<rect x="{xx}" y="{yy-12}" width="14" height="14" rx="2" fill="{color}"/>')
         parts.append(f'<text x="{xx+22}" y="{yy}" font-family="Arial,sans-serif" font-size="12" fill="#334155">{escape(label)}</text>')
-    parts.append('<text x="560" y="555" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#64748b">CC0 retrain pilots use new corpus/tokenizers; v2/v3 add metadata risk exclusions.</text>')
+    parts.append('<text x="560" y="555" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#64748b">CC0 retrain pilots use distinct filtered corpora, tokenizers and single-seed runs.</text>')
     parts.append('<text x="560" y="575" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" fill="#64748b">External models have different training data and compute. All cross-model scores are exploratory.</text>')
     parts.append('</svg>')
     out = Path(args.out)
@@ -134,7 +135,7 @@ def main() -> int:
         "",
         f"![Same-harness benchmark comparison across SLM-Tavenel and SLM references]({Path(os.path.relpath(out.resolve(), readme.resolve().parent)).as_posix()})",
         "",
-        "Whiskers show one standard error across items for each checkpoint; they do not measure training-run variation. CC0 retraining pilots are single-seed runs; v2/v3 add conservative metadata exclusions but still await manual privacy review and source sign-off. Paired item-bootstrap intervals are conditional, post-hoc and unadjusted for multiple comparisons.",
+        "Whiskers show one standard error across items for each checkpoint; they do not measure training-run variation. CC0 retraining pilots are single-seed exploratory runs with distinct corpus filters. V3 is superseded after integrity issues were found; v4 has automated scans and a 20-excerpt sample, while maintainer source/privacy attestations remain unsigned. Paired item-bootstrap intervals are post-hoc and unadjusted for multiple comparisons.",
         "",
     ]
     replacement = begin + "\n" + "\n".join(table) + "\n" + end

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 370" role="img" aria-labelledby="title desc">
+<title id="title">SLM-Tavenel EXP-0010 document split by language</title>
+<desc id="desc">Document counts in the training, development and held-out test splits, divided into English and French. Splits are document-disjoint.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="600.0" y="38.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#172033">A bilingual corpus split by complete documents</text>
+<text x="600.0" y="65.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="400" fill="#526078">Document counts by split; bar widths show the language share within each split</text>
+<text x="50.0" y="158.0" text-anchor="start" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#172033">Train</text>
+<rect x="210" y="132" width="473.5" height="42" rx="6" fill="#155eef"/>
+<rect x="683.5" y="132" width="306.5" height="42" rx="6" fill="#d97706"/>
+<text x="446.8" y="158.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#ffffff">English  632 (60.7%)</text>
+<text x="836.8" y="158.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#ffffff">French  409 (39.3%)</text>
+<text x="1014.0" y="158.0" text-anchor="start" font-family="Arial,sans-serif" font-size="13" font-weight="400" fill="#334155">1,041 documents</text>
+<text x="50.0" y="233.0" text-anchor="start" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#172033">Dev</text>
+<rect x="210" y="207" width="509.2" height="42" rx="6" fill="#155eef"/>
+<rect x="719.2" y="207" width="270.8" height="42" rx="6" fill="#d97706"/>
+<text x="464.6" y="233.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#ffffff">English  47 (65.3%)</text>
+<text x="854.6" y="233.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#ffffff">French  25 (34.7%)</text>
+<text x="1014.0" y="233.0" text-anchor="start" font-family="Arial,sans-serif" font-size="13" font-weight="400" fill="#334155">72 documents</text>
+<text x="50.0" y="308.0" text-anchor="start" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#172033">Test</text>
+<rect x="210" y="282" width="464.0" height="42" rx="6" fill="#155eef"/>
+<rect x="674.0" y="282" width="316.0" height="42" rx="6" fill="#d97706"/>
+<text x="442.0" y="308.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#ffffff">English  69 (59.5%)</text>
+<text x="832.0" y="308.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="#ffffff">French  47 (40.5%)</text>
+<text x="1014.0" y="308.0" text-anchor="start" font-family="Arial,sans-serif" font-size="13" font-weight="400" fill="#334155">116 documents</text>
+<text x="600.0" y="365.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" font-weight="400" fill="#64748b">English 632 train / English 47 dev / English 69 test ; French 409 train / French 25 dev / French 47 test</text>
+</svg>

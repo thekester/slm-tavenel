@@ -152,6 +152,9 @@ class PublicationRiskMetadataStep(Step):
 
     def __call__(self, doc):
         metadata = doc.get("source_metadata") or {}
+        metadata_text = json.dumps(metadata, ensure_ascii=False)
+        if "\ufffd" in metadata_text:
+            return None, ("replacement_character_in_source_metadata", None)
         raw = metadata.get("discipline")
         if not isinstance(raw, str) or not raw.strip():
             return None, ("missing_discipline_metadata", None)

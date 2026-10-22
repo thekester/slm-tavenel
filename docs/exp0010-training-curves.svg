@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1460 620" role="img" aria-labelledby="title desc">
+<title id="title">Training and development loss across ten paired seeds</title>
+<desc id="desc">Median gated and ungated loss across ten training seeds. Shaded areas show the interquartile range. Development evaluation uses the same development split for all runs.</desc>
+<rect width="100%" height="100%" fill="#f8fafc"/>
+<text x="730.0" y="36.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#172033">Training traces across the ten paired runs</text>
+<text x="730.0" y="62.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="400" fill="#526078">Lines show medians; shaded bands show the interquartile range across seeds</text>
+<rect x="30" y="102" width="690" height="460" rx="12" fill="#ffffff" stroke="#dbe3ef"/>
+<text x="375.0" y="129.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#172033">Training batch loss</text>
+<line x1="98" y1="508.0" x2="700" y2="508.0" stroke="#e5eaf2"/>
+<text x="88.0" y="512.0" text-anchor="end" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">3.1</text>
+<line x1="98" y1="422.0" x2="700" y2="422.0" stroke="#e5eaf2"/>
+<text x="88.0" y="426.0" text-anchor="end" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">4.2</text>
+<line x1="98" y1="336.0" x2="700" y2="336.0" stroke="#e5eaf2"/>
+<text x="88.0" y="340.0" text-anchor="end" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">5.4</text>
+<line x1="98" y1="250.0" x2="700" y2="250.0" stroke="#e5eaf2"/>
+<text x="88.0" y="254.0" text-anchor="end" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">6.5</text>
+<line x1="98" y1="164.0" x2="700" y2="164.0" stroke="#e5eaf2"/>
+<text x="88.0" y="168.0" text-anchor="end" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">7.7</text>
+<line x1="98.0" y1="164" x2="98.0" y2="508" stroke="#f1f5f9"/>
+<text x="98.0" y="528.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">0M</text>
+<line x1="248.6" y1="164" x2="248.6" y2="508" stroke="#f1f5f9"/>
+<text x="248.6" y="528.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">4M</text>
+<line x1="399.2" y1="164" x2="399.2" y2="508" stroke="#f1f5f9"/>
+<text x="399.2" y="528.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">8M</text>
+<line x1="549.8" y1="164" x2="549.8" y2="508" stroke="#f1f5f9"/>
+<text x="549.8" y="528.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">12M</text>
+<line x1="700.3" y1="164" x2="700.3" y2="508" stroke="#f1f5f9"/>
+<text x="700.3" y="528.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">16M</text>
+<path d="M 128.8 179.3 L 159.7 284.8 L 190.5 336.5 L 221.4 367.7 L 252.2 382.8 L 283.0 397.0 L 313.9 415.1 L 344.7 417.4 L 375.6 427.2 L 406.4 429.6 L 437.2 445.1 L 468.1 437.7 L 498.9 443.6 L 529.8 454.5 L 560.6 452.3 L 591.4 456.3 L 622.3 463.9 L 653.1 473.1 L 684.0 469.7 L 700.0 476.4 L 700.0 484.5 L 684.0 487.3 L 653.1 481.2 L 622.3 479.3 L 591.4 471.9 L 560.6 463.3 L 529.8 464.1 L 498.9 457.1 L 468.1 453.6 L 437.2 454.1 L 406.4 448.2 L 375.6 435.1 L 344.7 433.5 L 313.9 425.8 L 283.0 409.8 L 252.2 395.9 L 221.4 379.4 L 190.5 358.3 L 159.7 301.2 L 128.8 181.8 Z" fill="#155eef" fill-opacity="0.14" stroke="none"/>
+<path d="M 128.8 180.6 L 159.7 293.8 L 190.5 347.4 L 221.4 376.5 L 252.2 386.2 L 283.0 403.1 L 313.9 422.2 L 344.7 426.0 L 375.6 431.4 L 406.4 438.7 L 437.2 450.0 L 468.1 450.6 L 498.9 447.6 L 529.8 459.9 L 560.6 457.9 L 591.4 466.1 L 622.3 469.9 L 653.1 475.2 L 684.0 475.9 L 700.0 480.5" fill="none" stroke="#155eef" stroke-width="2.5"/>
+<path d="M 128.8 177.9 L 159.7 272.9 L 190.5 325.7 L 221.4 363.2 L 252.2 374.9 L 283.0 390.8 L 313.9 408.6 L 344.7 411.2 L 375.6 421.2 L 406.4 423.1 L 437.2 438.0 L 468.1 431.0 L 498.9 438.3 L 529.8 448.1 L 560.6 448.2 L 591.4 452.5 L 622.3 457.9 L 653.1 468.7 L 684.0 467.7 L 700.0 472.4 L 700.0 480.2 L 684.0 479.9 L 653.1 477.5 L 622.3 476.7 L 591.4 467.0 L 560.6 458.8 L 529.8 460.1 L 498.9 449.9 L 468.1 449.3 L 437.2 448.0 L 406.4 443.1 L 375.6 427.4 L 344.7 428.1 L 313.9 420.4 L 283.0 402.3 L 252.2 390.9 L 221.4 374.4 L 190.5 344.2 L 159.7 293.3 L 128.8 181.9 Z" fill="#d97706" fill-opacity="0.14" stroke="none"/>
+<path d="M 128.8 180.5 L 159.7 284.4 L 190.5 337.4 L 221.4 369.2 L 252.2 380.9 L 283.0 396.6 L 313.9 415.0 L 344.7 417.3 L 375.6 426.1 L 406.4 430.5 L 437.2 444.2 L 468.1 445.5 L 498.9 444.4 L 529.8 455.0 L 560.6 452.5 L 591.4 460.7 L 622.3 465.6 L 653.1 471.0 L 684.0 470.9 L 700.0 476.2" fill="none" stroke="#d97706" stroke-width="2.5"/>
+<text x="399.0" y="550.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">Training token positions presented</text>
+<rect x="740" y="102" width="690" height="460" rx="12" fill="#ffffff" stroke="#dbe3ef"/>
+<text x="1085.0" y="129.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#172033">Development-set loss</text>
+<line x1="808" y1="508.0" x2="1410" y2="508.0" stroke="#e5eaf2"/>
+<text x="798.0" y="512.0" text-anchor="end" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">3.5</text>
+<line x1="808" y1="422.0" x2="1410" y2="422.0" stroke="#e5eaf2"/>
+<text x="798.0" y="426.0" text-anchor="end" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">3.9</text>
+<line x1="808" y1="336.0" x2="1410" y2="336.0" stroke="#e5eaf2"/>
+<text x="798.0" y="340.0" text-anchor="end" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">4.2</text>
+<line x1="808" y1="250.0" x2="1410" y2="250.0" stroke="#e5eaf2"/>
+<text x="798.0" y="254.0" text-anchor="end" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">4.6</text>
+<line x1="808" y1="164.0" x2="1410" y2="164.0" stroke="#e5eaf2"/>
+<text x="798.0" y="168.0" text-anchor="end" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">5.0</text>
+<line x1="808.0" y1="164" x2="808.0" y2="508" stroke="#f1f5f9"/>
+<text x="808.0" y="528.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">0M</text>
+<line x1="958.6" y1="164" x2="958.6" y2="508" stroke="#f1f5f9"/>
+<text x="958.6" y="528.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">4M</text>
+<line x1="1109.2" y1="164" x2="1109.2" y2="508" stroke="#f1f5f9"/>
+<text x="1109.2" y="528.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">8M</text>
+<line x1="1259.8" y1="164" x2="1259.8" y2="508" stroke="#f1f5f9"/>
+<text x="1259.8" y="528.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">12M</text>
+<line x1="1410.3" y1="164" x2="1410.3" y2="508" stroke="#f1f5f9"/>
+<text x="1410.3" y="528.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">16M</text>
+<path d="M 958.5 210.2 L 1109.0 356.3 L 1259.5 414.1 L 1410.0 464.0 L 1410.0 472.3 L 1259.5 422.8 L 1109.0 367.7 L 958.5 222.6 Z" fill="#155eef" fill-opacity="0.14" stroke="none"/>
+<path d="M 958.5 219.1 L 1109.0 365.3 L 1259.5 420.5 L 1410.0 468.7" fill="none" stroke="#155eef" stroke-width="2.5"/>
+<path d="M 958.5 193.0 L 1109.0 339.0 L 1259.5 400.8 L 1410.0 448.7 L 1410.0 459.4 L 1259.5 409.5 L 1109.0 347.9 L 958.5 205.0 Z" fill="#d97706" fill-opacity="0.14" stroke="none"/>
+<path d="M 958.5 195.2 L 1109.0 343.7 L 1259.5 405.5 L 1410.0 455.1" fill="none" stroke="#d97706" stroke-width="2.5"/>
+<text x="1109.0" y="550.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">Training token positions presented</text>
+<line x1="580" y1="590" x2="610" y2="590" stroke="#155eef" stroke-width="3"/>
+<text x="620.0" y="594.0" text-anchor="start" font-family="Arial,sans-serif" font-size="12" font-weight="400" fill="#334155">Gated</text>
+<line x1="770" y1="590" x2="800" y2="590" stroke="#d97706" stroke-width="3"/>
+<text x="810.0" y="594.0" text-anchor="start" font-family="Arial,sans-serif" font-size="12" font-weight="400" fill="#334155">Ungated control</text>
+<text x="730.0" y="614.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">Training loss is logged on minibatches; development loss is evaluated at steps 122, 244, 366 and 488. Curves describe these runs, not uncertainty about future runs.</text>
+</svg>

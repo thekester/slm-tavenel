@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" role="img" aria-labelledby="title desc">
+<title id="title">Paired gate effects across ten EXP-0010 seeds</title>
+<desc id="desc">Each seed shows its observed ungated minus gated English/French macro bits-per-byte difference; positive values favor the gated model. The final row shows the mean effect and the predeclared hierarchical bootstrap 95 percent interval.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="600.0" y="36.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="21" font-weight="700" fill="#172033">Ten paired seeds support a positive gate effect on this corpus</text>
+<text x="600.0" y="62.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="400" fill="#526078">Per-seed points are observed effects; only the pooled estimate has a bootstrap interval</text>
+<line x1="300.0" y1="100" x2="300.0" y2="413" stroke="#e5eaf2" stroke-dasharray="0"/>
+<text x="300.0" y="88.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">-0.02</text>
+<line x1="475.0" y1="100" x2="475.0" y2="413" stroke="#64748b" stroke-dasharray="5 4"/>
+<text x="475.0" y="88.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">+0.00</text>
+<line x1="650.0" y1="100" x2="650.0" y2="413" stroke="#e5eaf2" stroke-dasharray="0"/>
+<text x="650.0" y="88.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">+0.02</text>
+<line x1="825.0" y1="100" x2="825.0" y2="413" stroke="#e5eaf2" stroke-dasharray="0"/>
+<text x="825.0" y="88.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">+0.04</text>
+<line x1="1000.0" y1="100" x2="1000.0" y2="413" stroke="#e5eaf2" stroke-dasharray="0"/>
+<text x="1000.0" y="88.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#64748b">+0.06</text>
+<text x="260.0" y="120.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#475569">Seed 421101</text>
+<circle cx="820.2" cy="116.0" r="5" fill="#155eef"/>
+<text x="829.2" y="120.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#334155">+0.0395</text>
+<text x="260.0" y="147.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#475569">Seed 421102</text>
+<circle cx="440.6" cy="143.0" r="5" fill="#64748b"/>
+<text x="431.6" y="147.0" text-anchor="end" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#334155">-0.0039</text>
+<text x="260.0" y="174.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#475569">Seed 421103</text>
+<circle cx="748.3" cy="170.0" r="5" fill="#155eef"/>
+<text x="757.3" y="174.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#334155">+0.0312</text>
+<text x="260.0" y="201.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#475569">Seed 421104</text>
+<circle cx="759.9" cy="197.0" r="5" fill="#155eef"/>
+<text x="768.9" y="201.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#334155">+0.0326</text>
+<text x="260.0" y="228.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#475569">Seed 421105</text>
+<circle cx="588.2" cy="224.0" r="5" fill="#155eef"/>
+<text x="597.2" y="228.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#334155">+0.0129</text>
+<text x="260.0" y="255.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#475569">Seed 421106</text>
+<circle cx="836.8" cy="251.0" r="5" fill="#155eef"/>
+<text x="845.8" y="255.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#334155">+0.0413</text>
+<text x="260.0" y="282.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#475569">Seed 421107</text>
+<circle cx="796.1" cy="278.0" r="5" fill="#155eef"/>
+<text x="805.1" y="282.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#334155">+0.0367</text>
+<text x="260.0" y="309.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#475569">Seed 421108</text>
+<circle cx="904.2" cy="305.0" r="5" fill="#155eef"/>
+<text x="913.2" y="309.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#334155">+0.0490</text>
+<text x="260.0" y="336.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#475569">Seed 421109</text>
+<circle cx="677.6" cy="332.0" r="5" fill="#155eef"/>
+<text x="686.6" y="336.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#334155">+0.0232</text>
+<text x="260.0" y="363.0" text-anchor="end" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#475569">Seed 421110</text>
+<circle cx="580.4" cy="359.0" r="5" fill="#155eef"/>
+<text x="589.4" y="363.0" text-anchor="start" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="#334155">+0.0121</text>
+<line x1="288" y1="386" x2="1010" y2="386" stroke="#cbd5e1"/>
+<text x="260.0" y="407.0" text-anchor="end" font-family="Arial,sans-serif" font-size="12" font-weight="700" fill="#172033">Pooled estimate</text>
+<line x1="622.0" y1="403" x2="820.2" y2="403" stroke="#155eef" stroke-width="4"/>
+<line x1="622.0" y1="396" x2="622.0" y2="410" stroke="#155eef" stroke-width="2"/>
+<line x1="820.2" y1="396" x2="820.2" y2="410" stroke="#155eef" stroke-width="2"/>
+<circle cx="715.2" cy="403" r="6" fill="#155eef" stroke="#ffffff" stroke-width="2"/>
+<text x="832.2" y="407.0" text-anchor="start" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#172033">+0.0275 [+0.0168, +0.0395]</text>
+<text x="600.0" y="480.0" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" font-weight="400" fill="#64748b">Effect = ungated BPB − gated BPB; positive values favor the gate. Pooled 95% interval resamples seeds and documents within language.</text>
+</svg>
