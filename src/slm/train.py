@@ -253,6 +253,8 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
     set_determinism(cfg.seed, cfg.deterministic)
     out_dir = Path(cfg.out_dir)
     model_cfg = load_model_config(cfg.model)
+    if cfg.mir and not 0 <= cfg.mir_mask_token_id < model_cfg.vocab_size:
+        raise ValueError(f"MIR mask token id {cfg.mir_mask_token_id} is outside vocab size {model_cfg.vocab_size}")
 
     train_data = TokenShards(cfg.data_dir, "train")
     val_data = TokenShards(cfg.data_dir, "val")
@@ -325,6 +327,9 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
 
     tokens_per_step = cfg.micro_batch_size * cfg.seq_len * cfg.grad_accum_steps * world
     flops_per_step = model.flops_per_token(cfg.seq_len) * tokens_per_step
+    if cfg.mir:
+        # Both clean and masked objectives contribute a forward/backward pass.
+        flops_per_step *= 2
     probe = torch.from_numpy(val_data.sample(batch_rng(cfg.seed + 2, 0, 0, 0), 2, min(cfg.seq_len, 128))[0]).to(device)
     last_loss = float("nan")
     t0 = time.perf_counter()
@@ -334,8 +339,11 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
         for group in opt.param_groups:
             group["lr"] = lr
         loss_sum = 0.0
+        clean_loss_sum = 0.0
+        mir_loss_sum = 0.0
         for micro in range(cfg.grad_accum_steps):
-            x, y = train_data.sample(batch_rng(cfg.seed, step, rank, micro), cfg.micro_batch_size, cfg.seq_len)
+            rng = batch_rng(cfg.seed, step, rank, micro)
+            x, y = train_data.sample(rng, cfg.micro_batch_size, cfg.seq_len)
             x, y = torch.from_numpy(x).to(device), torch.from_numpy(y).to(device)
             sync = contextlib.nullcontext()
             if world > 1 and micro < cfg.grad_accum_steps - 1:
@@ -343,8 +351,19 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
             doc_ids = document_ids(x, eos_id) if eos_id is not None else None
             with sync, autocast_context(device, cfg.dtype), attention_backend(device, cfg.deterministic):
                 _, loss = run_model(x, y, return_logits=False, doc_ids=doc_ids)
-                (loss / cfg.grad_accum_steps).backward()
-            loss_sum += loss.item()
+                total_loss = loss
+                if cfg.mir:
+                    ratios = rng.uniform(cfg.mir_mask_ratio_min, cfg.mir_mask_ratio_max,
+                                         size=(cfg.micro_batch_size, 1))
+                    mask = rng.random((cfg.micro_batch_size, cfg.seq_len)) < ratios
+                    x_masked = x.clone()
+                    x_masked[torch.from_numpy(mask).to(device)] = cfg.mir_mask_token_id
+                    _, mir_loss = run_model(x_masked, y, return_logits=False, doc_ids=doc_ids)
+                    total_loss = loss + cfg.mir_aux_weight * mir_loss
+                    mir_loss_sum += mir_loss.item()
+                (total_loss / cfg.grad_accum_steps).backward()
+            clean_loss_sum += loss.item()
+            loss_sum += total_loss.item()
         grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_clip).item()
         observing = master and cfg.observe_interval and step % cfg.observe_interval == 0
         if observing:
@@ -370,6 +389,9 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
                 "tokens": done * tokens_per_step,
                 "tokens_per_s": round(steps_timed * tokens_per_step / dt, 1),
             }
+            record["ntp_loss"] = round(clean_loss_sum / cfg.grad_accum_steps, 5)
+            if cfg.mir:
+                record["mir_aux_loss"] = round(mir_loss_sum / cfg.grad_accum_steps, 5)
             if cfg.peak_tflops > 0:
                 record["mfu"] = round(steps_timed * flops_per_step / dt / (cfg.peak_tflops * 1e12 * world), 4)
             if device.type == "cuda":

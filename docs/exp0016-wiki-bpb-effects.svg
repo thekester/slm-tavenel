@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="390" viewBox="0 0 960 390" role="img" aria-labelledby="title desc">
+  <title id="title">SLM-Tavenel 25M EXP-0016 held-out BPB differences</title>
+  <desc id="desc">Paired document-bootstrap intervals for wiki mixture minus FSC-only control. Negative differences favor the wiki mixture. Wiki improves and FSC regresses.</desc>
+  <rect width="960" height="390" fill="#ffffff"/>
+  <text x="36" y="34" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#172554">SLM-Tavenel 25M: held-out BPB effect of a 20% wiki mixture</text>
+  <text x="36" y="59" font-family="Arial, sans-serif" font-size="13" fill="#475569">EXP-0016 treatment minus matched FSC-only control · lower BPB is better</text>
+  <g stroke="#e2e8f0" stroke-width="1">
+    <line x1="280" y1="86" x2="280" y2="305"/>
+    <line x1="468.9" y1="86" x2="468.9" y2="305"/>
+    <line x1="657.8" y1="86" x2="657.8" y2="305"/>
+    <line x1="846.7" y1="86" x2="846.7" y2="305"/>
+  </g>
+  <line x1="657.8" y1="82" x2="657.8" y2="309" stroke="#334155" stroke-width="2"/>
+  <g font-family="Arial, sans-serif" font-size="13" fill="#334155" text-anchor="end">
+    <text x="260" y="122">FSC English validation</text>
+    <text x="260" y="172">FSC French validation</text>
+    <text x="260" y="222">Wikipedia English holdout</text>
+    <text x="260" y="272">Wikipedia French holdout</text>
+  </g>
+  <g stroke-linecap="round" stroke-width="5">
+    <line x1="664.0" y1="117" x2="665.0" y2="117" stroke="#c2410c"/>
+    <line x1="661.8" y1="167" x2="663.3" y2="167" stroke="#c2410c"/>
+    <line x1="298.1" y1="217" x2="344.0" y2="217" stroke="#047857"/>
+    <line x1="373.5" y1="267" x2="422.8" y2="267" stroke="#047857"/>
+  </g>
+  <g stroke-width="2" fill="#fff">
+    <circle cx="664.5" cy="117" r="6" stroke="#c2410c"/>
+    <circle cx="662.6" cy="167" r="6" stroke="#c2410c"/>
+    <circle cx="322.1" cy="217" r="6" stroke="#047857"/>
+    <circle cx="400.0" cy="267" r="6" stroke="#047857"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="12" fill="#334155">
+    <text x="683" y="121">+0.00355 [+0.00325, +0.00382]</text>
+    <text x="681" y="171">+0.00255 [+0.00214, +0.00293]</text>
+    <text x="334" y="221">−0.17777 [−0.19044, −0.16647]</text>
+    <text x="413" y="271">−0.13653 [−0.15056, −0.12442]</text>
+  </g>
+  <line x1="280" y1="305" x2="846.7" y2="305" stroke="#64748b" stroke-width="1.5"/>
+  <g font-family="Arial, sans-serif" font-size="12" fill="#475569" text-anchor="middle">
+    <text x="280" y="326">−0.20</text>
+    <text x="468.9" y="326">−0.10</text>
+    <text x="657.8" y="326">0</text>
+    <text x="846.7" y="326">+0.10</text>
+  </g>
+  <text x="36" y="357" font-family="Arial, sans-serif" font-size="12" fill="#475569">95% paired document-bootstrap intervals; conditional on these checkpoints and documents, not training seeds.</text>
+</svg>

@@ -21,8 +21,9 @@ TEXT_SETS = {
     "mot_2024_plus_test": "data/processed/exp0012-mot-v1.11/temporal/test.jsonl",
 }
 BENCHMARKS = [
-    "data/benchmarks/arc_easy.jsonl", "data/benchmarks/hellaswag.jsonl",
-    "data/benchmarks/belebele_en.jsonl", "data/benchmarks/belebele_fr.jsonl",
+    "data/benchmarks/arc_easy.jsonl", "data/benchmarks/arc_challenge.jsonl",
+    "data/benchmarks/hellaswag.jsonl", "data/benchmarks/belebele_en.jsonl",
+    "data/benchmarks/belebele_fr.jsonl", "data/benchmarks/winogrande.jsonl",
 ]
 
 

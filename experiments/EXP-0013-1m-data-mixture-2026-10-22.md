@@ -1,8 +1,10 @@
 # EXP-0013: 1M paired FSC/MOT data-mixture pilot
 
-**Status (2026-10-22):** queued after EXP-0012 completes both 10M arms and their evaluations.
-MOT tokenization will use the frozen FSC v4 1M tokenizer. No GPU training starts before the 10M
-queue finishes.
+**Status (2026-10-22): complete as a single paired-seed exploratory pilot.** MOT tokenization,
+both 488-step arms, and both held-out evaluations completed after EXP-0012. The first queue
+attempt used an invalid `slm encode` command and stopped before producing tokens or starting
+training; the command was corrected to `slm data encode`, and the run then completed. Final paired
+text and benchmark outcomes are in the [combined EXP-0012/0013 results report](EXP-0012-0013-mixture-pilot-results-2026-10-22.md).
 
 ## Question
 

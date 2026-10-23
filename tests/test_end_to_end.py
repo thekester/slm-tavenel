@@ -85,6 +85,44 @@ def test_muon_and_doc_mask_training_reproducible_across_resume(corpus, tmp_path)
         torch.testing.assert_close(p, q, msg=n)
 
 
+def test_mir_training_reproduces_across_resume_and_logs_objectives(corpus, tmp_path, monkeypatch):
+    import slm.train as training
+
+    monkeypatch.setattr(training, "setup_distributed", lambda: (0, 1, torch.device("cpu")))
+    settings = dict(mir=True, doc_mask=True, grad_accum_steps=2)
+    full = train(make_cfg(corpus, tmp_path / "full", 6, **settings))
+    train(make_cfg(corpus, tmp_path / "split", 3, **settings))
+    resumed = train(make_cfg(corpus, tmp_path / "split", 6, **settings))
+    assert full["final_loss"] == pytest.approx(resumed["final_loss"], rel=1e-6)
+    a = load_model(latest_checkpoint(tmp_path / "full"))
+    b = load_model(latest_checkpoint(tmp_path / "split"))
+    for name, value in a.state_dict().items():
+        torch.testing.assert_close(value, b.state_dict()[name], msg=name)
+    for row in map(json.loads, (tmp_path / "full/metrics.jsonl").read_text().splitlines()):
+        assert row["loss"] == pytest.approx(row["ntp_loss"] + 0.4 * row["mir_aux_loss"], abs=2e-5)
+
+
+def test_mir_masks_inputs_without_changing_targets_or_document_boundaries(corpus, tmp_path, monkeypatch):
+    import slm.train as training
+
+    monkeypatch.setattr(training, "setup_distributed", lambda: (0, 1, torch.device("cpu")))
+    original = training.SLM.forward
+    calls = []
+    def capture(self, x, y=None, **kwargs):
+        if y is not None:
+            calls.append((x.clone(), y.clone(), kwargs["doc_ids"].clone()))
+        return original(self, x, y, **kwargs)
+    monkeypatch.setattr(training.SLM, "forward", capture)
+    train(make_cfg(corpus, tmp_path / "masked", 1, mir=True, doc_mask=True,
+                   mir_mask_ratio_min=1.0, mir_mask_ratio_max=1.0,
+                   eval_interval=0, observe_interval=0))
+    clean, masked = calls
+    assert torch.all(masked[0] == 10)
+    assert torch.any(clean[0] != 10)
+    torch.testing.assert_close(clean[1], masked[1])
+    torch.testing.assert_close(clean[2], masked[2])
+
+
 def test_resume_does_not_require_initial_weights(corpus, tmp_path):
     train(make_cfg(corpus, tmp_path / "source", 3))
     initial = tmp_path / "initial.pt"

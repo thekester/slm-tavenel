@@ -85,7 +85,7 @@ tags:
 
 # SLM-Tavenel 1M — EXP-0010 research model
 
-> **Experimental base model.** Weights and included code are offered under MIT. This release documents the source records and their declared licenses; it does not certify source-rights clearance, complete privacy review, or conformance to the OSI Open Source AI Definition. The model has not been instruction tuned.
+> **Experimental base model.** Project self-assessment: the prepared package meets the core requirements of Open Source AI Definition 1.0 under MIT terms for weights, code and Data Information. This is not OSI certification. Source license metadata and privacy limitations are disclosed separately. The candidate remains local until publicly released. The model has not been instruction tuned.
 
 ## Contents
 
@@ -194,7 +194,7 @@ The benchmark files are not redistributed in this model bundle. Their paths, ite
 
 ## Licensing and release status
 
-The selected weights, inference implementation, training code and traceability information are offered under MIT. The OSAID does not prescribe a specific legal instrument for making model parameters freely available; MIT is the instrument chosen for this package. The training dataset and HAL metadata declare CC0 for selected source records, but source-rights verification and manual privacy review remain unsigned. The MIT notices for this model do not relicense source articles and do not promise that all downstream weight uses are free of third-party claims. We do not claim full OSI OSAID 1.0 conformance because its data-information requirements include availability under approved terms, and the authority behind source records has not been independently established ([definition](https://opensource.org/ai/open-source-ai-definition)).
+The selected weights, inference implementation, training code and Data Information are offered under MIT, an OSI-approved license. The project self-assesses the prepared package against the core OSAID 1.0 requirements; see `training_record/OSAID-1.0-SELF-ASSESSMENT.md`. This is not OSI certification or endorsement. The training dataset and HAL metadata report CC0 for selected source records, but the audit does not independently verify each submitter's authority. That provenance limitation is disclosed; it is separate from the terms and artifact requirements in the OSAID. The MIT notices do not relicense source articles or guarantee the absence of third-party claims. Source and privacy review status is described in `training_record/data-card.md`.
 
 This candidate package was prepared locally for the target Hub ID `athenista/slm-tavenel-1m-exp0010`; as of 2026-10-22 it had not been uploaded. No paper or DOI has been assigned.
 

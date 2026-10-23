@@ -9,6 +9,7 @@ from __future__ import annotations
 import dataclasses
 import hashlib
 import json
+import math
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, TypeVar
@@ -114,6 +115,12 @@ class TrainConfig:
     beta2: float = 0.95
     eps: float = 1e-8
     grad_clip: float = 1.0
+    # Masked-input regularization: auxiliary next-token loss on randomly masked inputs.
+    mir: bool = False
+    mir_mask_token_id: int = 10
+    mir_mask_ratio_min: float = 0.0
+    mir_mask_ratio_max: float = 0.5
+    mir_aux_weight: float = 0.4
     # Schedule: "wsd" (warmup-stable-decay) or "cosine"
     schedule: str = "wsd"
     warmup_steps: int = 20
@@ -135,6 +142,12 @@ class TrainConfig:
     def __post_init__(self) -> None:
         if self.optimizer not in ("adamw", "muon"):
             raise ValueError(f"unknown optimizer {self.optimizer!r}")
+        if not 0 <= self.mir_mask_ratio_min <= self.mir_mask_ratio_max <= 1:
+            raise ValueError("MIR mask ratios must satisfy 0 <= min <= max <= 1")
+        if not math.isfinite(self.mir_aux_weight) or self.mir_aux_weight < 0:
+            raise ValueError("MIR auxiliary weight must be finite and nonnegative")
+        if not isinstance(self.mir_mask_token_id, int) or self.mir_mask_token_id < 0:
+            raise ValueError("MIR mask token id must be a nonnegative integer")
         if self.schedule not in ("wsd", "cosine"):
             raise ValueError(f"unknown schedule {self.schedule!r}")
         if self.dtype not in ("float32", "bfloat16", "float16"):

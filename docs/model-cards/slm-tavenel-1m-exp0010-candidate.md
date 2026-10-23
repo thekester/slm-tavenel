@@ -16,7 +16,7 @@ tags:
 
 # SLM-Tavenel 1M — EXP-0010 research model
 
-> **Experimental base model.** Weights and included code are offered under MIT. This release documents the source records and their declared licenses; it does not certify source-rights clearance, complete privacy review, or conformance to the OSI Open Source AI Definition. The model has not been instruction tuned.
+> **Experimental base model.** Project self-assessment: the public package meets the core requirements of Open Source AI Definition 1.0 under MIT terms for weights, code and Data Information. This is not OSI certification. Source license metadata and privacy limitations are disclosed separately. The model has not been instruction tuned. Published at https://huggingface.co/athenista/slm-tavenel-1m-exp0010 (revision `3bb07398ec8105d9625cf8e346425b9987c65c48`).
 
 ## Contents
 
@@ -71,13 +71,13 @@ print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 
 ## Training data and provenance
 
-The source is the `french_open_science` subset of [PleIAs/French-Science-Commons](https://huggingface.co/datasets/PleIAs/French-Science-Commons), pinned at revision `bfa114c09d7c28dcd0a8a47fe445c64b4a3c6156`. The subset began with 3,450 English/French records labeled CC0 by the dataset and matched to CC0 in the versions returned by a paginated HAL API metadata audit. The filters retained 1,229 documents: 748 English and 481 French. The training split contains 15,976,924 tokens; development 931,435; document-held-out test 2,032,436 across 69 English and 47 French documents. The test text is not included in the artifact.
+The source is the `french_open_science` subset of [PleIAs/French-Science-Commons](https://huggingface.co/datasets/PleIAs/French-Science-Commons), pinned at revision `bfa114c09d7c28dcd0a8a47fe445c64b4a3c6156`. Of 3,483 English/French dataset records labeled CC0, a paginated HAL audit dated 2026-10-22 found 3,450 whose `licence_s` main-file license and all reported `fileLicenses_s` Document-file licenses were CC0 across returned versions; 33 records were excluded for missing, conflicting or non-CC0 HAL records. The filters retained 1,229 documents: 748 English and 481 French. The training split contains 15,976,924 tokens; development 931,435; document-held-out test 2,032,436 across 69 English and 47 French documents. The test text is not included in the artifact. HAL documents the file-level fields in its [licence API announcement](https://www.ccsd.cnrs.fr/en/2026/02/no-hal-deposit-without-licence-the-essential-information-you-need-to-know/). The audit establishes metadata agreement, not depositor authority or publisher permission.
 
 The pipeline redacted 2,579 email-shaped strings, 158 phone-shaped strings and three IP-pattern matches; it excluded five documents with residual email-shaped strings and two with replacement characters. The retained text had zero matches for the configured residual scan patterns, and a deterministic screen reviewed 10 short excerpts per language. These automated and sampled checks are limited; they do not establish that the corpus contains no personal or sensitive information.
 
-![Document-level split by language](exp0010-data-splits.svg)
+![Document-level split by language](../exp0010-data-splits.svg)
 
-The bundle includes a record-level manifest with source IDs and URIs, declared license labels, language, split and pre/post-processing text hashes; it also includes the source revision, HAL snapshot, filtering decisions, pipeline configuration, split/tokenizer manifests, privacy-screen report and processing scripts. Source article text is omitted. Missing author or rights information is reported as supplied by the corpus metadata; identities are not inferred. These records improve traceability, but do not independently establish ownership or permission.
+The bundle includes a record-level manifest with source IDs and URIs, source titles, declared authors, publication dates, DOI where supplied, declared license labels, language, split and pre/post-processing text hashes; it also includes the source revision, HAL snapshot, filtering decisions, pipeline configuration, split/tokenizer manifests, privacy-screen report and processing scripts. Source article text is omitted. All 1,229 retained rows have a non-empty upstream author field; 380 provide a DOI. These are source-supplied metadata fields, not independent verification of author identity or rights authority. No author identity is inferred, and missing DOI values are left blank. See the [source and privacy review dossier](../reviews/EXP-0010-SOURCE-PRIVACY-REVIEW.md) for the audited scope and remaining human decisions.
 
 The processed-data manifest records that the repository worktree was dirty when the dataset pipeline ran. Before packaging, the pipeline was replayed from the recorded inputs and configuration into a separate scratch directory; the retained-document file, filtering-decision file and summary statistics matched the original hashes exactly. The replay configuration, manifest and comparison report are included. The original dirty-worktree marker remains visible. The ten model-training pairs ran from the recorded clean code commit.
 
@@ -95,7 +95,7 @@ The ten paired seed pairs used 488 AdamW steps at 32,768 token positions per ste
 
 Per-step training and development losses, gradient and optimizer metrics, fixed-probe attention sink mass, attention entropy, residual statistics, gate values, per-layer weight norms and update ratios are recorded in `training_record/replicates/`. These are observability diagnostics; they do not by themselves explain why the model produces a particular output.
 
-![Training and development loss across the ten paired runs](exp0010-training-curves.svg)
+![Training and development loss across the ten paired runs](../exp0010-training-curves.svg)
 
 ## Evaluation
 
@@ -105,7 +105,7 @@ The primary metric is the equal-language macro-average of English and French bit
 
 Across ten paired seeds, the estimated effect was **+0.0275 BPB** (hierarchical bootstrap 95% interval **[+0.0168, +0.0395]**). The predeclared +0.01 BPB practical threshold is supported for this corpus, tokenizer and one-pass budget only.
 
-![Observed effect for each paired seed and the pooled interval](exp0010-paired-seed-effects.svg)
+![Observed effect for each paired seed and the pooled interval](../exp0010-paired-seed-effects.svg)
 
 This is evidence about a specific architecture, corpus, tokenizer and one-pass budget. It does not show that the selected checkpoint is a generally capable model or that the gate explains model behavior. Per-seed effects, document-hash-level scores and the locked analysis are in `training_record/sealed-test-bpb-results.json`.
 
@@ -126,7 +126,7 @@ Item counts: ARC-Easy 2,376, ARC-Challenge 1,172, HellaSwag 10,042, Belebele EN 
 | [Pythia-31M](https://huggingface.co/EleutherAI/pythia-31m) | 30.5M | not scored | 0.167 | not scored | not scored | not scored | 0.505 |
 | [SmolLM2-135M](https://huggingface.co/HuggingFaceTB/SmolLM2-135M) | 135M | 0.643 | 0.278 | 0.356 | 0.358 | 0.314 | 0.530 |
 
-![SLM-Tavenel EXP-0010 and same-harness SLM references](exp0010-benchmark-comparison.svg)
+![SLM-Tavenel EXP-0010 and same-harness SLM references](../exp0010-benchmark-comparison.svg)
 
 Paired item-bootstrap differences against the exploratory SLM-Tavenel 10M checkpoint and four public references are recorded in `training_record/benchmark-comparisons.json`. This comparison shows only one SLM-Tavenel 1M: the selected candidate described above. Pythia-31M was scored only on ARC-Challenge and WinoGrande XL validation; the other cells are marked “not scored” and are absent from the chart. Comparisons are conditional on these checkpoints and question samples, not on repeated training seeds. Exact-overlap filtering only addresses matches detectable by the recorded filters; external pretraining exposure is unknown.
 
@@ -134,7 +134,7 @@ The benchmark files are not redistributed in this model bundle. Their paths, ite
 
 ## Licensing and release status
 
-The selected weights, inference implementation, training code and traceability information are offered under MIT. The OSAID does not prescribe a specific legal instrument for making model parameters freely available; MIT is the instrument chosen for this package. The training dataset and HAL metadata declare CC0 for selected source records, but source-rights verification and manual privacy review remain unsigned. The MIT notices for this model do not relicense source articles and do not promise that all downstream weight uses are free of third-party claims. We do not claim full OSI OSAID 1.0 conformance because its data-information requirements include availability under approved terms, and the authority behind source records has not been independently established ([definition](https://opensource.org/ai/open-source-ai-definition)).
+The selected weights, inference implementation, training code and Data Information are offered under MIT, an OSI-approved license. The project self-assesses the prepared package against the core OSAID 1.0 requirements; see `training_record/OSAID-1.0-SELF-ASSESSMENT.md`. This is not OSI certification or endorsement. The training dataset and HAL metadata report CC0 for selected source records, but the audit does not independently verify each submitter's authority. That provenance limitation is disclosed; it is separate from the terms and artifact requirements in the OSAID. The MIT notices do not relicense source articles or guarantee the absence of third-party claims. Source and privacy review status is described in the [data card](slm-tavenel-1m-exp0010-data-card.md).
 
 This candidate package was prepared locally for the target Hub ID `athenista/slm-tavenel-1m-exp0010`; as of 2026-10-22 it had not been uploaded. No paper or DOI has been assigned.
 

@@ -86,7 +86,7 @@ def query_hal(batch: list[dict], timeout: int, retries: int) -> list[dict]:
             records = []
             total = None
             while total is None or len(records) < total:
-                params = urlencode({"q": query, "fl": "halId_s,licence_s,uri_s,docType_s",
+                params = urlencode({"q": query, "fl": "halId_s,licence_s,fileLicenses_s,fileAnnexeLicenses_s,uri_s,docType_s",
                                     "wt": "json", "rows": str(len(ids)), "start": str(len(records))})
                 request = Request(f"{API}?{params}", headers={"User-Agent": "SLM-Tavenel corpus-rights audit/1.0"})
                 with urlopen(request, timeout=timeout) as response:
@@ -138,7 +138,11 @@ def main() -> int:
             outcome = "not_found"
             api_licenses = []
             record_uris = []
-        elif all(record.get("licence_s") == CC0_URL for record in records):
+        elif all(
+            record.get("licence_s") == CC0_URL
+            and all(license == CC0_URL for license in (record.get("fileLicenses_s") or []))
+            for record in records
+        ):
             outcome = "cc0_all_versions"
             api_licenses = sorted({record.get("licence_s") for record in records})
             record_uris = sorted({record.get("uri_s") for record in records if record.get("uri_s")})
@@ -146,7 +150,11 @@ def main() -> int:
             outcome = "license_conflict" if any(record.get("licence_s") == CC0_URL for record in records) else "license_mismatch"
             api_licenses = sorted({record.get("licence_s") or "(missing)" for record in records})
             record_uris = sorted({record.get("uri_s") for record in records if record.get("uri_s")})
+        file_licenses = sorted({license for record in records for license in (record.get("fileLicenses_s") or [])})
+        annex_licenses = sorted({license for record in records for license in (record.get("fileAnnexeLicenses_s") or [])})
         audited.append({**row, "hal_uris": record_uris, "hal_licenses": api_licenses,
+                        "hal_document_file_licenses": file_licenses,
+                        "hal_annex_file_licenses": annex_licenses,
                         "hal_versions": len(records), "outcome": outcome})
 
     counts = {name: sum(row["outcome"] == name for row in audited)
@@ -180,7 +188,8 @@ def main() -> int:
         "dataset_revision": "bfa114c09d7c28dcd0a8a47fe445c64b4a3c6156",
         "subset": "french_open_science",
         "source_api": API,
-        "source_api_query_fields": ["halId_s", "licence_s", "uri_s", "docType_s"],
+        "source_api_query_fields": ["halId_s", "licence_s", "fileLicenses_s", "fileAnnexeLicenses_s", "uri_s", "docType_s"],
+        "license_field_interpretation": "HAL documents licence_s as the main-file license and fileLicenses_s as licenses on Document files. The audit requires CC0 on the main file and every reported Document file; all versions are paginated and checked.",
         "expected_license": CC0_URL,
         "inputs": [{"path": str(path), "sha256": sha256_file(path)} for path in args.inputs],
         "counts": {"documents": len(documents), "by_language": {

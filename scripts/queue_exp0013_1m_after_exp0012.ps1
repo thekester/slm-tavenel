@@ -49,7 +49,7 @@ Write-QueueLog '10M pipeline complete; encoding temporal MOT training documents 
 if (-not (Test-Path -LiteralPath (Join-Path $motTokens 'manifest.json'))) {
     if (Test-Path -LiteralPath $motTokens) { throw "Refusing to overwrite incomplete token output: $motTokens" }
     $ErrorActionPreference = 'Continue'
-    & $pythonPath -m slm encode --tokenizer 'data/tokenizers/fsc-cc0-open-weights-v4' --inputs $motTrain --out $motTokens --val-fraction 0 --shard-tokens 50000000 *> (Join-Path $workspacePath 'runs/EXP-0013-1m-mot-encode.log')
+    & $pythonPath -m slm data encode --tokenizer 'data/tokenizers/fsc-cc0-open-weights-v4' --inputs $motTrain --out $motTokens --val-fraction 0 --shard-tokens 50000000 *> (Join-Path $workspacePath 'runs/EXP-0013-1m-mot-encode.log')
     $exitCode = $LASTEXITCODE
     $ErrorActionPreference = 'Stop'
     if ($exitCode -ne 0) { Write-QueueLog "MOT tokenization failed with exit code $exitCode."; exit $exitCode }

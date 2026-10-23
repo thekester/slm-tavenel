@@ -59,6 +59,13 @@ def main() -> int:
                 "dataset_record_id": doc_id,
                 "source_record_id": source_id,
                 "source_record_uri": f"https://hal.science/{source_id}",
+                # Preserve the source's declared attribution metadata verbatim where present.
+                # These fields help trace the corpus; they do not independently verify
+                # author identity or prove that the submitter held the relevant rights.
+                "source_title": metadata.get("title"),
+                "declared_author": metadata.get("author"),
+                "publication_date": metadata.get("publication_date"),
+                "doi": metadata.get("doi"),
                 "language": language,
                 "declared_dataset_license": row["license"],
                 "split": split,

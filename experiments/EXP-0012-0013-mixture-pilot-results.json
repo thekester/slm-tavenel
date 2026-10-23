@@ -1,0 +1,909 @@
+{
+  "kind": "slm.exp0012-exp0013-mixture-pilot-comparison",
+  "status": "exploratory_single_paired_seed_per_size",
+  "bootstrap": {
+    "method": "paired resampling of item correctness differences",
+    "draws": 20000,
+    "seed": 20261022,
+    "interval": "percentile 95%; item-sampling uncertainty only",
+    "familywise_correction": "none"
+  },
+  "limitations": [
+    "Each size has one matched seed pair; training-seed variability is not estimated.",
+    "Benchmark intervals condition on these checkpoints and benchmark items; they do not measure run-to-run variation.",
+    "Benchmark outcomes are secondary and exploratory; no checkpoint was selected from them.",
+    "The MOT-containing checkpoints are not cleared for public weight release.",
+    "The FSC test was already evaluated in EXP-0010 and is not a new untouched confirmatory test."
+  ],
+  "studies": [
+    {
+      "study": "EXP-0012 10M",
+      "status": "single_paired_seed_pilot",
+      "paired_training_seed": 1234,
+      "control_checkpoint": "runs/EXP-0012-10m-fsc-control-py311-torch210-2026-10-22/checkpoints/step_00015000.pt",
+      "control_checkpoint_sha256": "20e0b16ef2474e5678d75ee4c3bcee8996a0bd097699817d6b5eea0e0cdf3af5",
+      "mixture_checkpoint": "runs/EXP-0012-10m-fsc-mot-mixture-py311-torch210-2026-10-22/checkpoints/step_00015000.pt",
+      "mixture_checkpoint_sha256": "96d7ed1264e3224a689f3f6f3b60b0cb6204117bd0eb3787159e5fc559f3dcdc",
+      "parameters": 9978368,
+      "text_outcomes": {
+        "fsc_en_validation": {
+          "control_bpb": 1.1776686561980438,
+          "mixture_bpb": 1.202535424031983,
+          "delta_bpb_mixture_minus_control": 0.024866767833939152,
+          "input_path": "data/processed/fsc-pilot-v1-token-balanced/en-val.jsonl",
+          "input_sha256": "31d8abab77d6aaae1e9da6aefda2980172e756bd1763bc68f415abdcf5900665",
+          "interpretation": "negative favors the mixture on this text set"
+        },
+        "fsc_fr_validation": {
+          "control_bpb": 1.0912172126443538,
+          "mixture_bpb": 1.1144963984447935,
+          "delta_bpb_mixture_minus_control": 0.02327918580043975,
+          "input_path": "data/processed/fsc-pilot-v1-token-balanced/fr-val.jsonl",
+          "input_sha256": "96c43ad5549d167c8a9535f0ee70dd8bc2d31e9dda6641dbaac8befa924e7c39",
+          "interpretation": "negative favors the mixture on this text set"
+        },
+        "mot_2022_2023_dev": {
+          "control_bpb": 1.6339332350147187,
+          "mixture_bpb": 1.1875428292744326,
+          "delta_bpb_mixture_minus_control": -0.4463904057402861,
+          "input_path": "data/processed/exp0012-mot-v1.11/temporal/dev.jsonl",
+          "input_sha256": "e4f01813e189e4d1d529b37b74ae51d3183b2ae178007f95de7621c0134ead11",
+          "interpretation": "negative favors the mixture on this text set"
+        },
+        "mot_2024_plus_test": {
+          "control_bpb": 1.6130606080547134,
+          "mixture_bpb": 1.17186073077075,
+          "delta_bpb_mixture_minus_control": -0.44119987728396337,
+          "input_path": "data/processed/exp0012-mot-v1.11/temporal/test.jsonl",
+          "input_sha256": "20d43db86e4dd5d43cb842f6cbadb0d4a10a6c97b9ffb275e8533ddc990e383f",
+          "interpretation": "negative favors the mixture on this text set"
+        }
+      },
+      "benchmark_outcomes": {
+        "arc_easy": {
+          "items": 2376,
+          "control_accuracy": 0.3068181818181818,
+          "mixture_accuracy": 0.2984006734006734,
+          "delta_accuracy_mixture_minus_control": -0.008417508417508417,
+          "paired_item_bootstrap_95ci": [
+            -0.026094276094276093,
+            0.00968013468013468
+          ],
+          "mixture_only_correct": 222,
+          "control_only_correct": 242,
+          "same_correctness": 1912,
+          "benchmark_sha256": "f306f752bfd65be4a4df619bae155905bf2896cc72cbb8f544dda92e3585f740"
+        },
+        "arc_challenge": {
+          "items": 1172,
+          "control_accuracy": 0.18088737201365188,
+          "mixture_accuracy": 0.1689419795221843,
+          "delta_accuracy_mixture_minus_control": -0.011945392491467578,
+          "paired_item_bootstrap_95ci": [
+            -0.032423208191126277,
+            0.008532423208191127
+          ],
+          "mixture_only_correct": 68,
+          "control_only_correct": 82,
+          "same_correctness": 1022,
+          "benchmark_sha256": "813b6ace2566b3a60b1b4631255b7c9a834db4d68842874d9ac213745beaac38"
+        },
+        "hellaswag": {
+          "items": 10042,
+          "control_accuracy": 0.27434773949412466,
+          "mixture_accuracy": 0.2695678151762597,
+          "delta_accuracy_mixture_minus_control": -0.0047799243178649675,
+          "paired_item_bootstrap_95ci": [
+            -0.009858593905596494,
+            0.00039832702648874725
+          ],
+          "mixture_only_correct": 318,
+          "control_only_correct": 366,
+          "same_correctness": 9358,
+          "benchmark_sha256": "b400c1a7d3c7f1a620409fe84ddd98335a3cb72be32dbb10ec79719e0658b447"
+        },
+        "belebele_en": {
+          "items": 900,
+          "control_accuracy": 0.29555555555555557,
+          "mixture_accuracy": 0.27666666666666667,
+          "delta_accuracy_mixture_minus_control": -0.01888888888888889,
+          "paired_item_bootstrap_95ci": [
+            -0.042222222222222223,
+            0.0044444444444444444
+          ],
+          "mixture_only_correct": 47,
+          "control_only_correct": 64,
+          "same_correctness": 789,
+          "benchmark_sha256": "d7337aa3ce395579d66deee2dd69e5abbd701dac012591c1de2b790e3e3377c2"
+        },
+        "belebele_fr": {
+          "items": 900,
+          "control_accuracy": 0.30333333333333334,
+          "mixture_accuracy": 0.31333333333333335,
+          "delta_accuracy_mixture_minus_control": 0.01,
+          "paired_item_bootstrap_95ci": [
+            -0.014444444444444444,
+            0.03333333333333333
+          ],
+          "mixture_only_correct": 65,
+          "control_only_correct": 56,
+          "same_correctness": 779,
+          "benchmark_sha256": "0d63805711db69417749c8bbb9890893c15e0ea6e0b7e4bcc11be4f38d6279f8"
+        },
+        "winogrande": {
+          "items": 1267,
+          "control_accuracy": 0.5201262825572218,
+          "mixture_accuracy": 0.4972375690607735,
+          "delta_accuracy_mixture_minus_control": -0.022888713496448304,
+          "paired_item_bootstrap_95ci": [
+            -0.056037884767166535,
+            0.010260457774269928
+          ],
+          "mixture_only_correct": 210,
+          "control_only_correct": 239,
+          "same_correctness": 818,
+          "benchmark_sha256": "3bf695c7d0aa78e2a0d1a62cb963c61d04de137113816a94aa64aeccae2cace1"
+        }
+      }
+    },
+    {
+      "study": "EXP-0013 1M",
+      "status": "single_paired_seed_pilot",
+      "paired_training_seed": 421021,
+      "control_checkpoint": "runs/EXP-0013-1m-fsc-control-2026-10-22/checkpoints/step_00000488.pt",
+      "control_checkpoint_sha256": "2fd932c16eaf90067070072c21466e5d55825db8934d19d858177ed32fb8eedb",
+      "mixture_checkpoint": "runs/EXP-0013-1m-fsc-mot-mixture-2026-10-22/checkpoints/step_00000488.pt",
+      "mixture_checkpoint_sha256": "eb89a09bb2b753957cb929cffa09b75e1d6949c7ec95e5c386a810539d747ce3",
+      "parameters": 1181920,
+      "text_outcomes": {
+        "fsc_en_dev": {
+          "control_bpb": 1.8000782035599894,
+          "mixture_bpb": 1.810346790791967,
+          "delta_bpb_mixture_minus_control": 0.010268587231977655,
+          "input_path": "data/processed/fsc-cc0-open-weights-v4/splits/en-dev.jsonl",
+          "input_sha256": "4f6542c197140316042bcbee2b40bf5b35a5ab179d41159798cf5898bb6954d3",
+          "interpretation": "negative favors the mixture on this text set"
+        },
+        "fsc_en_test": {
+          "control_bpb": 1.7766836147800298,
+          "mixture_bpb": 1.787992752303711,
+          "delta_bpb_mixture_minus_control": 0.011309137523681123,
+          "input_path": "data/processed/fsc-cc0-open-weights-v4/splits/en-test.jsonl",
+          "input_sha256": "6d8d053d0b5d7d3e2d2224a210b836d4f2af24ccef073f5a1d1e89077df6a5d3",
+          "interpretation": "negative favors the mixture on this text set"
+        },
+        "fsc_fr_dev": {
+          "control_bpb": 1.5728384134083317,
+          "mixture_bpb": 1.6021531710339385,
+          "delta_bpb_mixture_minus_control": 0.029314757625606758,
+          "input_path": "data/processed/fsc-cc0-open-weights-v4/splits/fr-dev.jsonl",
+          "input_sha256": "7ffb5d0308b8b5cee377397ab0c1c708e40395b0a68e55d92b2e5217b1417357",
+          "interpretation": "negative favors the mixture on this text set"
+        },
+        "fsc_fr_test": {
+          "control_bpb": 1.5919542211528581,
+          "mixture_bpb": 1.61864800372504,
+          "delta_bpb_mixture_minus_control": 0.0266937825721818,
+          "input_path": "data/processed/fsc-cc0-open-weights-v4/splits/fr-test.jsonl",
+          "input_sha256": "8d7c22a9616fc878a8058334053fed6e25fd5b435f3d5d722c11dc0aa67e957e",
+          "interpretation": "negative favors the mixture on this text set"
+        },
+        "mot_dev_en": {
+          "control_bpb": 2.6207892856344714,
+          "mixture_bpb": 1.896052242832911,
+          "delta_bpb_mixture_minus_control": -0.7247370428015605,
+          "input_path": "data/processed/exp0012-mot-v1.11/temporal/dev.jsonl",
+          "input_sha256": "e4f01813e189e4d1d529b37b74ae51d3183b2ae178007f95de7621c0134ead11",
+          "interpretation": "negative favors the mixture on this text set"
+        },
+        "mot_dev_fr": {
+          "control_bpb": 2.4533720000268286,
+          "mixture_bpb": 2.1741980181954954,
+          "delta_bpb_mixture_minus_control": -0.27917398183133324,
+          "input_path": "data/processed/exp0012-mot-v1.11/temporal/dev.jsonl",
+          "input_sha256": "e4f01813e189e4d1d529b37b74ae51d3183b2ae178007f95de7621c0134ead11",
+          "interpretation": "negative favors the mixture on this text set"
+        },
+        "mot_test_2024_plus_en": {
+          "control_bpb": 2.6106998239380084,
+          "mixture_bpb": 1.871354684997132,
+          "delta_bpb_mixture_minus_control": -0.7393451389408763,
+          "input_path": "data/processed/exp0012-mot-v1.11/temporal/test.jsonl",
+          "input_sha256": "20d43db86e4dd5d43cb842f6cbadb0d4a10a6c97b9ffb275e8533ddc990e383f",
+          "interpretation": "negative favors the mixture on this text set"
+        },
+        "mot_test_2024_plus_fr": {
+          "control_bpb": 2.4128252931405045,
+          "mixture_bpb": 2.1184662523642825,
+          "delta_bpb_mixture_minus_control": -0.294359040776222,
+          "input_path": "data/processed/exp0012-mot-v1.11/temporal/test.jsonl",
+          "input_sha256": "20d43db86e4dd5d43cb842f6cbadb0d4a10a6c97b9ffb275e8533ddc990e383f",
+          "interpretation": "negative favors the mixture on this text set"
+        }
+      },
+      "benchmark_outcomes": {
+        "arc_easy": {
+          "items": 2376,
+          "control_accuracy": 0.2781986531986532,
+          "mixture_accuracy": 0.2786195286195286,
+          "delta_accuracy_mixture_minus_control": 0.00042087542087542086,
+          "paired_item_bootstrap_95ci": [
+            -0.015572390572390573,
+            0.016414141414141416
+          ],
+          "mixture_only_correct": 187,
+          "control_only_correct": 186,
+          "same_correctness": 2003,
+          "benchmark_sha256": "f306f752bfd65be4a4df619bae155905bf2896cc72cbb8f544dda92e3585f740"
+        },
+        "arc_challenge": {
+          "items": 1172,
+          "control_accuracy": 0.1945392491467577,
+          "mixture_accuracy": 0.19965870307167236,
+          "delta_accuracy_mixture_minus_control": 0.005119453924914676,
+          "paired_item_bootstrap_95ci": [
+            -0.014505119453924915,
+            0.024744027303754267
+          ],
+          "mixture_only_correct": 74,
+          "control_only_correct": 68,
+          "same_correctness": 1030,
+          "benchmark_sha256": "813b6ace2566b3a60b1b4631255b7c9a834db4d68842874d9ac213745beaac38"
+        },
+        "hellaswag": {
+          "items": 10042,
+          "control_accuracy": 0.2599083847839076,
+          "mixture_accuracy": 0.26110336586337385,
+          "delta_accuracy_mixture_minus_control": 0.0011949810794662419,
+          "paired_item_bootstrap_95ci": [
+            -0.0041824337781318464,
+            0.00657239593706433
+          ],
+          "mixture_only_correct": 381,
+          "control_only_correct": 369,
+          "same_correctness": 9292,
+          "benchmark_sha256": "b400c1a7d3c7f1a620409fe84ddd98335a3cb72be32dbb10ec79719e0658b447"
+        },
+        "belebele_en": {
+          "items": 900,
+          "control_accuracy": 0.26666666666666666,
+          "mixture_accuracy": 0.25222222222222224,
+          "delta_accuracy_mixture_minus_control": -0.014444444444444444,
+          "paired_item_bootstrap_95ci": [
+            -0.03666666666666667,
+            0.0077777777777777776
+          ],
+          "mixture_only_correct": 44,
+          "control_only_correct": 57,
+          "same_correctness": 799,
+          "benchmark_sha256": "d7337aa3ce395579d66deee2dd69e5abbd701dac012591c1de2b790e3e3377c2"
+        },
+        "belebele_fr": {
+          "items": 900,
+          "control_accuracy": 0.27444444444444444,
+          "mixture_accuracy": 0.26,
+          "delta_accuracy_mixture_minus_control": -0.014444444444444444,
+          "paired_item_bootstrap_95ci": [
+            -0.034444444444444444,
+            0.005555555555555556
+          ],
+          "mixture_only_correct": 34,
+          "control_only_correct": 47,
+          "same_correctness": 819,
+          "benchmark_sha256": "0d63805711db69417749c8bbb9890893c15e0ea6e0b7e4bcc11be4f38d6279f8"
+        },
+        "winogrande": {
+          "items": 1267,
+          "control_accuracy": 0.4940805051302289,
+          "mixture_accuracy": 0.5011838989739542,
+          "delta_accuracy_mixture_minus_control": 0.007103393843725336,
+          "paired_item_bootstrap_95ci": [
+            -0.017363851617995266,
+            0.03235990528808208
+          ],
+          "mixture_only_correct": 135,
+          "control_only_correct": 126,
+          "same_correctness": 1006,
+          "benchmark_sha256": "3bf695c7d0aa78e2a0d1a62cb963c61d04de137113816a94aa64aeccae2cace1"
+        }
+      }
+    }
+  ],
+  "same_harness_external_reference": {
+    "kind": "slm.exp0010-descriptive-benchmark-comparisons",
+    "status": "exploratory_posthoc",
+    "candidate": {
+      "model": "SLM-Tavenel 1M EXP-0010 gated seed 421101",
+      "parameters": 1181920,
+      "checkpoint_sha256": "d86a5617dd08c7a43c9e6ac1a276f19455a82ecf2f49bdda55b2f5cbb1ddcfd8",
+      "scores": {
+        "arc_challenge": {
+          "items": 1172,
+          "acc": 0.1962457337883959
+        },
+        "arc_easy": {
+          "items": 2376,
+          "acc": 0.2803030303030303
+        },
+        "belebele_en": {
+          "items": 900,
+          "acc": 0.2644444444444444
+        },
+        "belebele_fr": {
+          "items": 900,
+          "acc": 0.26555555555555554
+        },
+        "hellaswag": {
+          "items": 10042,
+          "acc": 0.25871340370444135
+        },
+        "winogrande": {
+          "items": 1267,
+          "acc": 0.4925019731649566
+        }
+      }
+    },
+    "references": [
+      {
+        "model": "SLM-Tavenel 10M FSC pilot",
+        "parameters": 9978368,
+        "scores": {
+          "arc_challenge": {
+            "items": 1172,
+            "acc": 0.18430034129692832
+          },
+          "arc_easy": {
+            "items": 2376,
+            "acc": 0.3055555555555556
+          },
+          "belebele_en": {
+            "items": 900,
+            "acc": 0.29555555555555557
+          },
+          "belebele_fr": {
+            "items": 900,
+            "acc": 0.3188888888888889
+          },
+          "hellaswag": {
+            "items": 10042,
+            "acc": 0.2751443935471022
+          },
+          "winogrande": {
+            "items": 1267,
+            "acc": 0.5114443567482242
+          }
+        }
+      },
+      {
+        "model": "tiny1m",
+        "parameters": 935040,
+        "scores": {
+          "arc_challenge": {
+            "items": 1172,
+            "acc": 0.1885665529010239
+          },
+          "arc_easy": {
+            "items": 2376,
+            "acc": 0.2558922558922559
+          },
+          "belebele_en": {
+            "items": 900,
+            "acc": 0.27444444444444444
+          },
+          "belebele_fr": {
+            "items": 900,
+            "acc": 0.29
+          },
+          "hellaswag": {
+            "items": 10042,
+            "acc": 0.26030671181039633
+          },
+          "winogrande": {
+            "items": 1267,
+            "acc": 0.5177584846093133
+          }
+        }
+      },
+      {
+        "model": "pythia-14m",
+        "parameters": 14067712,
+        "scores": {
+          "arc_challenge": {
+            "items": 1172,
+            "acc": 0.1612627986348123
+          },
+          "arc_easy": {
+            "items": 2376,
+            "acc": 0.32954545454545453
+          },
+          "belebele_en": {
+            "items": 900,
+            "acc": 0.25555555555555554
+          },
+          "belebele_fr": {
+            "items": 900,
+            "acc": 0.3088888888888889
+          },
+          "hellaswag": {
+            "items": 10042,
+            "acc": 0.2620991834295957
+          },
+          "winogrande": {
+            "items": 1267,
+            "acc": 0.5201262825572218
+          }
+        }
+      },
+      {
+        "model": "pythia-31m",
+        "parameters": 30494720,
+        "scores": {
+          "arc_challenge": {
+            "items": 1172,
+            "acc": 0.16723549488054607
+          },
+          "winogrande": {
+            "items": 1267,
+            "acc": 0.505130228887135
+          }
+        }
+      },
+      {
+        "model": "smollm2-135m",
+        "parameters": 134515008,
+        "scores": {
+          "arc_challenge": {
+            "items": 1172,
+            "acc": 0.2781569965870307
+          },
+          "arc_easy": {
+            "items": 2376,
+            "acc": 0.6430976430976431
+          },
+          "belebele_en": {
+            "items": 900,
+            "acc": 0.35777777777777775
+          },
+          "belebele_fr": {
+            "items": 900,
+            "acc": 0.31444444444444447
+          },
+          "hellaswag": {
+            "items": 10042,
+            "acc": 0.3564031069508066
+          },
+          "winogrande": {
+            "items": 1267,
+            "acc": 0.5295974743488555
+          }
+        }
+      }
+    ],
+    "paired_item_comparisons": [
+      {
+        "reference": "SLM-Tavenel 10M FSC pilot",
+        "task": "arc_challenge",
+        "items": 1172,
+        "reference_accuracy": 0.18430034129692832,
+        "slm_tavenel_accuracy": 0.1962457337883959,
+        "paired_delta_tavenel_minus_reference": 0.011945392491467588,
+        "paired_item_bootstrap_95ci": [
+          -0.011945392491467578,
+          0.03583617747440273
+        ],
+        "tavenel_only_correct": 113,
+        "reference_only_correct": 99,
+        "both_same_correctness": 960,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "SLM-Tavenel 10M FSC pilot",
+        "task": "arc_easy",
+        "items": 2376,
+        "reference_accuracy": 0.3055555555555556,
+        "slm_tavenel_accuracy": 0.2803030303030303,
+        "paired_delta_tavenel_minus_reference": -0.025252525252525304,
+        "paired_item_bootstrap_95ci": [
+          -0.045454545454545456,
+          -0.005050505050505051
+        ],
+        "tavenel_only_correct": 271,
+        "reference_only_correct": 331,
+        "both_same_correctness": 1774,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "SLM-Tavenel 10M FSC pilot",
+        "task": "belebele_en",
+        "items": 900,
+        "reference_accuracy": 0.29555555555555557,
+        "slm_tavenel_accuracy": 0.2644444444444444,
+        "paired_delta_tavenel_minus_reference": -0.031111111111111145,
+        "paired_item_bootstrap_95ci": [
+          -0.06555555555555556,
+          0.003361111111108686
+        ],
+        "tavenel_only_correct": 114,
+        "reference_only_correct": 142,
+        "both_same_correctness": 644,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "SLM-Tavenel 10M FSC pilot",
+        "task": "belebele_fr",
+        "items": 900,
+        "reference_accuracy": 0.3188888888888889,
+        "slm_tavenel_accuracy": 0.26555555555555554,
+        "paired_delta_tavenel_minus_reference": -0.053333333333333344,
+        "paired_item_bootstrap_95ci": [
+          -0.08888888888888889,
+          -0.017777777777777778
+        ],
+        "tavenel_only_correct": 108,
+        "reference_only_correct": 156,
+        "both_same_correctness": 636,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "SLM-Tavenel 10M FSC pilot",
+        "task": "hellaswag",
+        "items": 10042,
+        "reference_accuracy": 0.2751443935471022,
+        "slm_tavenel_accuracy": 0.25871340370444135,
+        "paired_delta_tavenel_minus_reference": -0.016430989842660837,
+        "paired_item_bootstrap_95ci": [
+          -0.023600876319458276,
+          -0.009460266879107747
+        ],
+        "tavenel_only_correct": 587,
+        "reference_only_correct": 752,
+        "both_same_correctness": 8703,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "SLM-Tavenel 10M FSC pilot",
+        "task": "winogrande",
+        "items": 1267,
+        "reference_accuracy": 0.5114443567482242,
+        "slm_tavenel_accuracy": 0.4925019731649566,
+        "paired_delta_tavenel_minus_reference": -0.018942383583267608,
+        "paired_item_bootstrap_95ci": [
+          -0.056037884767166535,
+          0.018153117600631413
+        ],
+        "tavenel_only_correct": 278,
+        "reference_only_correct": 302,
+        "both_same_correctness": 687,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "tiny1m",
+        "task": "arc_challenge",
+        "items": 1172,
+        "reference_accuracy": 0.1885665529010239,
+        "slm_tavenel_accuracy": 0.1962457337883959,
+        "paired_delta_tavenel_minus_reference": 0.007679180887372017,
+        "paired_item_bootstrap_95ci": [
+          -0.020477815699658702,
+          0.03668941979522184
+        ],
+        "tavenel_only_correct": 151,
+        "reference_only_correct": 142,
+        "both_same_correctness": 879,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "tiny1m",
+        "task": "arc_easy",
+        "items": 2376,
+        "reference_accuracy": 0.2558922558922559,
+        "slm_tavenel_accuracy": 0.2803030303030303,
+        "paired_delta_tavenel_minus_reference": 0.024410774410774383,
+        "paired_item_bootstrap_95ci": [
+          0.0016835016835016834,
+          0.04713804713804714
+        ],
+        "tavenel_only_correct": 411,
+        "reference_only_correct": 353,
+        "both_same_correctness": 1612,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "tiny1m",
+        "task": "belebele_en",
+        "items": 900,
+        "reference_accuracy": 0.27444444444444444,
+        "slm_tavenel_accuracy": 0.2644444444444444,
+        "paired_delta_tavenel_minus_reference": -0.010000000000000009,
+        "paired_item_bootstrap_95ci": [
+          -0.043333333333333335,
+          0.022222222222222223
+        ],
+        "tavenel_only_correct": 108,
+        "reference_only_correct": 117,
+        "both_same_correctness": 675,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "tiny1m",
+        "task": "belebele_fr",
+        "items": 900,
+        "reference_accuracy": 0.29,
+        "slm_tavenel_accuracy": 0.26555555555555554,
+        "paired_delta_tavenel_minus_reference": -0.024444444444444435,
+        "paired_item_bootstrap_95ci": [
+          -0.05444444444444444,
+          0.005555555555555556
+        ],
+        "tavenel_only_correct": 82,
+        "reference_only_correct": 104,
+        "both_same_correctness": 714,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "tiny1m",
+        "task": "hellaswag",
+        "items": 10042,
+        "reference_accuracy": 0.26030671181039633,
+        "slm_tavenel_accuracy": 0.25871340370444135,
+        "paired_delta_tavenel_minus_reference": -0.0015933081059549825,
+        "paired_item_bootstrap_95ci": [
+          -0.009858593905596494,
+          0.00657239593706433
+        ],
+        "tavenel_only_correct": 882,
+        "reference_only_correct": 898,
+        "both_same_correctness": 8262,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "tiny1m",
+        "task": "winogrande",
+        "items": 1267,
+        "reference_accuracy": 0.5177584846093133,
+        "slm_tavenel_accuracy": 0.4925019731649566,
+        "paired_delta_tavenel_minus_reference": -0.0252565114443567,
+        "paired_item_bootstrap_95ci": [
+          -0.06077348066298342,
+          0.009471191791633781
+        ],
+        "tavenel_only_correct": 240,
+        "reference_only_correct": 272,
+        "both_same_correctness": 755,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "pythia-14m",
+        "task": "arc_challenge",
+        "items": 1172,
+        "reference_accuracy": 0.1612627986348123,
+        "slm_tavenel_accuracy": 0.1962457337883959,
+        "paired_delta_tavenel_minus_reference": 0.03498293515358361,
+        "paired_item_bootstrap_95ci": [
+          0.010238907849829351,
+          0.059726962457337884
+        ],
+        "tavenel_only_correct": 134,
+        "reference_only_correct": 93,
+        "both_same_correctness": 945,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "pythia-14m",
+        "task": "arc_easy",
+        "items": 2376,
+        "reference_accuracy": 0.32954545454545453,
+        "slm_tavenel_accuracy": 0.2803030303030303,
+        "paired_delta_tavenel_minus_reference": -0.049242424242424254,
+        "paired_item_bootstrap_95ci": [
+          -0.0707070707070707,
+          -0.027356902356902357
+        ],
+        "tavenel_only_correct": 284,
+        "reference_only_correct": 401,
+        "both_same_correctness": 1691,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "pythia-14m",
+        "task": "belebele_en",
+        "items": 900,
+        "reference_accuracy": 0.25555555555555554,
+        "slm_tavenel_accuracy": 0.2644444444444444,
+        "paired_delta_tavenel_minus_reference": 0.00888888888888889,
+        "paired_item_bootstrap_95ci": [
+          -0.024444444444444446,
+          0.042222222222222223
+        ],
+        "tavenel_only_correct": 125,
+        "reference_only_correct": 117,
+        "both_same_correctness": 658,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "pythia-14m",
+        "task": "belebele_fr",
+        "items": 900,
+        "reference_accuracy": 0.3088888888888889,
+        "slm_tavenel_accuracy": 0.26555555555555554,
+        "paired_delta_tavenel_minus_reference": -0.043333333333333335,
+        "paired_item_bootstrap_95ci": [
+          -0.07555555555555556,
+          -0.011111111111111112
+        ],
+        "tavenel_only_correct": 93,
+        "reference_only_correct": 132,
+        "both_same_correctness": 675,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "pythia-14m",
+        "task": "hellaswag",
+        "items": 10042,
+        "reference_accuracy": 0.2620991834295957,
+        "slm_tavenel_accuracy": 0.25871340370444135,
+        "paired_delta_tavenel_minus_reference": -0.0033857797251543587,
+        "paired_item_bootstrap_95ci": [
+          -0.011053574985062736,
+          0.0041824337781318464
+        ],
+        "tavenel_only_correct": 738,
+        "reference_only_correct": 772,
+        "both_same_correctness": 8532,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "pythia-14m",
+        "task": "winogrande",
+        "items": 1267,
+        "reference_accuracy": 0.5201262825572218,
+        "slm_tavenel_accuracy": 0.4925019731649566,
+        "paired_delta_tavenel_minus_reference": -0.027624309392265234,
+        "paired_item_bootstrap_95ci": [
+          -0.062352012628255724,
+          0.007103393843725336
+        ],
+        "tavenel_only_correct": 237,
+        "reference_only_correct": 272,
+        "both_same_correctness": 758,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "pythia-31m",
+        "task": "arc_challenge",
+        "items": 1172,
+        "reference_accuracy": 0.16723549488054607,
+        "slm_tavenel_accuracy": 0.1962457337883959,
+        "paired_delta_tavenel_minus_reference": 0.029010238907849845,
+        "paired_item_bootstrap_95ci": [
+          0.002559726962457338,
+          0.05460750853242321
+        ],
+        "tavenel_only_correct": 140,
+        "reference_only_correct": 106,
+        "both_same_correctness": 926,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "pythia-31m",
+        "task": "winogrande",
+        "items": 1267,
+        "reference_accuracy": 0.505130228887135,
+        "slm_tavenel_accuracy": 0.4925019731649566,
+        "paired_delta_tavenel_minus_reference": -0.012628255722178405,
+        "paired_item_bootstrap_95ci": [
+          -0.0473559589581689,
+          0.022888713496448304
+        ],
+        "tavenel_only_correct": 253,
+        "reference_only_correct": 269,
+        "both_same_correctness": 745,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "smollm2-135m",
+        "task": "arc_challenge",
+        "items": 1172,
+        "reference_accuracy": 0.2781569965870307,
+        "slm_tavenel_accuracy": 0.1962457337883959,
+        "paired_delta_tavenel_minus_reference": -0.08191126279863478,
+        "paired_item_bootstrap_95ci": [
+          -0.11348122866894197,
+          -0.050341296928327645
+        ],
+        "tavenel_only_correct": 135,
+        "reference_only_correct": 231,
+        "both_same_correctness": 806,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "smollm2-135m",
+        "task": "arc_easy",
+        "items": 2376,
+        "reference_accuracy": 0.6430976430976431,
+        "slm_tavenel_accuracy": 0.2803030303030303,
+        "paired_delta_tavenel_minus_reference": -0.3627946127946128,
+        "paired_item_bootstrap_95ci": [
+          -0.38636363636363635,
+          -0.3392255892255892
+        ],
+        "tavenel_only_correct": 141,
+        "reference_only_correct": 1003,
+        "both_same_correctness": 1232,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "smollm2-135m",
+        "task": "belebele_en",
+        "items": 900,
+        "reference_accuracy": 0.35777777777777775,
+        "slm_tavenel_accuracy": 0.2644444444444444,
+        "paired_delta_tavenel_minus_reference": -0.09333333333333332,
+        "paired_item_bootstrap_95ci": [
+          -0.13,
+          -0.056666666666666664
+        ],
+        "tavenel_only_correct": 103,
+        "reference_only_correct": 187,
+        "both_same_correctness": 610,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "smollm2-135m",
+        "task": "belebele_fr",
+        "items": 900,
+        "reference_accuracy": 0.31444444444444447,
+        "slm_tavenel_accuracy": 0.26555555555555554,
+        "paired_delta_tavenel_minus_reference": -0.048888888888888926,
+        "paired_item_bootstrap_95ci": [
+          -0.08555555555555555,
+          -0.012222222222222223
+        ],
+        "tavenel_only_correct": 118,
+        "reference_only_correct": 162,
+        "both_same_correctness": 620,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "smollm2-135m",
+        "task": "hellaswag",
+        "items": 10042,
+        "reference_accuracy": 0.3564031069508066,
+        "slm_tavenel_accuracy": 0.25871340370444135,
+        "paired_delta_tavenel_minus_reference": -0.09768970324636528,
+        "paired_item_bootstrap_95ci": [
+          -0.10645289782911771,
+          -0.08892650866361283
+        ],
+        "tavenel_only_correct": 585,
+        "reference_only_correct": 1566,
+        "both_same_correctness": 7891,
+        "multiple_comparison_adjustment": "none"
+      },
+      {
+        "reference": "smollm2-135m",
+        "task": "winogrande",
+        "items": 1267,
+        "reference_accuracy": 0.5295974743488555,
+        "slm_tavenel_accuracy": 0.4925019731649566,
+        "paired_delta_tavenel_minus_reference": -0.03709550118389893,
+        "paired_item_bootstrap_95ci": [
+          -0.0734017363851618,
+          0.0
+        ],
+        "tavenel_only_correct": 261,
+        "reference_only_correct": 308,
+        "both_same_correctness": 698,
+        "multiple_comparison_adjustment": "none"
+      }
+    ],
+    "bootstrap": {
+      "method": "paired resampling of item correctness differences",
+      "draws": 20000,
+      "seed": 20261022,
+      "interval": "percentile 95%",
+      "familywise_correction": "none"
+    },
+    "interpretation": "Scores use identical pinned evaluation files and local scoring code. They are conditional on these checkpoints and do not estimate training-seed variability. External models have different corpora, budgets, tokenizers and possible benchmark exposure; differences are descriptive."
+  }
+}

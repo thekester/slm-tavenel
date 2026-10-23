@@ -92,6 +92,8 @@ def main() -> int:
         raise ValueError("Training tokenizer is missing EOS or PAD")
 
     files: dict[str, str] = {}
+    copy_hashed(ROOT / "docs/reviews/OSAID-1.0-EXP0010-HF.md",
+                out / "training_record/OSAID-1.0-SELF-ASSESSMENT.md", files, out)
     source_manifest = out / "training_record/source-record-manifest.jsonl"
     source_manifest.parent.mkdir(parents=True, exist_ok=True)
     import subprocess
@@ -276,7 +278,8 @@ def main() -> int:
         "weight_license": "MIT", "code_license": "MIT", "data_information_license": "MIT",
         "maintainer_authorized_local_candidate_preparation": True,
         "uploaded": False,
-        "publication_status": "local candidate prepared; not uploaded; source-rights and manual privacy reviews unsigned",
+        "publication_status": "local candidate; OSAID 1.0 core requirements self-assessed met; not uploaded; source-rights and privacy limitations disclosed",
+        "osaid_1_0_self_assessment": "prepared package meets core OSAID 1.0 requirements by project self-assessment; not OSI certified; public availability pending",
         "source_rights_review_signed": False, "manual_privacy_review_signed": False,
         "training": {
             "selected_seed": 421101, "paired_seeds": list(range(421101, 421111)),

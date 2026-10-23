@@ -1,0 +1,33 @@
+# EXP-0021 matched FSC-only masked-input regularization pilot.
+# Uses the already-reserved tokenizer token id 10 as [MASK], avoiding vocab changes.
+# Local exploratory run only; source rights/privacy review remains unresolved.
+model: configs/model/slm-25m-gated.yaml
+data_dir: data/tokens/fsc-pilot-v1-scaling
+init_from: runs/fsc-scaling/25m-gated-grown-s1234/checkpoints/step_00015000.pt
+out_dir: runs/EXP-0021-25m-fsc-mir-s2-2026-10-23
+seed: 20261024
+seq_len: 1024
+micro_batch_size: 4
+grad_accum_steps: 8
+max_steps: 1500
+optimizer: adamw
+lr: 3.0e-4
+min_lr: 3.0e-5
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 50
+decay_fraction: 0.2
+mir: true
+mir_mask_token_id: 10
+mir_mask_ratio_min: 0.0
+mir_mask_ratio_max: 0.5
+mir_aux_weight: 0.4
+dtype: bfloat16
+deterministic: false
+log_interval: 50
+eval_interval: 250
+eval_batches: 20
+observe_interval: 500
+ckpt_interval: 500
+keep_checkpoints: 3
+resume: false

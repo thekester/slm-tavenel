@@ -1,6 +1,6 @@
 # EXP-0009: SLM-Tavenel scaling and same-harness references
 
-*Status:* 1M and 10M are complete. On 2026-10-20, the user paused grown-25M at step 3,050; its latest durable checkpoint is step 3,000. Resume later from that checkpoint. The active runs use the frozen French-Science-Commons
+*Status:* 1M, 10M and grown-25M are complete. The 25M checkpoint completed step 15,000 on 2026-10-22 and all six pinned multiple-choice scores plus English/French held-out BPB are recorded. It resumed from durable step 3,000 using the original Python 3.11.9 / PyTorch 2.10.0+cu130 runtime after a mismatched-runtime attempt was stopped and archived. The resumed trajectory matched the historical validation loss at step 3,500. Comparisons and limitations are in the [25M results report](EXP-0009-25m-scaling-results-2026-10-22.md). See the [resume diagnostic](../docs/reviews/EXP-0009-25M-RESUME-DIAGNOSTIC-2026-10-22.md). This experiment uses the frozen French-Science-Commons
 pilot corpus; the corpus remains a candidate and results are exploratory pending rights and privacy
 review. External references are contextual, not controlled training comparisons.
 
@@ -17,7 +17,7 @@ review. External references are contextual, not controlled training comparisons.
 |---|---:|---|---:|---:|---:|---|
 | 1M gated | 1.2M | scratch | 491.52M | 15,000 | 1234 | Complete |
 | 10M gated | 10M | scratch | 491.52M | 15,000 | 1234 | Complete |
-| 25M gated | 25M | function-preserving growth from the trained 10M checkpoint | 491.52M additional | 15,000 additional | 1234 | Paused at step 3,050; durable checkpoint at step 3,000 |
+| 25M gated | 25M | function-preserving growth from the trained 10M checkpoint | 491.52M additional | 15,000 additional | 1234 | Training and all six MC/BPB evaluations complete; local candidate prepared; not uploaded |
 | 25M gated | 25M | scratch | 491.52M | 15,000 | 1234 | Deferred |
 
 The completed 1M and 10M runs use the same 8,192-entry tokenizer, the same EN/FR and license-balanced frozen data, the
@@ -27,9 +27,9 @@ tokens-per-parameter differ by scale and will be reported. The grown 25M conditi
 491.52M-token 10M run, so compare its downstream numbers as a different initialization path and
 report the full cost. It must not be described as an iso-compute comparison with scratch.
 
-The scratch 25M run is deferred to limit compute and GPU time. Grown-25M is paused and is not part of
-the current evaluation round. Therefore this phase cannot compare
-scratch and grown initialization at 25M; the grown model also inherits the completed 10M run's
+The scratch 25M run is deferred to limit compute and GPU time. Grown-25M training and its planned
+evaluations are complete. Therefore this phase cannot compare scratch and grown initialization at
+25M; the grown model also inherits the completed 10M run's
 training budget and data exposure. Primary outcome is English and French bits-per-byte on the fixed
 held-out documents. Secondary
 outcomes are raw and length-normalized accuracy on ARC-Easy, HellaSwag, Belebele EN and Belebele FR,
@@ -123,11 +123,10 @@ only after item-level provenance and an acceptable license are verified.
 ## Evaluation status and outputs
 
 The sequential training queue is `scripts/run_fsc_scaling.ps1`; configs are under `configs/train/fsc-pilot-v1-*`.
-Run outputs are under `runs/fsc-scaling/`. The current evaluation covers completed 1M and 10M
-checkpoints and the three pinned references; it does not wait for paused 25M. Each evaluation records
+Run outputs are under `runs/fsc-scaling/`. The completed 1M, 10M and grown-25M evaluations and three pinned references are recorded. The 25M has all six same-file MC scores and English/French BPB on the same held-out text. Each evaluation records
 BPB, item-level MC predictions, checkpoint/model revision, tokenizer or benchmark hashes under its
 `analysis/` directory or `runs/reference/`. Paired bootstrap intervals quantify item-sampling
 uncertainty conditional on these particular checkpoints and benchmark items; they do not estimate
 training-seed or training-data variability. Keep comparisons exploratory and update the chart only
 from validated same-file outputs. The supplementary ARC-Challenge/WinoGrande wave is complete and
-also remains exploratory. Resume 25M with `scripts/resume_fsc_25m_grown.ps1` when ready.
+also remains exploratory. The scratch 25M run remains deferred.

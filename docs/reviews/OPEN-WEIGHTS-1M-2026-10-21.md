@@ -234,3 +234,16 @@ and their hashes before release.
 ## Corrected complete HAL pagination audit
 
 The corrected audit queried every page for all 3,450 previously selected HAL IDs and recorded `numFound` pagination counts. All returned versions for all 3,450 IDs report CC0: 1,767 English and 1,683 French. No IDs were missing and no license conflicts were observed in this API snapshot. This improves completeness of the metadata comparison; it does not independently prove that each submitter had authority to apply CC0. The filtered outputs are now separated by the record language, and the audit code and report hashes are retained locally.
+
+
+## 2026-10-22 file-level license follow-up
+
+A new audit rechecked all 3,483 dataset rows labeled CC0 against every paginated HAL version and
+queried both `licence_s` (main-file license) and `fileLicenses_s` (Document-file licenses). It
+confirmed the same 3,450 CC0-matched IDs and 33 missing, conflicting or non-CC0 exclusions. Among
+the accepted IDs, every returned main-file and Document-file license was CC0. The full machine
+report is in `exports/slm-tavenel-1m-exp0010-release-candidate-v4/training_record/hal-license-audit.json`;
+the explanation and limits are in `docs/reviews/EXP-0010-HAL-FILE-LICENSE-ADDENDUM-2026-10-22.md`.
+HAL describes these file-level fields in its [2026 API announcement](https://www.ccsd.cnrs.fr/en/2026/02/no-hal-deposit-without-licence-the-essential-information-you-need-to-know/).
+This follow-up still does not prove that each depositor had authority to apply CC0 or that source
+articles are free from privacy risk. The source-rights and human privacy attestations remain unsigned.

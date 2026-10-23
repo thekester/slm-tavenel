@@ -4,6 +4,9 @@ An open research project on small language models, reproducible training, observ
 careful evaluation under limited compute. The 1B goal is a longer-term direction; the current
 release work concerns a roughly 1M-parameter bilingual research model.
 
+**New here?** Start with the [SLM-Tavenel research overview](docs/SLM-TAVENEL-RESEARCH-OVERVIEW.md),
+an article-style guide to the 1M study, its data, results, benchmark comparisons, and limitations.
+
 ## Current status
 
 The repository contains historical 1M/10M pilots and same-harness comparisons with TinyStories,
@@ -28,10 +31,13 @@ PleIAs/French-Science-Commons revision `bfa114c09d7c28dcd0a8a47fe445c64b4a3c6156
 filtered records, split, source IDs, declared CC0 metadata, processing and hashes, and excludes
 article text from the model bundle. The dataset and HAL metadata trail is not independent proof of
 each depositor's authority. Source-rights review and manual privacy sign-off remain unsigned. The
-OSAID does not require a specific legal instrument for model parameters; this project uses MIT for
-the weights and code. We do not claim full conformance to the [OSI Open Source AI Definition 1.0](https://opensource.org/ai/open-source-ai-definition)
-because the authority behind the source records and the applicable data-information terms have not
-been independently established. This is stated in the candidate release documentation.
+OSAID allows different legal mechanisms for model parameters; this project uses MIT for weights,
+code and Data Information. Our [OSAID 1.0 self-assessment](docs/reviews/OSAID-1.0-EXP0010-ASSESSMENT.md)
+finds the published package meets the definition's core artifact and terms requirements. This is a
+project self-assessment, not OSI certification; the [EXP-0010 package is public on Hugging Face](https://huggingface.co/athenista/slm-tavenel-1m-exp0010).
+Source-rights and privacy findings are disclosed separately in the
+[source and privacy dossier](docs/reviews/EXP-0010-SOURCE-PRIVACY-REVIEW.md); their unsigned
+governance records are not OSAID criteria.
 
 The data-preparation manifest records a dirty worktree at preprocessing time. Before packaging, the
 pipeline was replayed into a separate scratch directory; the retained-document and filtering
@@ -39,23 +45,21 @@ decision hashes and processing statistics matched the recorded outputs exactly. 
 configuration and report are included in the candidate package. The subsequent paired
 model-training runs use a recorded clean code commit.
 
-The local Hub candidate contains a runnable Transformers implementation, selected weights, training
-code and configurations, per-run metrics and observability logs, data-source manifest, benchmark
-records, licenses, provenance and SHA-256 file inventory. It has not been uploaded. The selected
-seed, scope, evaluation limits and unresolved source review are documented in the [EXP-0010 model card](docs/model-cards/slm-tavenel-1m-exp0010-candidate.md),
-[EXP-0010 data card](docs/model-cards/slm-tavenel-1m-exp0010-data-card.md),
-[protocol](experiments/EXP-0010-1m-paired-replication-2026-10-22.md), [experiment archive](experiments/)
-and [roadmap](docs/ROADMAP.md).
+The [EXP-0010 1M package](https://huggingface.co/athenista/slm-tavenel-1m-exp0010) is public with selected weights, runnable Transformers code, training configurations, paired-run metrics, observability logs, source manifests, benchmark records and a SHA-256 inventory. The [EXP-0009 10M FSC pilot](https://huggingface.co/athenista/slm-tavenel-10m-exp0009) is public as an explicitly exploratory single-seed checkpoint. Its mixed source-license labels, rights and privacy review gaps, and dirty-worktree provenance are disclosed in its model card and attribution files. Read the [EXP-0010 model card](docs/model-cards/slm-tavenel-1m-exp0010-candidate.md), [data card](docs/model-cards/slm-tavenel-1m-exp0010-data-card.md), [paired protocol](experiments/EXP-0010-1m-paired-replication-2026-10-22.md), [experiment archive](experiments/) and [roadmap](docs/ROADMAP.md).
 
-Older wiki and FSC runs, including prior 1M pilots, 10M studies and the paused grown-25M run, remain
-in the repository as historical records. The 25M run is paused. Their scores are not used as evidence
-for the new paired experiment.
+The 10M card also includes a post-training HAL file-license audit: 31,262 of 31,417 source IDs match across returned HAL versions; 72 have explicit mismatches, 3 conflicting declarations, 24 missing file-license fields and 56 were not found. Those 155 records remain unresolved. See the [audit review](docs/reviews/EXP-0009-HAL-FILE-LICENSE-AUDIT-2026-10-22.md) and [full metadata-only report](https://huggingface.co/athenista/slm-tavenel-10m-exp0009/blob/main/training_record/hal-file-license-audit-2026-10-22.json). This is not a rights clearance.
+
+A targeted HAL recheck on 23 October found no change among those 155 records. Crossref metadata was available for 75 DOI-bearing records: 30 included the dataset-declared license URL, 15 listed only a different license or policy URL, 23 had no license field, and 7 lookups failed. These metadata do not establish rights-holder authority or the exact version used. A local text and metadata screen of the 31,417 training documents found four residual public-IP-pattern matches, 54 replacement-character documents, and 20,808 records with at least one broad privacy-review signal; the later v4 content-risk filters were not applied to these historic runs. See the [source and privacy review record](docs/reviews/EXP-0009-25M-SOURCE-PRIVACY-REVIEW.md) and its machine-readable reports. The [25M package is now public on Hugging Face](https://huggingface.co/athenista/slm-tavenel-25m-exp0009). It includes a full tracked source snapshot and an [OSAID 1.0 self-assessment](docs/reviews/OSAID-1.0-EXP0009-25M-ASSESSMENT.md), which describes OSAID alignment as a project self-assessment, not OSI certification. Source-rights and manual privacy review remain unsigned; those risks and limits are disclosed in the model card and reports.
+
+Older wiki and FSC runs, including prior 1M pilots, remain in the repository as historical records.
+The grown 25M run resumed from durable step 3,000 in the matching Python 3.11 / PyTorch 2.10 environment and completed step 15,000. Its six same-harness benchmark scores, comparison chart, paired item intervals and English/French BPB are recorded in the separate EXP-0009 report. Its inference package passed a fixed-input native-to-Transformers parity check. The model is publicly hosted as a separate EXP-0009 artifact and is not part of the EXP-0010 1M release.
 ## Current SLM benchmark comparison
 
 The current comparison shows exactly one SLM-Tavenel 1M: the preselected EXP-0010 candidate,
 validated with ten paired training seeds for the gate ablation. Earlier single-seed 1M pilots remain
 in the experiment archive; they are not presented here as competing current versions. The exploratory
-SLM-Tavenel 10M checkpoint and public models provide context across model sizes.
+[SLM-Tavenel 10M FSC pilot](https://huggingface.co/athenista/slm-tavenel-10m-exp0009) and public
+models provide context across model sizes.
 
 ![SLM-Tavenel 1M selected candidate and small-model benchmark references](docs/exp0010-benchmark-comparison.svg)
 
@@ -68,9 +72,81 @@ results report](experiments/EXP-0010-results-2026-10-22.md) for the score table,
 provenance and limitations. OpenBookQA and FrenchBench are omitted because their question-source terms
 are unresolved for redistribution.
 
-The paused 25M-grown run is excluded. Earlier 1M benchmark results and raw item records remain archived
-under [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md) and the corresponding run records;
-their different dataset versions and training conditions are not mixed into this current comparison.
+### Separate EXP-0009 scaling comparison
+
+![SLM-Tavenel 1M, 10M and grown 25M compared with public small-model references](docs/exp0009-25m-benchmark-comparison.svg)
+
+This separate six-task chart includes the selected SLM-Tavenel 1M, the 10M pilot, the grown 25M
+checkpoint, TinyStories tiny1m, Pythia-14M/31M and SmolLM2-135M. Every available score uses the same
+pinned input files and repository evaluator. Error bars reflect item-sampling uncertainty only; they
+do not represent training-seed variation. The 25M inherits the trained 10M checkpoint and receives
+491.52M additional token positions, so it is not an iso-compute size comparison. These results are
+exploratory; the [25M weights are available on Hugging Face](https://huggingface.co/athenista/slm-tavenel-25m-exp0009). See the [EXP-0009 results report](experiments/EXP-0009-25m-scaling-results-2026-10-22.md)
+for the full scores, paired intervals, BPB point estimates, hashes and corpus limits. BPB is reported
+with paired document-bootstrap intervals conditional on the two saved checkpoints; the intervals do
+not estimate training-seed uncertainty.
+
+Held-out bits-per-byte (lower is better; same FSC English/French validation text and tokenizer):
+
+| SLM-Tavenel checkpoint | English BPB | French BPB |
+|---|---:|---:|
+| 1M EXP-0010 selected | 1.4904 | 1.3676 |
+| 10M EXP-0009 | 1.1755 | 1.0897 |
+| grown 25M EXP-0009 | **1.1171** | **1.0367** |
+
+![Paired document-bootstrap intervals for held-out BPB differences](docs/exp0009-25m-bpb-document-bootstrap.svg)
+
+Positive values are 10M BPB minus 25M BPB, so they favor the grown 25M point estimate.
+
+| Comparison | Documents | BPB difference | 95% paired document interval |
+|---|---:|---:|---:|
+| English, 10M minus 25M | 685 | +0.0585 | [+0.0570, +0.0602] |
+| French, 10M minus 25M | 678 | +0.0530 | [+0.0520, +0.0540] |
+| Equal-language mean | 685 EN; 678 FR | +0.0557 | [+0.0548, +0.0567] |
+
+The grown 25M is lower by 0.0585 BPB in English and 0.0530 in French than the 10M point estimate.
+This single continuation is not an iso-compute or parameter-only experiment. The intervals quantify
+validation-document sampling for these checkpoints, but not training-seed variation or source-data
+uncertainty. The bootstrap used seed 20261024 and 20,000 draws; see the
+bootstrap record (local artifact: `runs/fsc-scaling/comparisons/exp0009-bpb-document-bootstrap.json`) for hashes and method.
+
+The later single-pair 10M and 1M FSC/MOT mixture pilots are reported separately in the
+[paired pilot results](experiments/EXP-0012-0013-mixture-pilot-results-2026-10-22.md), with a
+[paired benchmark-effect chart](docs/exp0012-13-mixture-benchmark-effects.svg). Their control arms
+are experimental comparisons, not additional promoted SLM-Tavenel model versions; the results do
+not estimate training-seed variability.
+
+The 25M follow-up [EXP-0014](experiments/EXP-0014-25m-continuation-mixture-2026-10-23.md) compares
+matched 49.15M-token continuations from the same published checkpoint. An 80% FSC / 20% MOT mix
+reduces held-out MOT BPB by about 0.266 on both development and temporal-test text, while increasing
+FSC BPB by 0.005–0.006. Its six multiple-choice changes are small and all paired item intervals
+include zero. The result supports a domain-specific trade-off, not a general benchmark improvement;
+the new checkpoints remain local because the source reviews are unresolved.
+
+[EXP-0015](experiments/EXP-0015-25m-muon-continuation-2026-10-23.md) tested whether the project's
+Muon optimizer transfers to a matched 25M continuation. The run stopped at step 300/1,500 with a
+CUDA illegal-memory-access error before its first checkpoint. It is recorded as failed/incomplete;
+the partial losses are not a performance result and no weights were published.
+
+[EXP-0016](experiments/EXP-0016-25m-wiki-mixture-2026-10-23.md) compared a
+decontaminated English/French Wikipedia mixture with the EXP-0014 FSC-only control. Its data are
+retokenized with the 25M tokenizer and filtered against all six benchmark files. The matched
+continuation completed 1,500/1,500 steps. At the same 49.152M-token continuation budget, the 20%
+wiki mixture reduced held-out wiki BPB by 0.178 EN / 0.137 FR, while FSC BPB increased by 0.0035 EN /
+0.0025 FR. MOT BPB also improved by about 0.059 on each set. Paired item intervals for all six
+post-hoc multiple-choice tasks include zero, so this is a domain trade-off, not a general benchmark
+gain. The 10% wiki dose-response [EXP-0017](experiments/EXP-0017-25m-wiki-10pct-2026-10-23.md) is complete: it retains about 76–78% of the 20% arm's wiki BPB reduction while cutting its FSC BPB regression by about 60–64%. The six paired multiple-choice intervals still include zero, so this is a better observed domain compromise, not a general benchmark win. See the [0/10/20% dose-response graph](docs/exp0017-wiki-dose-response.svg) and [full EXP-0017 report](experiments/EXP-0017-25m-wiki-10pct-2026-10-23.md). Wikipedia and FSC rights/privacy reviews remain unresolved; candidate checkpoints stay local and exploratory.
+
+The preregistered [EXP-0018/0019 2x2 learning-rate sensitivity grid](experiments/EXP-0018-0019-25m-learning-rate-grid-2026-10-23.md) is complete. Both 1.5e-4 runs finished training and held-out BPB evaluation. At this fixed token budget, reducing the learning rate worsened BPB on all four held-out sets for both data recipes. Wiki at 10% still improves wiki BPB while slightly regressing FSC BPB; its wiki gain is smaller at the lower rate. This is a one-seed sensitivity study with document-bootstrap intervals only, not a confirmed optimum or a general benchmark win. See the four-cell analysis (local artifact: `runs/EXP-0018-0019-25m-learning-rate-grid-2026-10-23/analysis.json`) and full report. All checkpoints remain local; source rights/privacy reviews are unresolved.
+
+A new local transfer pilot, [EXP-0020/0021](experiments/EXP-0020-0021-25m-mir-pilot-2026-10-23.md), is complete: the MIR arm had higher BPB than the same-seed FSC control on all four held-out sets. This one-seed result is exploratory, and the supporting paper starts at 72M parameters; MIR also took about 1.84x as long to train in this local run.
+
+A second-seed replication of the 10% wiki recipe is training-complete in [EXP-0022](experiments/EXP-0022-25m-wiki-10pct-seed2-2026-10-23.md), matched to the completed EXP-0020 FSC control. Its final checkpoint is saved; held-out BPB evaluation remains pending after PC shutdown. No seed-2 mixture effect is reported until evaluation finishes. Two seeds are still too few to estimate seed variance robustly.
+
+The grown 25M checkpoint is reported separately under [EXP-0009](experiments/EXP-0009-fsc-scaling-and-references.md).
+It is kept out of the EXP-0010 chart because it follows a distinct inherited training path and uses a
+different experiment record. Earlier 1M benchmark results and raw item records remain archived under
+EXP-0009; their different dataset versions and training conditions are not mixed into this comparison.
 
 ## Legacy wiki-v0 benchmark snapshot
 
@@ -131,10 +207,11 @@ and [EXP-0005](experiments/EXP-0005-muon-10m.md); raw evaluator outputs are stor
 
 The `eval bpb` and `eval mc` commands accept `--hf-model` and `--hf-revision` for reference models.
 The [wiki-v1 pipeline](configs/data/pipeline-wiki-v1.yaml) expands the exploratory corpus and adds
-benchmark decontamination. EXP-0008 is paused while the candidate French-Science-Commons corpus is
-reviewed; 1M/25M scaling comparisons remain postponed. Model growth is available through `slm grow`; the
-[1M](configs/model/slm-1m-gated.yaml) and [25M](configs/model/slm-25m-gated.yaml) configurations
-remain available for later work.
+benchmark decontamination. EXP-0008 remains paused while the candidate French-Science-Commons corpus is
+reviewed. A separate exploratory EXP-0009 reports the completed 1M, 10M and grown-25M FSC runs;
+the grown-25M checkpoint and its source manifest are public on Hugging Face, and the 25M-from-scratch run remains deferred.
+Model growth is available through `slm grow`; the [1M](configs/model/slm-1m-gated.yaml) and
+[25M](configs/model/slm-25m-gated.yaml) configurations remain available for further work.
 
 What exists today:
 
@@ -236,7 +313,7 @@ Agent traces should connect task inputs, relevant execution context, tool calls,
 
 The data pipeline is intended to be a reproducible research artifact in its own right. It will track source revisions, licenses, attribution requirements, transformations, filtering decisions, and dataset splits.
 
-[Common Pile](https://arxiv.org/abs/2506.05209) and selected [SmolTalk2](https://huggingface.co/datasets/HuggingFaceTB/smoltalk2) subsets are initial candidates for review. [FineWeb and FineWeb-Edu](https://arxiv.org/abs/2406.17557), [FineWeb2](https://arxiv.org/abs/2506.20920), [Dolma](https://arxiv.org/abs/2402.00159), [The Stack v2](https://arxiv.org/abs/2402.19173), and [Tülu 3](https://arxiv.org/abs/2411.15124) mixtures are additional candidates for comparison or selective use. These names form a research shortlist, not an approved training corpus. Inclusion will depend on review of the specific sources and subsets used.
+[Common Pile](https://arxiv.org/abs/2506.05209), selected [SmolTalk2](https://huggingface.co/datasets/HuggingFaceTB/smoltalk2) subsets, and [PleIAs Common Corpus](https://huggingface.co/datasets/PleIAs/common_corpus) are candidates for review. Common Corpus is pinned in the [collection review](docs/reviews/DATASET-COLLECTION-REVIEW-2026-10-23.md) and remains blocked pending per-record license, provenance, and reproducible privacy checks. [FineWeb and FineWeb-Edu](https://arxiv.org/abs/2406.17557), [FineWeb2](https://arxiv.org/abs/2506.20920), [Dolma](https://arxiv.org/abs/2402.00159), [The Stack v2](https://arxiv.org/abs/2402.19173), and [Tülu 3](https://arxiv.org/abs/2411.15124) mixtures are additional candidates for comparison or selective use. These names form a research shortlist, not an approved training corpus. Inclusion will depend on review of the specific sources and subsets used.
 
 Preparation will include quality filtering, exact and approximate deduplication, privacy review, and checks for benchmark contamination. [DataTrove](https://github.com/huggingface/datatrove) is a reference implementation for investigating these processing pipelines. The intended core corpus excludes sources with unidentified provenance or restrictions incompatible with the project's reuse goals, including NonCommercial and NoDerivatives restrictions.
 
@@ -263,6 +340,10 @@ Promising methods will be tested individually before being combined at the targe
 ## Research references
 
 This bibliography covers the papers named in our research notes and the primary publications associated with the models and datasets discussed there. GRIT is included as background for the attention sink study. SmolTalk2 and DataTrove are documented separately as dataset and software resources. These references motivate experiments; their inclusion does not establish results for SLM-1B or approve their artifacts for use in training.
+
+The 2026-10-23 [25M performance research scan](docs/reviews/25M-PERFORMANCE-RESEARCH-2026-10-23.md)
+maps recent data-selection, pruning, batch-size and optimizer findings to bounded SLM-Tavenel experiments.
+It explicitly separates benchmark-targeted training from general-model claims and records corpus review limits.
 
 ### Reasoning, architecture, and agent systems
 

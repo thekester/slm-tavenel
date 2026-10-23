@@ -1,6 +1,6 @@
 # EXP-0012: 10M specialist/general-text mixture pilot
 
-**Status (2026-10-22):** data preparation completed. An initial control in Python 3.12/PyTorch 2.4 was stopped at step 400 after clear loss divergence. Its logs are retained but excluded from analysis. The matched control has restarted in the reference Python 3.11/PyTorch 2.10 environment with a recorded progress snapshot at step 6,050/15,000; the 20% MOT arm and paired held-out evaluations are queued behind it.
+**Status (2026-10-22): complete as a single paired-seed exploratory pilot.** Both 15,000-step training arms and held-out evaluations finished. The initial control attempt in Python 3.12/PyTorch 2.4 was stopped at step 400 after clear loss divergence; its logs are retained and excluded from analysis. Final paired text and benchmark outcomes are in the [combined EXP-0012/0013 results report](EXP-0012-0013-mixture-pilot-results-2026-10-22.md).
 
 ## Research motivation
 
@@ -81,12 +81,13 @@ model or a valid comparison arm.
 
 The matched control restarted at 2026-10-22 07:46 in Python 3.11/PyTorch 2.10, matching the
 reference run's software versions. At step 6,050 it measured 60,993 tokens/s with training loss
-2.73289. `scripts/run_exp0012_py311_queue.ps1` runs the FSC control,
-then the 20% MOT treatment, then evaluates both checkpoints; queue events are logged in
-`runs/EXP-0012-py311-queue.log`. This runner sets `resume: false` in both configs. Before the
-restart, the older PyTorch 2.10 run measured about 52,000 tokens/s. The current run's first interval
-implies about 1 h 53 m per 15,000-step arm, about 3 h 46 m for both arms, plus evaluation. Actual
-duration may differ as throughput changes during training.
+2.73289. `scripts/run_exp0012_py311_queue.ps1` ran the FSC control, the 20% MOT treatment, and
+the paired text/benchmark evaluations; queue events are logged in
+`runs/EXP-0012-py311-queue.log`. This runner sets `resume: false` in both configs. The control
+ran from 07:46 to 09:46, the treatment from 09:46 to 11:56, and the two full text plus four-task
+benchmark evaluations completed by 12:55. ARC-Challenge and WinoGrande were then scored for both
+checkpoints in separate completion records. The combined six-task comparison verifies file hashes,
+item IDs, ordering, and labels before calculating paired outcomes; see the [results report](EXP-0012-0013-mixture-pilot-results-2026-10-22.md).
 
 ## Release-time implementation correction
 
@@ -99,6 +100,8 @@ training inputs were not changed by this source release. The ordering is inherit
 stable document-ID hash sort; the builder does not use its seed argument to reshuffle records.
 
 ## References
+
+See the [paired pilot results](EXP-0012-0013-mixture-pilot-results-2026-10-22.md) for all six benchmark scores, uncertainty intervals, held-out BPB outcomes, and limitations.
 
 - Sedova et al. (2026), [Scaling Laws for Mixture Pretraining Under Data Constraints](https://arxiv.org/abs/2605.12715).
 - Xu et al. (2026), [Harness²: Recursive Agent Harnessing for an Open World](https://arxiv.org/abs/2610.14224).

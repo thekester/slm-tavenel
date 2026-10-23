@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="650" viewBox="0 0 1120 650">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<style>text{font-family:Inter,Segoe UI,Arial,sans-serif;fill:#18212f}.title{font-size:27px;font-weight:700}.sub{font-size:14px;fill:#485568}.panel{font-size:18px;font-weight:700}.axis{font-size:12px;fill:#536174}.small{font-size:12px;fill:#475569}</style>
+<text x="70" y="47" class="title">SLM-Tavenel 25M: wiki-mixture dose response</text>
+<text x="70" y="76" class="sub">BPB change relative to the matched FSC-only continuation; lower is better. Points show estimates; bars show 95% paired document intervals.</text>
+<circle cx="715" cy="111" r="6" fill="#2563eb"/>
+<text x="728" y="116" class="small">FSC validation</text>
+<rect x="899" y="105" width="12" height="12" fill="#c2410c"/>
+<text x="918" y="116" class="small">Wikipedia holdout</text>
+<text x="155" y="137" class="panel">English held-out text</text>
+<line x1="135" y1="175.1" x2="510" y2="175.1" stroke="#8b95a5" stroke-width="1.6"/>
+<text x="127" y="179.1" text-anchor="end" class="axis">0.00</text>
+<line x1="135" y1="262.9" x2="510" y2="262.9" stroke="#e3e8ef" stroke-width="1"/>
+<text x="127" y="266.9" text-anchor="end" class="axis">-0.05</text>
+<line x1="135" y1="350.6" x2="510" y2="350.6" stroke="#e3e8ef" stroke-width="1"/>
+<text x="127" y="354.6" text-anchor="end" class="axis">-0.10</text>
+<line x1="135" y1="438.4" x2="510" y2="438.4" stroke="#e3e8ef" stroke-width="1"/>
+<text x="127" y="442.4" text-anchor="end" class="axis">-0.15</text>
+<line x1="135" y1="526.2" x2="510" y2="526.2" stroke="#e3e8ef" stroke-width="1"/>
+<text x="127" y="530.2" text-anchor="end" class="axis">-0.20</text>
+<line x1="135" y1="154" x2="135" y2="535" stroke="#637083"/>
+<line x1="135" y1="535" x2="510" y2="535" stroke="#637083"/>
+<line x1="155.0" y1="535" x2="155.0" y2="540" stroke="#637083"/>
+<text x="155.0" y="558" text-anchor="middle" class="axis">0%</text>
+<line x1="315.0" y1="535" x2="315.0" y2="540" stroke="#637083"/>
+<text x="315.0" y="558" text-anchor="middle" class="axis">10%</text>
+<line x1="475.0" y1="535" x2="475.0" y2="540" stroke="#637083"/>
+<text x="475.0" y="558" text-anchor="middle" class="axis">20%</text>
+<polyline points="155.0,175.1 315.0,172.7 475.0,168.8" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<line x1="155.0" y1="175.1" x2="155.0" y2="175.1" stroke="#2563eb" stroke-width="2"/>
+<line x1="150.0" y1="175.1" x2="160.0" y2="175.1" stroke="#2563eb"/>
+<line x1="150.0" y1="175.1" x2="160.0" y2="175.1" stroke="#2563eb"/>
+<circle cx="155.0" cy="175.1" r="5.5" fill="#2563eb"/>
+<line x1="315.0" y1="173.0" x2="315.0" y2="172.4" stroke="#2563eb" stroke-width="2"/>
+<line x1="310.0" y1="173.0" x2="320.0" y2="173.0" stroke="#2563eb"/>
+<line x1="310.0" y1="172.4" x2="320.0" y2="172.4" stroke="#2563eb"/>
+<circle cx="315.0" cy="172.7" r="5.5" fill="#2563eb"/>
+<line x1="475.0" y1="169.4" x2="475.0" y2="168.4" stroke="#2563eb" stroke-width="2"/>
+<line x1="470.0" y1="169.4" x2="480.0" y2="169.4" stroke="#2563eb"/>
+<line x1="470.0" y1="168.4" x2="480.0" y2="168.4" stroke="#2563eb"/>
+<circle cx="475.0" cy="168.8" r="5.5" fill="#2563eb"/>
+<polyline points="155.0,175.1 315.0,417.6 475.0,487.2" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+<line x1="155.0" y1="175.1" x2="155.0" y2="175.1" stroke="#c2410c" stroke-width="2"/>
+<line x1="150.0" y1="175.1" x2="160.0" y2="175.1" stroke="#c2410c"/>
+<line x1="150.0" y1="175.1" x2="160.0" y2="175.1" stroke="#c2410c"/>
+<rect x="150.0" y="170.1" width="10" height="10" fill="#c2410c"/>
+<line x1="315.0" y1="435.2" x2="315.0" y2="401.9" stroke="#c2410c" stroke-width="2"/>
+<line x1="310.0" y1="435.2" x2="320.0" y2="435.2" stroke="#c2410c"/>
+<line x1="310.0" y1="401.9" x2="320.0" y2="401.9" stroke="#c2410c"/>
+<rect x="310.0" y="412.6" width="10" height="10" fill="#c2410c"/>
+<line x1="475.0" y1="509.4" x2="475.0" y2="467.4" stroke="#c2410c" stroke-width="2"/>
+<line x1="470.0" y1="509.4" x2="480.0" y2="509.4" stroke="#c2410c"/>
+<line x1="470.0" y1="467.4" x2="480.0" y2="467.4" stroke="#c2410c"/>
+<rect x="470.0" y="482.2" width="10" height="10" fill="#c2410c"/>
+<text x="660" y="137" class="panel">French held-out text</text>
+<line x1="640" y1="175.1" x2="1015" y2="175.1" stroke="#8b95a5" stroke-width="1.6"/>
+<text x="632" y="179.1" text-anchor="end" class="axis">0.00</text>
+<line x1="640" y1="262.9" x2="1015" y2="262.9" stroke="#e3e8ef" stroke-width="1"/>
+<text x="632" y="266.9" text-anchor="end" class="axis">-0.05</text>
+<line x1="640" y1="350.6" x2="1015" y2="350.6" stroke="#e3e8ef" stroke-width="1"/>
+<text x="632" y="354.6" text-anchor="end" class="axis">-0.10</text>
+<line x1="640" y1="438.4" x2="1015" y2="438.4" stroke="#e3e8ef" stroke-width="1"/>
+<text x="632" y="442.4" text-anchor="end" class="axis">-0.15</text>
+<line x1="640" y1="526.2" x2="1015" y2="526.2" stroke="#e3e8ef" stroke-width="1"/>
+<text x="632" y="530.2" text-anchor="end" class="axis">-0.20</text>
+<line x1="640" y1="154" x2="640" y2="535" stroke="#637083"/>
+<line x1="640" y1="535" x2="1015" y2="535" stroke="#637083"/>
+<line x1="660.0" y1="535" x2="660.0" y2="540" stroke="#637083"/>
+<text x="660.0" y="558" text-anchor="middle" class="axis">0%</text>
+<line x1="820.0" y1="535" x2="820.0" y2="540" stroke="#637083"/>
+<text x="820.0" y="558" text-anchor="middle" class="axis">10%</text>
+<line x1="980.0" y1="535" x2="980.0" y2="540" stroke="#637083"/>
+<text x="980.0" y="558" text-anchor="middle" class="axis">20%</text>
+<polyline points="660.0,175.1 820.0,173.4 980.0,170.6" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+<line x1="660.0" y1="175.1" x2="660.0" y2="175.1" stroke="#2563eb" stroke-width="2"/>
+<line x1="655.0" y1="175.1" x2="665.0" y2="175.1" stroke="#2563eb"/>
+<line x1="655.0" y1="175.1" x2="665.0" y2="175.1" stroke="#2563eb"/>
+<circle cx="660.0" cy="175.1" r="5.5" fill="#2563eb"/>
+<line x1="820.0" y1="173.9" x2="820.0" y2="173.0" stroke="#2563eb" stroke-width="2"/>
+<line x1="815.0" y1="173.9" x2="825.0" y2="173.9" stroke="#2563eb"/>
+<line x1="815.0" y1="173.0" x2="825.0" y2="173.0" stroke="#2563eb"/>
+<circle cx="820.0" cy="173.4" r="5.5" fill="#2563eb"/>
+<line x1="980.0" y1="171.3" x2="980.0" y2="169.9" stroke="#2563eb" stroke-width="2"/>
+<line x1="975.0" y1="171.3" x2="985.0" y2="171.3" stroke="#2563eb"/>
+<line x1="975.0" y1="169.9" x2="985.0" y2="169.9" stroke="#2563eb"/>
+<circle cx="980.0" cy="170.6" r="5.5" fill="#2563eb"/>
+<polyline points="660.0,175.1 820.0,358.1 980.0,414.8" fill="none" stroke="#c2410c" stroke-width="2.5"/>
+<line x1="660.0" y1="175.1" x2="660.0" y2="175.1" stroke="#c2410c" stroke-width="2"/>
+<line x1="655.0" y1="175.1" x2="665.0" y2="175.1" stroke="#c2410c"/>
+<line x1="655.0" y1="175.1" x2="665.0" y2="175.1" stroke="#c2410c"/>
+<rect x="655.0" y="170.1" width="10" height="10" fill="#c2410c"/>
+<line x1="820.0" y1="377.1" x2="820.0" y2="341.7" stroke="#c2410c" stroke-width="2"/>
+<line x1="815.0" y1="377.1" x2="825.0" y2="377.1" stroke="#c2410c"/>
+<line x1="815.0" y1="341.7" x2="825.0" y2="341.7" stroke="#c2410c"/>
+<rect x="815.0" y="353.1" width="10" height="10" fill="#c2410c"/>
+<line x1="980.0" y1="439.4" x2="980.0" y2="393.5" stroke="#c2410c" stroke-width="2"/>
+<line x1="975.0" y1="439.4" x2="985.0" y2="439.4" stroke="#c2410c"/>
+<line x1="975.0" y1="393.5" x2="985.0" y2="393.5" stroke="#c2410c"/>
+<rect x="975.0" y="409.8" width="10" height="10" fill="#c2410c"/>
+<text x="560" y="593" text-anchor="middle" class="axis">Wikipedia fraction in available training stream</text>
+<text x="26" y="345" transform="rotate(-90 26 345)" text-anchor="middle" class="axis">Δ bits per byte vs FSC-only</text>
+<text x="70" y="630" class="small">Intervals describe held-out document sampling conditional on these checkpoints; they do not include seed uncertainty. The 10% and 20% runs share source-selection rules.</text>
+</svg>
