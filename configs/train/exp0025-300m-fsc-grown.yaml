@@ -1,0 +1,27 @@
+# EXP-0025 treatment: function-preserving FFN widening from the EXP-0024 100M checkpoint.
+# Its matched 100M control uses identical 512-token sequences and 32,768 tokens/update.
+model: configs/model/slm-300m-fsc-growth.yaml
+data_dir: data/tokens/fsc-pilot-v1-scaling
+init_from: runs/EXP-0025-300m-grown-s20261025/initialization/300m-grown-from-exp0024-100m.pt
+out_dir: runs/EXP-0025-300m-grown-s20261025
+seed: 20261025
+seq_len: 512
+micro_batch_size: 1
+grad_accum_steps: 64
+max_steps: 1500
+optimizer: adamw
+lr: 3.0e-4
+min_lr: 3.0e-5
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 50
+decay_fraction: 0.2
+dtype: bfloat16
+deterministic: false
+log_interval: 50
+eval_interval: 250
+eval_batches: 20
+observe_interval: 500
+ckpt_interval: 500
+keep_checkpoints: 3
+resume: false

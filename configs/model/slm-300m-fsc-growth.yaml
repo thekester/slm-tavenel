@@ -1,0 +1,13 @@
+# FSC tokenizer-compatible 300M-class target grown from the EXP-0024 100M model.
+# Preserve width/depth/tokenizer and widen only the SwiGLU FFN for function-preserving growth.
+vocab_size: 8192
+d_model: 256
+n_layers: 80
+n_heads: 4
+n_kv_heads: 2
+ffn_hidden: 4608
+max_seq_len: 1024
+rope_theta: 10000.0
+qk_norm: true
+attn_gate: headwise
+window_pattern: []

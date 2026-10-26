@@ -188,7 +188,10 @@ def _load(args):
     if getattr(args, "hf_model", None):
         from slm import hf_adapter
 
-        model, tok = hf_adapter.load(args.hf_model, device, revision=args.hf_revision)
+        model, tok = hf_adapter.load(
+            args.hf_model, device, revision=args.hf_revision,
+            max_seq_len=getattr(args, "max_seq_len", None),
+        )
         return model, tok, device
     if not (args.checkpoint and args.tokenizer):
         raise SystemExit("--checkpoint and --tokenizer are required (or --hf-model for a reference model)")
@@ -248,6 +251,7 @@ def cmd_eval_mc(args) -> int:
 
         write_json(args.out, {"checkpoint": args.checkpoint, "hf_model": args.hf_model,
                               "hf_revision": args.hf_revision,
+                              "model_context_cap": model.cfg.max_seq_len,
                               "benchmarks": [{"path": path, "sha256": sha256_file(path)} for path in args.benchmarks],
                               "results": results})
     return 0
@@ -411,6 +415,8 @@ def build_parser() -> argparse.ArgumentParser:
     a = with_model(e.add_parser("mc", help="multiple-choice benchmarks by log-likelihood"), allow_hf=True)
     a.add_argument("--benchmarks", nargs="+", required=True)
     a.add_argument("--limit", type=int, default=None)
+    a.add_argument("--max-seq-len", type=int, default=None,
+                   help="cap reference-model context for matched evaluation")
     a.add_argument("--out", default=None)
     a.set_defaults(fn=cmd_eval_mc)
     a = e.add_parser("fetch-benchmarks", help="download pinned benchmark revisions")

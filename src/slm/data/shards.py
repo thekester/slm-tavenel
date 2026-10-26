@@ -9,6 +9,7 @@ document is followed by the end-of-text token. Shards are flat binary arrays
 from __future__ import annotations
 
 import hashlib
+import gzip
 import json
 import time
 from pathlib import Path
@@ -95,6 +96,98 @@ def encode(
     }
     write_json(out_dir / "manifest.json", manifest)
     return manifest
+
+
+def encode_fixed_splits(
+    tokenizer_path: str | Path,
+    split_inputs: dict[str, list[str | Path]],
+    out_dir: str | Path,
+    shard_tokens: int = 100_000_000,
+) -> dict[str, Any]:
+    """Encode preassigned corpus partitions without re-splitting documents.
+
+    ``train`` is used for optimization, ``dev`` maps to the trainer's ``val``
+    partition, and optional ``test`` remains a held-out corpus split. Gzipped
+    JSONL input is streamed so large corpora need not be decompressed to disk.
+    """
+    tok = slm_tokenizer.load(tokenizer_path)
+    eos = tok.token_to_id(slm_tokenizer.EOS)
+    dtype = np.uint16 if tok.get_vocab_size() <= 65535 else np.uint32
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    input_map = {"train": "train", "dev": "val", "test": "test"}
+    unknown = set(split_inputs) - set(input_map)
+    if unknown:
+        raise ValueError(f"unsupported fixed corpus splits: {sorted(unknown)}")
+    writers: dict[str, dict[str, Any]] = {
+        output_split: {"buf": [], "buffered": 0, "shards": [], "tokens": 0, "docs": 0}
+        for source_split, output_split in input_map.items() if source_split in split_inputs
+    }
+
+    def flush(split: str) -> None:
+        writer = writers[split]
+        if not writer["buf"]:
+            return
+        arr = np.concatenate(writer["buf"]).astype(dtype)
+        name = f"{split}_{len(writer['shards']):05d}.bin"
+        arr.tofile(out_dir / name)
+        writer["shards"].append({"file": name, "tokens": int(arr.size), "sha256": sha256_file(out_dir / name)})
+        writer["buf"], writer["buffered"] = [], 0
+
+    for source_split, paths in split_inputs.items():
+        output_split = input_map[source_split]
+        for input_path in paths:
+            path = Path(input_path)
+            opener = gzip.open if path.suffix == ".gz" else open
+            batch: list[dict[str, Any]] = []
+            with opener(path, "rt", encoding="utf-8") as stream:
+                for line in stream:
+                    if line.strip():
+                        batch.append(json.loads(line))
+                    if len(batch) < 1024:
+                        continue
+                    _encode_fixed_batch(batch, tok, eos, writers[output_split], dtype, shard_tokens, out_dir, output_split)
+                    batch = []
+            if batch:
+                _encode_fixed_batch(batch, tok, eos, writers[output_split], dtype, shard_tokens, out_dir, output_split)
+        flush(output_split)
+
+    tok_file = Path(tokenizer_path)
+    tok_file = tok_file / "tokenizer.json" if tok_file.is_dir() else tok_file
+    manifest = {
+        "kind": "slm.tokens.fixed_splits",
+        "created": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "dtype": np.dtype(dtype).name,
+        "eos_id": eos,
+        "vocab_size": tok.get_vocab_size(),
+        "tokenizer_sha256": sha256_file(tok_file),
+        "split_mapping": input_map,
+        "shard_tokens_target": shard_tokens,
+        "inputs": {
+            source_split: [{"path": str(path), "sha256": sha256_file(path)} for path in paths]
+            for source_split, paths in split_inputs.items()
+        },
+        "splits": {split: {"tokens": writer["tokens"], "docs": writer["docs"], "shards": writer["shards"]}
+                   for split, writer in writers.items()},
+        "code": code_revision(),
+    }
+    write_json(out_dir / "manifest.json", manifest)
+    return manifest
+
+
+def _encode_fixed_batch(batch, tok, eos, writer, dtype, shard_tokens, out_dir, split):
+    for rec, enc in zip(batch, tok.encode_batch([r["text"] for r in batch])):
+        ids = np.asarray(enc.ids + [eos], dtype=np.uint32)
+        writer["buf"].append(ids)
+        writer["buffered"] += ids.size
+        writer["tokens"] += ids.size
+        writer["docs"] += 1
+        if writer["buffered"] >= shard_tokens:
+            array = np.concatenate(writer["buf"]).astype(dtype)
+            name = f"{split}_{len(writer['shards']):05d}.bin"
+            array.tofile(out_dir / name)
+            writer["shards"].append({"file": name, "tokens": int(array.size), "sha256": sha256_file(out_dir / name)})
+            writer["buf"], writer["buffered"] = [], 0
 
 
 class TokenShards:

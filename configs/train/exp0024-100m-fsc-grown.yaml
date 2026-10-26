@@ -1,0 +1,27 @@
+# EXP-0024 treatment: 100M-class depth-expanded model, matched to the 50M control.
+# Exploratory only; FSC rights/privacy review remains unresolved.
+model: configs/model/slm-100m-gated.yaml
+data_dir: data/tokens/fsc-pilot-v1-scaling
+init_from: runs/EXP-0024-100m-fsc-grown-s20261025/initialization/100m-grown-from-exp0023-50m.pt
+out_dir: runs/EXP-0024-100m-fsc-grown-s20261025
+seed: 20261025
+seq_len: 1024
+micro_batch_size: 2
+grad_accum_steps: 16
+max_steps: 1500
+optimizer: adamw
+lr: 3.0e-4
+min_lr: 3.0e-5
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 50
+decay_fraction: 0.2
+dtype: bfloat16
+deterministic: false
+log_interval: 50
+eval_interval: 250
+eval_batches: 20
+observe_interval: 500
+ckpt_interval: 500
+keep_checkpoints: 3
+resume: false

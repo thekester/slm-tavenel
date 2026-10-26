@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "slm-1b"
-version = "0.1.0.dev18"
+version = "0.1.0.dev19"
 description = "SLM-1B Challenge: a reproducible, observable, open one-billion-parameter language model."
 readme = "README.md"
 license = { text = "MIT" }
@@ -20,6 +20,7 @@ dependencies = [
 
 [project.optional-dependencies]
 hf = ["datasets>=2.18", "transformers>=4.51"]
+data-curation = ["pyarrow==19.0.1", "tldextract==5.3.2"]
 energy = ["nvidia-ml-py>=12"]
 dev = ["pytest>=8"]
 

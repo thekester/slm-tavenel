@@ -1,0 +1,13 @@
+# EXP-0023: approximately 50M model grown function-preservingly from the trained 25M.
+# Depth doubles 20 -> 40 by block expansion; all other dimensions remain unchanged.
+vocab_size: 8192
+d_model: 256
+n_layers: 40
+n_heads: 4
+n_kv_heads: 2
+ffn_hidden: 1280
+max_seq_len: 1024
+rope_theta: 10000.0
+qk_norm: true
+attn_gate: headwise
+window_pattern: []
