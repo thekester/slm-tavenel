@@ -1,6 +1,6 @@
 # EXP-0028: matched 50M/100M continuation on the HPLT growth corpus
 
-**Status: both training arms complete; post-training evaluations pending.**
+**Status: invalidated for performance claims due to tokenizer mismatch.** Both training arms completed, but their token IDs were encoded with a tokenizer different from the parent model's tokenizer. Preserve the artifacts for audit; do not use their losses or benchmark scores as valid HPLT evidence.
 **Data:** local [growth corpus candidate v2](../docs/reviews/GROWTH-CORPUS-CANDIDATE-V2-2026-10-25.md); not legally cleared.
 **Benchmark data:** evaluation/decontamination only; never used as training text.
 
@@ -34,10 +34,12 @@ Report train/validation loss curves, final held-out loss and BPB in English and 
 
 Estimated training time from EXP-0024 measured throughput: approximately **2 h 48 min** for the 50M arm and **4 h 39 min** for the 100M arm, around **7 h 30 min** total serial GPU time, before final BPB and benchmark evaluation. The estimate assumes the same token throughput; actual times may differ.
 
-## Progress (2026-10-25)
+## Historical run observations (invalid tokenizer lineage; not performance evidence)
 
 The 50M control completed all 1,500 updates (49,152,000 token positions). Final train loss was **3.41143** and final domain-held-out `dev` loss was **3.41239**. Validation loss fell from 4.60019 at step 250 to 3.41239 at step 1,500. The final checkpoint is `runs/EXP-0028-50m-hplt-growth-s20261025/checkpoints/step_00001500.pt`.
 
 The 100M treatment completed 1,500 updates (49,152,000 token positions) on 2026-10-25. Final train loss was **3.35951** and domain-held-out `dev` loss was **3.35769**; peak recorded GPU memory was **6.17 GiB**. The matched 50M control's `dev` loss was **3.41239**, a descriptive difference of 0.05470 nats/token in favor of the 100M checkpoint. With one seed per arm, this does not estimate seed variation or establish a general scaling effect.
 
-External benchmark scores and final corpus `test` loss/BPB are still pending. No training process remains active. Benchmark datasets remain evaluation/decontamination-only and were not used as training text.
+## Audit note
+
+The token manifest records tokenizer SHA-256 `93c7b9364de2c42315571c851353862e63830bfbeb220dc14dde80e6ca82cfcb`. The EXP-0024 parent run manifest records `558bab3421bc9ee280f2aa9d0c6a82a9bc482e2ecb72a75837e9c3ee7d2dbd39`. Because the tokenizer mapping differs, the HPLT continuation runs and their benchmark outputs are not interpretable as model-performance evidence. The benchmark evaluator was also passed the release-candidate-v4 tokenizer, which does not match the EXP-0024 parent. These results are withdrawn, retained locally for audit, and superseded by the tokenizer-compatible matched comparison in [EXP-0029](EXP-0029-100m-equal-budget-corpus-comparison-2026-10-26.md). Benchmark data remain evaluation/decontamination-only. HPLT source-page rights and privacy review are unresolved.

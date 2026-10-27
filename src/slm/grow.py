@@ -29,7 +29,7 @@ import torch
 
 from slm.config import ModelConfig
 from slm.model import SLM
-from slm.runlog import sha256_file
+from slm.runlog import read_json, sha256_file, write_json
 
 FIXED = ("vocab_size", "d_model", "n_heads", "n_kv_heads", "max_seq_len", "rope_theta", "norm_eps",
          "tie_embeddings", "qk_norm", "attn_gate")
@@ -95,7 +95,20 @@ def grow_checkpoint(checkpoint: str | Path, dst_cfg: ModelConfig, out: str | Pat
         "method": "block expansion with zero output projections + zero-output MLP widening",
         "seed": seed,
     }
+    source_run_manifest = Path(checkpoint).resolve().parent.parent / "run_manifest.json"
+    if source_run_manifest.is_file():
+        source_manifest = read_json(source_run_manifest)
+        source_tokenizer_sha = source_manifest.get("tokenizer_sha256") or source_manifest.get("data", {}).get("tokenizer_sha256")
+        if source_tokenizer_sha:
+            info["tokenizer_sha256"] = str(source_tokenizer_sha)
+    if not info.get("tokenizer_sha256"):
+        source_provenance = Path(checkpoint).with_suffix(Path(checkpoint).suffix + ".provenance.json")
+        if source_provenance.is_file():
+            source_tokenizer_sha = read_json(source_provenance).get("tokenizer_sha256")
+            if source_tokenizer_sha:
+                info["tokenizer_sha256"] = str(source_tokenizer_sha)
     out = Path(out)
     out.parent.mkdir(parents=True, exist_ok=True)
     torch.save({"step": 0, "model": dst.state_dict(), "model_config": asdict(dst_cfg), "grown_from": info}, out)
+    write_json(out.with_suffix(out.suffix + ".provenance.json"), info)
     return info

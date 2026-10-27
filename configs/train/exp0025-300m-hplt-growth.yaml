@@ -1,0 +1,27 @@
+# EXP-0025 300M treatment: function-preserving growth from the matched HPLT 100M parent.
+# Same data, seed, token positions and optimizer schedule as the 100M control.
+model: configs/model/slm-300m-fsc-growth.yaml
+data_dir: data/tokens/slm-tavenel-growth-candidate-v2-fsc-tokenizer
+init_from: runs/EXP-0025-300m-hplt-growth-s20261026/initialization/300m-grown-from-exp0028-100m.pt
+out_dir: runs/EXP-0025-300m-hplt-growth-s20261026
+seed: 20261026
+seq_len: 512
+micro_batch_size: 1
+grad_accum_steps: 64
+max_steps: 1500
+optimizer: adamw
+lr: 3.0e-4
+min_lr: 3.0e-5
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 50
+decay_fraction: 0.2
+dtype: bfloat16
+deterministic: false
+log_interval: 50
+eval_interval: 250
+eval_batches: 20
+observe_interval: 500
+ckpt_interval: 500
+keep_checkpoints: 3
+resume: false

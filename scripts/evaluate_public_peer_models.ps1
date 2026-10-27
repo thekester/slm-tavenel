@@ -34,12 +34,18 @@ foreach ($ref in $references) {
     New-Item -ItemType Directory -Force -Path $outDir | Out-Null
     $outFile = Join-Path $outDir 'mc.json'
     $logFile = Join-Path $logDir ($ref.slug + '-evaluation.log')
+    # PowerShell can turn Python warnings written to stderr into terminating
+    # NativeCommandError records when ErrorActionPreference is Stop.
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
     & $python -m slm eval mc --hf-model $ref.repo --hf-revision $ref.revision `
-        --max-seq-len 1024 --device cuda --benchmarks $benchmarks --out $outFile *> $logFile
+        --max-seq-len 1024 --batch-items 2 --device cuda --benchmarks $benchmarks --out $outFile *> $logFile
+    $exitCode = $LASTEXITCODE
+    $ErrorActionPreference = $previousErrorActionPreference
     $status += [pscustomobject]@{
         repo = $ref.repo
         revision = $ref.revision
-        exit_code = $LASTEXITCODE
+        exit_code = $exitCode
         result = $outFile
         log = $logFile
     }

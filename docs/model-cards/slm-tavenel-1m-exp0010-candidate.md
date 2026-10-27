@@ -21,6 +21,7 @@ tags:
 ## Contents
 
 - [Summary and intended use](#summary-and-intended-use)
+- [Architecture](#architecture)
 - [Limitations](#limitations)
 - [Use the model](#use-the-model)
 - [Training data and provenance](#training-data-and-provenance)
@@ -34,6 +35,12 @@ tags:
 SLM-Tavenel is a decoder-only English/French base language model trained from scratch on a filtered science-text corpus. This selected checkpoint has 1,181,920 parameters, a 1,024-token context and an 8,192-token byte-level BPE vocabulary. The architecture uses four layers, grouped-query attention, QK normalization, SwiGLU, RoPE and a head-wise attention gate. It is intended for research on small-model training, reproducibility and observable optimization behavior. It is not a conversational assistant.
 
 The release checkpoint is gated seed `421101`. The protocol selected that seed before results were observed. The experiment trained ten paired gated/ungated seed pairs from matching shared initial weights and data order; only the preselected gated checkpoint is presented as the primary model. The final model weights for all twenty runs and their run records are included as float32 safetensors under `training_record/replicates/` so the paired study can be inspected. The original `.pt` checkpoint files and optimizer states are not included.
+
+## Architecture
+
+![SLM-Tavenel decoder block and the 1M, 10M and grown 25M model dimensions](../slm-tavenel-architecture.svg)
+
+The 1M checkpoint has four decoder blocks, width 96, three query heads and one key/value head, and a SwiGLU width of 256. Each block uses pre-RMSNorm, grouped-query causal attention, QK normalization, RoPE, a head-wise sigmoid gate on attention outputs, and a SwiGLU feed-forward sublayer with residual connections. The 10M and grown 25M checkpoints use the same block family with width 256 and four query / two key-value heads; their depth and feed-forward widths are shown in the diagram. All three use an 8,192-token byte-level BPE tokenizer and a 1,024-token context window. The 25M model was grown from the trained 10M checkpoint.
 
 ## Limitations
 
@@ -128,7 +135,11 @@ Item counts: ARC-Easy 2,376, ARC-Challenge 1,172, HellaSwag 10,042, Belebele EN 
 
 ![SLM-Tavenel EXP-0010 and same-harness SLM references](../exp0010-benchmark-comparison.svg)
 
+For a direct view of the SLM-Tavenel size series, including full model names and item-level uncertainty bars, see [the 1M/10M/25M comparison](../scaling-benchmark-comparison.svg).
+
 Paired item-bootstrap differences against the exploratory SLM-Tavenel 10M checkpoint and four public references are recorded in `training_record/benchmark-comparisons.json`. This comparison shows only one SLM-Tavenel 1M: the selected candidate described above. Pythia-31M was scored only on ARC-Challenge and WinoGrande XL validation; the other cells are marked “not scored” and are absent from the chart. Comparisons are conditional on these checkpoints and question samples, not on repeated training seeds. Exact-overlap filtering only addresses matches detectable by the recorded filters; external pretraining exposure is unknown.
+
+The larger SLM-Tavenel checkpoints do not show a reliable step-by-step gain in multiple-choice accuracy. From 10M to grown 25M, all six paired 95% item-bootstrap intervals include zero. At the same time, 25M has lower English/French held-out BPB on the FSC validation text than 10M. That supports better next-token prediction on this particular text sample, not a general downstream-task improvement. The 25M run inherits the 10M weights and receives 491.52M additional token positions, so size, initialization and extra training are confounded; one run per size also leaves training-seed variability unknown. The external references use different data, tokenizers and training budgets, so they cannot identify the cause of the performance gaps.
 
 The benchmark files are not redistributed in this model bundle. Their paths, item counts and SHA-256 digests are included in the score records. Reference model IDs and immutable revisions are in the included raw evaluation records.
 

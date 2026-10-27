@@ -32,7 +32,8 @@ from slm.config import ModelConfig, TrainConfig, config_hash, load_model_config
 from slm.data.shards import TokenShards
 from slm.model import SLM, document_ids
 from slm.optim import build_optimizer
-from slm.runlog import JsonlLogger, code_revision, environment_info, read_json, sha256_file, write_json
+from slm.runlog import (JsonlLogger, assert_tokenizer_compatible, code_revision, environment_info,
+                        read_json, sha256_file, write_json)
 
 
 def lr_at(step: int, cfg: TrainConfig) -> float:
@@ -260,6 +261,18 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
     val_data = TokenShards(cfg.data_dir, "val")
     if train_data.vocab_size > model_cfg.vocab_size:
         raise ValueError(f"tokenizer vocab {train_data.vocab_size} > model vocab {model_cfg.vocab_size}")
+    data_tokenizer_sha = train_data.manifest.get("tokenizer_sha256")
+    tokenizer_lineage: list[dict[str, str]] = []
+    if data_tokenizer_sha:
+        if cfg.resume:
+            existing = latest_checkpoint(out_dir)
+            if existing is not None:
+                tokenizer_lineage = assert_tokenizer_compatible(existing, data_tokenizer_sha)
+            elif cfg.init_from:
+                # A resumable run's first launch still needs to validate its seed checkpoint.
+                tokenizer_lineage = assert_tokenizer_compatible(cfg.init_from, data_tokenizer_sha)
+        elif cfg.init_from:
+            tokenizer_lineage = assert_tokenizer_compatible(cfg.init_from, data_tokenizer_sha)
 
     model = SLM(model_cfg).to(device)
     opt = build_optimizer(model, cfg.optimizer, cfg.lr, cfg.weight_decay, (cfg.beta1, cfg.beta2), cfg.eps,
@@ -312,6 +325,11 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
                 "provenance_path": str(provenance_path) if provenance_path.is_file() else None,
                 "provenance": data_provenance,
                 "tokenizer_sha256": data_manifest.get("tokenizer_sha256"),
+                "tokenizer_compatibility": {
+                    "dataset_tokenizer_sha256": data_tokenizer_sha,
+                    "source_checkpoint_lineage": tokenizer_lineage,
+                    "verified": bool(data_tokenizer_sha and (not cfg.init_from or tokenizer_lineage)),
+                },
                 "splits": {s: {"tokens": v["tokens"], "shards": [x["sha256"] for x in v["shards"]]}
                            for s, v in data_manifest["splits"].items()},
             },

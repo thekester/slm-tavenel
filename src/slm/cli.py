@@ -183,6 +183,7 @@ def cmd_bench(args) -> int:
 def _load(args):
     from slm import tokenizer
     from slm.train import load_model
+    from slm.runlog import assert_tokenizer_compatible, sha256_file
 
     device = _device(args.device)
     if getattr(args, "hf_model", None):
@@ -195,6 +196,10 @@ def _load(args):
         return model, tok, device
     if not (args.checkpoint and args.tokenizer):
         raise SystemExit("--checkpoint and --tokenizer are required (or --hf-model for a reference model)")
+    tokenizer_path = Path(args.tokenizer)
+    tokenizer_file = tokenizer_path if tokenizer_path.is_file() else tokenizer_path / "tokenizer.json"
+    tokenizer_hash = sha256_file(tokenizer_file)
+    tokenizer_lineage = assert_tokenizer_compatible(args.checkpoint, tokenizer_hash)
     return load_model(args.checkpoint, device), tokenizer.load(args.tokenizer), device
 
 
@@ -244,14 +249,22 @@ def cmd_eval_mc(args) -> int:
     model, tok, device = _load(args)
     results = {}
     for path in args.benchmarks:
-        results[Path(path).stem] = multiple_choice(model, tok, load_items(path, args.limit), device)
+        results[Path(path).stem] = multiple_choice(
+            model, tok, load_items(path, args.limit), device, batch_items=args.batch_items
+        )
     _print(results)
     if args.out:
         from slm.runlog import write_json
 
         write_json(args.out, {"checkpoint": args.checkpoint, "hf_model": args.hf_model,
                               "hf_revision": args.hf_revision,
+                              "checkpoint_sha256": sha256_file(args.checkpoint) if args.checkpoint else None,
+                              "tokenizer": args.tokenizer,
+                              "tokenizer_sha256": (sha256_file(Path(args.tokenizer) if Path(args.tokenizer).is_file()
+                                                               else Path(args.tokenizer) / "tokenizer.json")
+                                                   if args.tokenizer else None),
                               "model_context_cap": model.cfg.max_seq_len,
+                              "batch_items": args.batch_items,
                               "benchmarks": [{"path": path, "sha256": sha256_file(path)} for path in args.benchmarks],
                               "results": results})
     return 0
@@ -415,6 +428,8 @@ def build_parser() -> argparse.ArgumentParser:
     a = with_model(e.add_parser("mc", help="multiple-choice benchmarks by log-likelihood"), allow_hf=True)
     a.add_argument("--benchmarks", nargs="+", required=True)
     a.add_argument("--limit", type=int, default=None)
+    a.add_argument("--batch-items", type=int, default=16,
+                   help="items scored per forward batch; reduce this to lower evaluation GPU memory")
     a.add_argument("--max-seq-len", type=int, default=None,
                    help="cap reference-model context for matched evaluation")
     a.add_argument("--out", default=None)

@@ -19,10 +19,10 @@ TASKS = [
     ("winogrande", "WinoGrande XL", 0.50),
 ]
 MODELS = [
-    ("SLM-Tavenel 1M EXP-0010", "Tav 1M", "#2563eb", "runs/fsc-additional/slm-tavenel-1m/fsc-pilot-v2-mc.json", "exports/slm-tavenel-1m-exp0010-release-candidate-v4/training_record/selected-checkpoint-mc.json", 1_181_920),
-    ("SLM-Tavenel 10M EXP-0009", "Tav 10M", "#059669", "runs/fsc-additional/slm-tavenel-10m/fsc-pilot-v2-mc.json", "runs/fsc-scaling/10m-gated-s1234/analysis/fsc-pilot-v1-mc.json", 9_978_368),
-    ("SLM-Tavenel grown 25M EXP-0009", "Tav 25M", "#7c3aed", None, "runs/fsc-scaling/25m-gated-grown-s1234/analysis/fsc-pilot-v2-mc.json", 25_723_648),
-    ("TinyStories tiny1m", "Tiny 0.9M", "#0891b2", "runs/fsc-additional/tiny1m/fsc-pilot-v2-mc.json", "runs/reference/tiny1m/fsc-pilot-v1-mc.json", 935_040),
+    ("SLM-Tavenel 1M EXP-0010", "SLM-Tavenel 1M", "#2563eb", "runs/fsc-additional/slm-tavenel-1m/fsc-pilot-v2-mc.json", "exports/slm-tavenel-1m-exp0010-release-candidate-v4/training_record/selected-checkpoint-mc.json", 1_181_920),
+    ("SLM-Tavenel 10M EXP-0009", "SLM-Tavenel 10M", "#059669", "runs/fsc-additional/slm-tavenel-10m/fsc-pilot-v2-mc.json", "runs/fsc-scaling/10m-gated-s1234/analysis/fsc-pilot-v1-mc.json", 9_978_368),
+    ("SLM-Tavenel grown 25M EXP-0009", "SLM-Tavenel 25M", "#7c3aed", None, "runs/fsc-scaling/25m-gated-grown-s1234/analysis/fsc-pilot-v2-mc.json", 25_723_648),
+    ("TinyStories tiny1m", "TinyStories 0.9M", "#0891b2", "runs/fsc-additional/tiny1m/fsc-pilot-v2-mc.json", "runs/reference/tiny1m/fsc-pilot-v1-mc.json", 935_040),
     ("Pythia-14M", "Pythia 14M", "#64748b", "runs/fsc-additional/pythia-14m/fsc-pilot-v2-mc.json", "runs/reference/pythia-14m/fsc-pilot-v1-mc.json", 14_067_712),
     ("Pythia-31M", "Pythia 31M", "#475569", "runs/fsc-additional/pythia-31m/fsc-pilot-v2-mc.json", None, 30_494_720),
     ("SmolLM2-135M", "SmolLM2 135M", "#db2777", "runs/fsc-additional/smollm2-135m/fsc-pilot-v2-mc.json", "runs/reference/smollm2-135m/fsc-pilot-v1-mc.json", 134_515_008),

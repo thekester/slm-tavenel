@@ -19,7 +19,7 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
 from scripts.evaluate_exp0023_50m import score_documents_batched  # noqa: E402
-from slm.runlog import sha256_file, write_json  # noqa: E402
+from slm.runlog import assert_tokenizer_compatible, sha256_file, write_json  # noqa: E402
 from slm.tokenizer import load as load_tokenizer  # noqa: E402
 from slm.train import load_model  # noqa: E402
 
@@ -35,9 +35,10 @@ def digest(path: Path) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--checkpoint", type=Path, required=True)
-    parser.add_argument("--tokenizer", type=Path, default=ROOT / "exports/slm-tavenel-1m-exp0010-release-candidate-v4/tokenizer.json")
+    parser.add_argument("--tokenizer", type=Path, default=ROOT / "data/tokenizer/fsc-pilot-v1-train-only/tokenizer.json")
     parser.add_argument("--corpus", type=Path, default=ROOT / "data/processed/slm-tavenel-growth-candidate-v2")
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--experiment-id", default="EXP-0028")
     parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     parser.add_argument("--document-batch", type=int, default=16,
                         help="documents held in CPU memory per scoring batch")
@@ -46,6 +47,8 @@ def main() -> None:
     args = parser.parse_args()
 
     checkpoint = args.checkpoint.resolve()
+    tokenizer_sha = sha256_file(args.tokenizer)
+    tokenizer_lineage = assert_tokenizer_compatible(checkpoint, tokenizer_sha)
     test_path = args.corpus / "test.jsonl.gz"
     manifest_path = args.corpus / "manifest.json"
     corpus_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -121,12 +124,13 @@ def main() -> None:
         }
     result = {
         "kind": "slm.exp0028_hplt_candidate_test_bpb",
-        "experiment_id": "EXP-0028",
+        "experiment_id": args.experiment_id,
         "created_utc": datetime.now(timezone.utc).isoformat(),
         "checkpoint": str(checkpoint),
         "checkpoint_sha256": sha256_file(checkpoint),
         "tokenizer": str(args.tokenizer.resolve()),
         "tokenizer_sha256": sha256_file(args.tokenizer),
+        "tokenizer_lineage": tokenizer_lineage,
         "device": str(device),
         "corpus_manifest_sha256": sha256_file(manifest_path),
         "test_path": str(test_path),

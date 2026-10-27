@@ -1,0 +1,27 @@
+# EXP-0030 treatment: matched 25M continuation on the HPLT-rich candidate-v2 corpus.
+# The candidate is for local research only; its source-rights/privacy review is incomplete.
+model: configs/model/slm-25m-gated.yaml
+data_dir: data/tokens/slm-tavenel-growth-candidate-v2-fsc-tokenizer
+init_from: runs/fsc-scaling/25m-gated-grown-s1234/checkpoints/step_00015000.pt
+out_dir: runs/EXP-0030-25m-hplt-treatment-s20261027
+seed: 20261027
+seq_len: 1024
+micro_batch_size: 4
+grad_accum_steps: 8
+max_steps: 1500
+optimizer: adamw
+lr: 3.0e-4
+min_lr: 3.0e-5
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 50
+decay_fraction: 0.2
+dtype: bfloat16
+deterministic: false
+log_interval: 50
+eval_interval: 250
+eval_batches: 20
+observe_interval: 500
+ckpt_interval: 500
+keep_checkpoints: 3
+resume: true
