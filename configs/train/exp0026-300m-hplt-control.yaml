@@ -1,0 +1,30 @@
+# EXP-0026 300M control: same-parent continuation of the EXP-0025 300M checkpoint.
+# Matched with the 500M treatment on data, seed, token positions and schedule. Optimizer offload
+# is enabled in both arms so the AdamW arithmetic runs on the same (CPU) kernels.
+model: configs/model/slm-300m-fsc-growth.yaml
+data_dir: data/tokens/slm-tavenel-growth-candidate-v2-fsc-tokenizer
+init_from: runs/EXP-0025-300m-hplt-growth-s20261026/checkpoints/step_00001500.pt
+out_dir: runs/EXP-0026-300m-hplt-control-s20261028
+seed: 20261028
+seq_len: 1024
+micro_batch_size: 2
+grad_accum_steps: 16
+max_steps: 1500
+optimizer: adamw
+lr: 3.0e-4
+min_lr: 3.0e-5
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 50
+decay_fraction: 0.2
+dtype: bfloat16
+activation_checkpointing: true
+optimizer_offload: true
+deterministic: false
+log_interval: 50
+eval_interval: 250
+eval_batches: 20
+observe_interval: 500
+ckpt_interval: 250
+keep_checkpoints: 2
+resume: true

@@ -89,6 +89,64 @@ class CombinedOptimizer:
             o.load_state_dict(s)
 
 
+class CPUOffloadAdamW:
+    """AdamW whose moments live in host memory, with the update computed on the CPU.
+
+    In the spirit of ZeRO-Offload (Ren et al., 2021, arXiv:2101.06840): the device keeps fp32
+    weights and gradients, the host keeps the two Adam moments. At each step the weights and
+    gradients are copied to host buffers, ``torch.optim.AdamW`` updates the host copy and the result
+    is copied back. The device weights stay authoritative, so loading a model checkpoint needs no
+    resynchronisation. The arithmetic is the same AdamW, run by the CPU kernels instead of CUDA ones.
+    """
+
+    def __init__(self, groups: list[dict[str, Any]], lr: float, betas: tuple[float, float], eps: float) -> None:
+        self.device_params: list[torch.nn.Parameter] = []
+        host_groups = []
+        for group in groups:
+            host = []
+            for p in group["params"]:
+                h = torch.empty(p.shape, dtype=torch.float32, pin_memory=p.is_cuda)
+                h.copy_(p.detach())
+                h.grad = torch.empty_like(h)
+                self.device_params.append(p)
+                host.append(h)
+            host_groups.append({**group, "params": host})
+        self.host_params = [h for g in host_groups for h in g["params"]]
+        self.inner = torch.optim.AdamW(host_groups, lr=lr, betas=betas, eps=eps, foreach=True)
+
+    @property
+    def param_groups(self) -> list[dict[str, Any]]:
+        return self.inner.param_groups
+
+    @torch.no_grad()
+    def step(self) -> None:
+        for p, h in zip(self.device_params, self.host_params):
+            h.copy_(p, non_blocking=True)
+            if p.grad is None:
+                h.grad.zero_()
+            else:
+                h.grad.copy_(p.grad, non_blocking=True)
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+        self.inner.step()
+        for p, h in zip(self.device_params, self.host_params):
+            p.copy_(h, non_blocking=True)
+        if torch.cuda.is_available():
+            torch.cuda.synchronize()
+
+    def zero_grad(self, set_to_none: bool = True) -> None:
+        for p in self.device_params:
+            p.grad = None
+
+    def state_dict(self) -> dict[str, Any]:
+        return {"offload_adamw": self.inner.state_dict()}
+
+    def load_state_dict(self, state: dict[str, Any]) -> None:
+        if "offload_adamw" not in state:
+            raise ValueError("checkpoint optimizer state was not saved by CPUOffloadAdamW")
+        self.inner.load_state_dict(state["offload_adamw"])
+
+
 def muon_params(model: SLM) -> tuple[list[torch.nn.Parameter], list[torch.nn.Parameter]]:
     """Split parameters into (2D matrices inside blocks -> Muon, everything else -> AdamW)."""
     muon, other, seen = [], [], set()
@@ -101,9 +159,13 @@ def muon_params(model: SLM) -> tuple[list[torch.nn.Parameter], list[torch.nn.Par
 
 
 def build_optimizer(model: SLM, name: str, lr: float, weight_decay: float, betas: tuple[float, float],
-                    eps: float, momentum: float = 0.95, fused: bool = False):
+                    eps: float, momentum: float = 0.95, fused: bool = False, offload: bool = False):
     from slm.train import param_groups
 
+    if offload:
+        if name != "adamw":
+            raise ValueError("optimizer offload supports adamw only")
+        return CPUOffloadAdamW(param_groups(model, weight_decay), lr=lr, betas=betas, eps=eps)
     if name == "adamw":
         return torch.optim.AdamW(param_groups(model, weight_decay), lr=lr, betas=betas, eps=eps, fused=fused)
     if name == "muon":

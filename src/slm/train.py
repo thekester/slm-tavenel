@@ -161,7 +161,8 @@ def evaluate_loss(model: SLM, data: TokenShards, cfg: TrainConfig, device: torch
 
 
 def matrix_weights(model: SLM) -> dict[str, torch.Tensor]:
-    return {n: p.detach().float().clone() for n, p in model.named_parameters() if p.dim() >= 2}
+    # Host copies: a device snapshot of every matrix would not fit beside the largest models.
+    return {n: p.detach().to("cpu", torch.float32, copy=True) for n, p in model.named_parameters() if p.dim() >= 2}
 
 
 @torch.no_grad()
@@ -202,8 +203,9 @@ def benchmark(model_cfg: ModelConfig, cfg: TrainConfig, steps: int = 30, warmup:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     torch.manual_seed(cfg.seed)
     model = SLM(model_cfg).to(device)
+    model.activation_checkpointing = cfg.activation_checkpointing
     opt = build_optimizer(model, cfg.optimizer, cfg.lr, cfg.weight_decay, (cfg.beta1, cfg.beta2), cfg.eps,
-                          momentum=cfg.muon_momentum, fused=device.type == "cuda")
+                          momentum=cfg.muon_momentum, fused=device.type == "cuda", offload=cfg.optimizer_offload)
     gen = torch.Generator().manual_seed(cfg.seed)
     eos = 0
     times = []
@@ -275,8 +277,9 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
             tokenizer_lineage = assert_tokenizer_compatible(cfg.init_from, data_tokenizer_sha)
 
     model = SLM(model_cfg).to(device)
+    model.activation_checkpointing = cfg.activation_checkpointing
     opt = build_optimizer(model, cfg.optimizer, cfg.lr, cfg.weight_decay, (cfg.beta1, cfg.beta2), cfg.eps,
-                          momentum=cfg.muon_momentum, fused=device.type == "cuda")
+                          momentum=cfg.muon_momentum, fused=device.type == "cuda", offload=cfg.optimizer_offload)
     eos_id = int(train_data.manifest["eos_id"]) if cfg.doc_mask else None
 
     resume_from = latest_checkpoint(out_dir) if cfg.resume else None

@@ -128,6 +128,10 @@ class TrainConfig:
     # Precision and performance
     dtype: str = "bfloat16"
     compile: bool = False
+    # Recompute each block's activations in the backward pass (same numerics, less memory)
+    activation_checkpointing: bool = False
+    # Keep AdamW moments in host memory and run the update on the CPU (ZeRO-Offload style)
+    optimizer_offload: bool = False
     deterministic: bool = True
     peak_tflops: float = 0.0  # per device; enables MFU logging when > 0
     # Logging, evaluation, observability, checkpointing
@@ -154,6 +158,8 @@ class TrainConfig:
             raise ValueError(f"unknown dtype {self.dtype!r}")
         if not 0.0 <= self.decay_fraction <= 1.0:
             raise ValueError("decay_fraction must be in [0, 1]")
+        if self.optimizer_offload and self.optimizer != "adamw":
+            raise ValueError("optimizer_offload supports adamw only")
 
 
 def load_model_config(path: str | Path) -> ModelConfig:

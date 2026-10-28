@@ -1,13 +1,15 @@
 # EXP-0025 HPLT scale control: continue the tokenizer-compatible EXP-0029 100M parent.
 # Matched with the 300M treatment on data, seed, token positions and schedule.
+# Amended 2026-10-28 before either arm trained: 1,024-token windows (as EXP-0024/0029) instead of
+# the earlier 512-token fallback, now that the 300M arm fits with activation checkpointing.
 model: configs/model/slm-100m-gated.yaml
 data_dir: data/tokens/slm-tavenel-growth-candidate-v2-fsc-tokenizer
 init_from: runs/EXP-0029-100m-hplt-treatment-s20261026/checkpoints/step_00001500.pt
 out_dir: runs/EXP-0025-100m-hplt-control-s20261026
 seed: 20261026
-seq_len: 512
-micro_batch_size: 1
-grad_accum_steps: 64
+seq_len: 1024
+micro_batch_size: 2
+grad_accum_steps: 16
 max_steps: 1500
 optimizer: adamw
 lr: 3.0e-4
@@ -22,6 +24,6 @@ log_interval: 50
 eval_interval: 250
 eval_batches: 20
 observe_interval: 500
-ckpt_interval: 500
-keep_checkpoints: 3
-resume: false
+ckpt_interval: 250
+keep_checkpoints: 2
+resume: true

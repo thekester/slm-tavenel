@@ -250,6 +250,8 @@ class SLM(nn.Module):
         cos, sin = rope_tables(cfg.head_dim, cfg.max_seq_len, cfg.rope_theta)
         self.register_buffer("rope_cos", cos, persistent=False)
         self.register_buffer("rope_sin", sin, persistent=False)
+        # Training-time memory option, not part of the architecture or its config hash.
+        self.activation_checkpointing = False
         self.reset_parameters()
 
     @torch.no_grad()
@@ -293,8 +295,14 @@ class SLM(nn.Module):
             raise ValueError("document masking is for training and scoring, not cached generation")
         doc_mask = document_mask(doc_ids) if doc_ids is not None else None
         x = self.hook_embed(self.embed(input_ids))
+        recompute = self.activation_checkpointing and self.training and cache is None and torch.is_grad_enabled()
         for block in self.blocks:
-            x = block(x, self.rope_cos, self.rope_sin, offset, cache, doc_mask)
+            if recompute:
+                from torch.utils.checkpoint import checkpoint
+
+                x = checkpoint(block, x, self.rope_cos, self.rope_sin, offset, None, doc_mask, use_reentrant=False)
+            else:
+                x = block(x, self.rope_cos, self.rope_sin, offset, cache, doc_mask)
         h = self.final_norm(x)
         if targets is not None and not return_logits:
             return None, chunked_cross_entropy(h, self.lm_head.weight, targets)
