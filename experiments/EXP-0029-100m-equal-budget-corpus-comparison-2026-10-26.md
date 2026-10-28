@@ -1,6 +1,34 @@
 # EXP-0029: 100M equal-budget old-corpus versus HPLT-rich comparison
 
-**Status: old-corpus control training active; tokenizer-compatible HPLT treatment follows.** This experiment isolates the effect of the corpus used for an additional continuation, using a common 100M SLM-Tavenel parent checkpoint and its recorded tokenizer. The first attempted training start was stopped after discovering the previous HPLT token shards used a different tokenizer; no results from that attempt are used.
+**Status (2026-10-28): complete.** Both arms trained 1,500/1,500 steps and were scored. The HPLT arm stopped at step 900 on 2026-10-26 (PC shutdown) and resumed from its step-500 checkpoint; its losses at steps 550–650 reproduce the first launch to within 2e-4. First-launch logs are kept in the run directory. Paired analysis: `runs/EXP-0029-evaluations/paired-comparison.json`.
+
+## Results
+
+| Measure | Old-corpus control | HPLT-rich | Difference (95% paired bootstrap) |
+|---|---:|---:|---|
+| HPLT candidate test BPB (18,582 documents) | 1.4780 | 1.3122 | −0.1659 BPB for HPLT-rich [−0.1726, −0.1586] |
+| ARC-Easy acc (2,376) | 0.311 | 0.316 | +0.005 [−0.012, +0.023] |
+| ARC-Challenge acc (1,172) | 0.178 | 0.179 | +0.001 [−0.018, +0.020] |
+| HellaSwag acc (10,042) | 0.276 | 0.272 | −0.004 [−0.009, +0.001] |
+| Belebele EN acc (900) | 0.280 | 0.280 | 0.000 [−0.023, +0.023] |
+| Belebele FR acc (900) | 0.304 | 0.316 | +0.011 [−0.008, +0.031] |
+| WinoGrande acc (1,267) | 0.508 | 0.524 | +0.016 [−0.009, +0.041] |
+
+At an equal 49.152M-token continuation budget from the same 100M parent, the HPLT-rich mixture lowers
+held-out HPLT test BPB by about 0.166 (11%), with a document-bootstrap interval well away from zero.
+This is an in-domain result: the test split comes from the same candidate corpus as the treatment's
+training data. All six raw-accuracy intervals include zero, and every score is near chance. Of the
+twelve accuracy/normalized-accuracy contrasts, one interval excludes zero (Belebele FR `acc_norm`,
+−0.024 [−0.046, −0.003]); with twelve unadjusted comparisons, this single contrast is not treated as a
+finding. Conclusion: a large in-domain modeling gain, no measured multiple-choice change at 100M.
+Training-seed variance is not estimated.
+
+The HPLT-rich step-1,500 checkpoint is the parent of the EXP-0025 301M growth (float64 function check:
+max logit difference 0.0; float32 2.48e-5).
+
+## Original design (2026-10-26)
+
+This experiment isolates the effect of the corpus used for an additional continuation, using a common 100M SLM-Tavenel parent checkpoint and its recorded tokenizer. The first attempted training start was stopped after discovering the previous HPLT token shards used a different tokenizer; no results from that attempt are used.
 
 ## Question
 
