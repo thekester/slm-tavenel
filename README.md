@@ -393,6 +393,8 @@ The GitHub prerelease notes for [v0.1.0-dev.19](docs/releases/v0.1.0-dev.19.md) 
 
 **HybridAgent.** Jiaru Zou et al. (2026). [Hybrid Reasoning Agents](https://arxiv.org/abs/2610.18861). arXiv:2610.18861. Explores transitions between latent reasoning and textual interaction through HybridLink, with working memory across tool interactions. It motivates our experiments on reasoning efficiency, agent traces, and causal inspection. [Official code](https://github.com/togethercomputer/HybridAgent).
 
+**A curriculum for post-training agents.** Ben Burtenshaw, Sergio Paniego, Merve and the Hugging Face team (2026). [A curriculum for post-training agents](https://huggingface.co/blog/huggingface/train-agents), published 20 October 2026. A practical guide to agent post-training stages: supervised fine-tuning on agent traces, distillation, GRPO, multi-turn RL environments, and training through an agent harness. This is a community article, not a peer-reviewed study or evidence about SLM-Tavenel's base-model results; it is a design reference only if we pursue agent post-training.
+
 **Coconut.** Shibo Hao et al. (2024). [Training Large Language Models to Reason in a Continuous Latent Space](https://arxiv.org/abs/2412.06769). arXiv:2412.06769. Introduces continuous thoughts by feeding hidden states back as input embeddings. It provides a starting point for comparing textual and latent reasoning.
 
 **Recurrent depth.** Jonas Geiping et al. (2025). [Scaling up Test-Time Compute with Latent Reasoning: A Recurrent Depth Approach](https://arxiv.org/abs/2502.05171). arXiv:2502.05171. Studies additional inference computation through repeated application of a recurrent block. It motivates experiments that vary computation depth while tracking quality and resource use.

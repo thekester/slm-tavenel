@@ -63,6 +63,16 @@ function Invoke-MemoryPilot([string]$name, [string]$config) {
     Get-Content -LiteralPath (Join-Path $logDir ($name + '.log')) | Set-Content -LiteralPath $out -Encoding utf8
 }
 
+function Invoke-ScaleAnalysis([string]$experiment, [string]$smallerSlug, [string]$largerSlug) {
+    $root = "runs/$experiment-evaluations"
+    $out = "$root/paired-scale-comparison.json"
+    if (Test-Path -LiteralPath $out) { Write-Status "skip $experiment-scale-analysis"; return }
+    Invoke-Python "$experiment-scale-analysis" @('scripts/analyze_scale_comparison.py', '--experiment-id', $experiment,
+        '--smaller-mc', "$root/$smallerSlug/benchmarks.json", '--larger-mc', "$root/$largerSlug/benchmarks.json",
+        '--smaller-test', "$root/$smallerSlug/hplt-test-bpb.json", '--larger-test', "$root/$largerSlug/hplt-test-bpb.json",
+        '--out', $out)
+}
+
 function Invoke-Evaluation([string]$experiment, [string]$slug, [string]$checkpoint) {
     $outDir = Join-Path $ProjectRoot (Join-Path "runs/$experiment-evaluations" $slug)
     New-Item -ItemType Directory -Force -Path $outDir | Out-Null
@@ -110,6 +120,7 @@ Invoke-Train 'exp0025-300m-train' 'configs/train/exp0025-300m-hplt-growth.yaml' 
 Invoke-Evaluation 'EXP-0025' '300m-treatment' $exp25Grown
 Invoke-Train 'exp0025-100m-control-train' 'configs/train/exp0025-100m-hplt-control.yaml' $exp25Control
 Invoke-Evaluation 'EXP-0025' '100m-control' $exp25Control
+Invoke-ScaleAnalysis 'EXP-0025' '100m-control' '300m-treatment'
 
 # EXP-0026: 301M continuation control versus 498M growth (Qwen3-0.6B scale), with optimizer offload.
 $grown500 = 'runs/EXP-0026-500m-hplt-growth-s20261028/initialization/500m-grown-from-exp0025-300m.pt'
@@ -121,5 +132,6 @@ Invoke-Train 'exp0026-500m-train' 'configs/train/exp0026-500m-hplt-growth.yaml' 
 Invoke-Evaluation 'EXP-0026' '500m-treatment' $exp26Grown
 Invoke-Train 'exp0026-300m-control-train' 'configs/train/exp0026-300m-hplt-control.yaml' $exp26Control
 Invoke-Evaluation 'EXP-0026' '300m-control' $exp26Control
+Invoke-ScaleAnalysis 'EXP-0026' '300m-control' '500m-treatment'
 
 Write-Status 'queue complete'

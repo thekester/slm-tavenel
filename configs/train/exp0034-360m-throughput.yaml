@@ -1,0 +1,13 @@
+# EXP-0034 throughput/memory probe for the classic 362M shape (random tokens; `slm bench`).
+model: configs/model/slm-360m-classic.yaml
+data_dir: data/tokens/smoke
+out_dir: runs/EXP-0034-throughput
+seed: 20261029
+seq_len: 2048
+micro_batch_size: 4
+grad_accum_steps: 4
+optimizer: adamw
+lr: 3.0e-3
+dtype: bfloat16
+activation_checkpointing: true
+deterministic: false

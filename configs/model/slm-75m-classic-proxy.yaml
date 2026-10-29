@@ -1,0 +1,13 @@
+# ~75M-parameter proxy of the classic 362M shape (EXP-0034a recipe ablations): same tokenizer
+# (49,152 SmolLM2 tokens), head dimension 64, GQA, SwiGLU, QK-norm and head-wise gate.
+vocab_size: 49152
+d_model: 512
+n_layers: 16
+n_heads: 8
+n_kv_heads: 4
+ffn_hidden: 1536
+max_seq_len: 2048
+rope_theta: 100000.0
+qk_norm: true
+attn_gate: headwise
+window_pattern: []

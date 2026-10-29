@@ -121,6 +121,11 @@ class TrainConfig:
     mir_mask_ratio_min: float = 0.0
     mir_mask_ratio_max: float = 0.5
     mir_aux_weight: float = 0.4
+    # Logit distillation from a Hugging Face causal LM sharing the data's tokenizer (pinned revision)
+    distill_teacher: str = ""
+    distill_revision: str = ""
+    distill_weight: float = 0.5
+    distill_temperature: float = 1.0
     # Schedule: "wsd" (warmup-stable-decay) or "cosine"
     schedule: str = "wsd"
     warmup_steps: int = 20
@@ -158,6 +163,12 @@ class TrainConfig:
             raise ValueError(f"unknown dtype {self.dtype!r}")
         if not 0.0 <= self.decay_fraction <= 1.0:
             raise ValueError("decay_fraction must be in [0, 1]")
+        if self.distill_teacher and not self.distill_revision:
+            raise ValueError("distill_teacher needs a pinned distill_revision")
+        if not 0.0 <= self.distill_weight <= 1.0 or self.distill_temperature <= 0:
+            raise ValueError("distill_weight must be in [0, 1] and distill_temperature > 0")
+        if self.distill_teacher and self.mir:
+            raise ValueError("distillation and MIR cannot be combined")
         if self.optimizer_offload and self.optimizer != "adamw":
             raise ValueError("optimizer_offload supports adamw only")
 

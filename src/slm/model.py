@@ -236,6 +236,36 @@ def chunked_cross_entropy(h: torch.Tensor, weight: torch.Tensor, targets: torch.
     return total / (targets != -100).sum().clamp_min(1)
 
 
+def _chunk_distill_sums(h: torch.Tensor, weight: torch.Tensor, targets: torch.Tensor,
+                        teacher_logits: torch.Tensor, temperature: float) -> torch.Tensor:
+    logits = F.linear(h, weight).float()
+    ce = F.cross_entropy(logits, targets, ignore_index=-100, reduction="sum")
+    student = F.log_softmax(logits / temperature, dim=-1)
+    teacher = F.log_softmax(teacher_logits.float() / temperature, dim=-1)
+    kl = (teacher.exp() * (teacher - student)).sum(-1)
+    return torch.stack([ce, (kl * (targets != -100)).sum()])
+
+
+def chunked_distillation_loss(h: torch.Tensor, weight: torch.Tensor, targets: torch.Tensor,
+                              teacher_logits: torch.Tensor, temperature: float = 1.0,
+                              chunk: int = 1024) -> tuple[torch.Tensor, torch.Tensor]:
+    """Mean next-token cross-entropy and mean KL(teacher || student) at ``temperature``, in chunks.
+
+    Forward KL on the full vocabulary, as in Hinton et al. (2015); the caller scales the KL term by
+    temperature**2 so its gradient magnitude does not depend on the temperature."""
+    from torch.utils.checkpoint import checkpoint
+
+    h = h.reshape(-1, h.size(-1))
+    targets = targets.reshape(-1)
+    teacher_logits = teacher_logits.reshape(-1, teacher_logits.size(-1))
+    total = h.new_zeros(2, dtype=torch.float32)
+    for i in range(0, h.size(0), chunk):
+        total = total + checkpoint(_chunk_distill_sums, h[i : i + chunk], weight, targets[i : i + chunk],
+                                   teacher_logits[i : i + chunk], temperature, use_reentrant=False)
+    n = (targets != -100).sum().clamp_min(1)
+    return total[0] / n, total[1] / n
+
+
 class SLM(nn.Module):
     def __init__(self, cfg: ModelConfig) -> None:
         super().__init__()
@@ -281,12 +311,19 @@ class SLM(nn.Module):
         cache: KVCache | None = None,
         return_logits: bool = True,
         doc_ids: torch.Tensor | None = None,
+        teacher_logits: torch.Tensor | None = None,
+        distill_weight: float = 0.0,
+        distill_temperature: float = 1.0,
     ) -> tuple[torch.Tensor | None, torch.Tensor | None]:
         """With ``return_logits=False`` and targets, the loss is computed in chunks and the
         full B x T x vocab logits are never stored, which bounds training memory.
 
         ``doc_ids`` (B x T, see ``document_ids``) restricts attention to tokens of the same
-        document when several documents share a training window."""
+        document when several documents share a training window.
+
+        With ``teacher_logits`` (B x T x vocab, same tokenizer), the loss becomes
+        ``(1 - w) * CE + w * T**2 * KL(teacher || student)``; both terms are kept in
+        ``self.last_loss_parts`` for logging."""
         T = input_ids.shape[1]
         offset = cache.seq_len if cache is not None else 0
         if offset + T > self.cfg.max_seq_len:
@@ -304,6 +341,10 @@ class SLM(nn.Module):
             else:
                 x = block(x, self.rope_cos, self.rope_sin, offset, cache, doc_mask)
         h = self.final_norm(x)
+        if targets is not None and not return_logits and teacher_logits is not None:
+            ce, kl = chunked_distillation_loss(h, self.lm_head.weight, targets, teacher_logits, distill_temperature)
+            self.last_loss_parts = {"ce": ce.detach(), "kl": kl.detach()}
+            return None, (1 - distill_weight) * ce + distill_weight * distill_temperature**2 * kl
         if targets is not None and not return_logits:
             return None, chunked_cross_entropy(h, self.lm_head.weight, targets)
         logits = self.lm_head(h)

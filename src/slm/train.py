@@ -106,6 +106,24 @@ def attention_backend(device: torch.device, deterministic: bool):
     return contextlib.nullcontext()
 
 
+def load_teacher(cfg: TrainConfig, device: torch.device, vocab_size: int) -> torch.nn.Module | None:
+    """Frozen Hugging Face teacher for logit distillation, in bfloat16, at its pinned revision."""
+    if not cfg.distill_teacher:
+        return None
+    from transformers import AutoModelForCausalLM
+
+    teacher = AutoModelForCausalLM.from_pretrained(cfg.distill_teacher, revision=cfg.distill_revision,
+                                                   torch_dtype=torch.bfloat16)
+    if teacher.config.vocab_size != vocab_size:
+        raise ValueError(f"teacher vocab {teacher.config.vocab_size} != student vocab {vocab_size}")
+    return teacher.to(device).eval().requires_grad_(False)
+
+
+@torch.no_grad()
+def teacher_logits(teacher: torch.nn.Module | None, x: torch.Tensor) -> torch.Tensor | None:
+    return None if teacher is None else teacher(input_ids=x, use_cache=False).logits
+
+
 def checkpoint_path(out_dir: Path, step: int) -> Path:
     return out_dir / "checkpoints" / f"step_{step:08d}.pt"
 
@@ -206,6 +224,7 @@ def benchmark(model_cfg: ModelConfig, cfg: TrainConfig, steps: int = 30, warmup:
     model.activation_checkpointing = cfg.activation_checkpointing
     opt = build_optimizer(model, cfg.optimizer, cfg.lr, cfg.weight_decay, (cfg.beta1, cfg.beta2), cfg.eps,
                           momentum=cfg.muon_momentum, fused=device.type == "cuda", offload=cfg.optimizer_offload)
+    teacher = load_teacher(cfg, device, model_cfg.vocab_size)
     gen = torch.Generator().manual_seed(cfg.seed)
     eos = 0
     times = []
@@ -222,7 +241,9 @@ def benchmark(model_cfg: ModelConfig, cfg: TrainConfig, steps: int = 30, warmup:
             x = x.to(device)
             doc_ids = document_ids(x[:, :-1], eos) if cfg.doc_mask else None
             with autocast_context(device, cfg.dtype):
-                _, loss = model(x[:, :-1], x[:, 1:], return_logits=False, doc_ids=doc_ids)
+                _, loss = model(x[:, :-1], x[:, 1:], return_logits=False, doc_ids=doc_ids,
+                                teacher_logits=teacher_logits(teacher, x[:, :-1]),
+                                distill_weight=cfg.distill_weight, distill_temperature=cfg.distill_temperature)
                 (loss / cfg.grad_accum_steps).backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_clip)
         opt.step()
@@ -280,6 +301,9 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
     model.activation_checkpointing = cfg.activation_checkpointing
     opt = build_optimizer(model, cfg.optimizer, cfg.lr, cfg.weight_decay, (cfg.beta1, cfg.beta2), cfg.eps,
                           momentum=cfg.muon_momentum, fused=device.type == "cuda", offload=cfg.optimizer_offload)
+    teacher = load_teacher(cfg, device, model_cfg.vocab_size)
+    if teacher is not None and world > 1:
+        raise ValueError("distillation is implemented for single-process training")
     eos_id = int(train_data.manifest["eos_id"]) if cfg.doc_mask else None
 
     resume_from = latest_checkpoint(out_dir) if cfg.resume else None
@@ -339,6 +363,12 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
             "world_size": world,
             "resumed_from": str(resume_from) if resume_from else None,
             "initialized_from": init_info,
+            "distillation": None if teacher is None else {
+                "teacher": cfg.distill_teacher, "revision": cfg.distill_revision,
+                "teacher_params": sum(p.numel() for p in teacher.parameters()),
+                "weight": cfg.distill_weight, "temperature": cfg.distill_temperature,
+                "objective": "(1 - w) * CE + w * T^2 * KL(teacher || student), full vocabulary",
+            },
             "code": code_revision(),
             "environment": environment_info(),
         })
@@ -362,6 +392,7 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
         loss_sum = 0.0
         clean_loss_sum = 0.0
         mir_loss_sum = 0.0
+        kl_sum = 0.0
         for micro in range(cfg.grad_accum_steps):
             rng = batch_rng(cfg.seed, step, rank, micro)
             x, y = train_data.sample(rng, cfg.micro_batch_size, cfg.seq_len)
@@ -371,8 +402,14 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
                 sync = run_model.no_sync()
             doc_ids = document_ids(x, eos_id) if eos_id is not None else None
             with sync, autocast_context(device, cfg.dtype), attention_backend(device, cfg.deterministic):
-                _, loss = run_model(x, y, return_logits=False, doc_ids=doc_ids)
+                _, loss = run_model(x, y, return_logits=False, doc_ids=doc_ids,
+                                    teacher_logits=teacher_logits(teacher, x), distill_weight=cfg.distill_weight,
+                                    distill_temperature=cfg.distill_temperature)
                 total_loss = loss
+                if teacher is not None:
+                    # Log the next-token term as the model's loss; the KL term separately.
+                    loss = model.last_loss_parts["ce"]
+                    kl_sum += model.last_loss_parts["kl"].item()
                 if cfg.mir:
                     ratios = rng.uniform(cfg.mir_mask_ratio_min, cfg.mir_mask_ratio_max,
                                          size=(cfg.micro_batch_size, 1))
@@ -413,6 +450,8 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
             record["ntp_loss"] = round(clean_loss_sum / cfg.grad_accum_steps, 5)
             if cfg.mir:
                 record["mir_aux_loss"] = round(mir_loss_sum / cfg.grad_accum_steps, 5)
+            if teacher is not None:
+                record["distill_kl"] = round(kl_sum / cfg.grad_accum_steps, 5)
             if cfg.peak_tflops > 0:
                 record["mfu"] = round(steps_timed * flops_per_step / dt / (cfg.peak_tflops * 1e12 * world), 4)
             if device.type == "cuda":

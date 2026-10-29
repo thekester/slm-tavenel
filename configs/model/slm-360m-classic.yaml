@@ -1,0 +1,15 @@
+# ~362M parameters, from scratch. Same shape as SmolLM2-360M and MobileLLM-350M
+# (32 layers, width 960, 15 query / 5 key-value heads, SwiGLU 2560, tied embeddings), with the
+# project's head-wise attention gate (EXP-0003/0004) and QK-norm. Vocabulary sized for the
+# SmolLM2 tokenizer (49,152 tokens, Apache-2.0) so that logit distillation from SmolLM2 is possible.
+vocab_size: 49152
+d_model: 960
+n_layers: 32
+n_heads: 15
+n_kv_heads: 5
+ffn_hidden: 2560
+max_seq_len: 2048
+rope_theta: 100000.0
+qk_norm: true
+attn_gate: headwise
+window_pattern: []
