@@ -130,6 +130,10 @@ class TrainConfig:
     jepa_weight: float = 0.0
     jepa_ema: float = 0.996
     jepa_predictor_hidden: int = 0
+    # "token": predict the next position's latent from h(t) and token(t+1); "state": transition rows of
+    # two jepa_state_tokens-long states around one action, predict the pooled latent of the next state
+    jepa_mode: str = "token"
+    jepa_state_tokens: int = 0
     # Schedule: "wsd" (warmup-stable-decay) or "cosine"
     schedule: str = "wsd"
     warmup_steps: int = 20
@@ -173,6 +177,8 @@ class TrainConfig:
             raise ValueError("distill_teacher needs a pinned distill_revision")
         if not 0.0 <= self.distill_weight <= 1.0 or self.distill_temperature <= 0:
             raise ValueError("distill_weight must be in [0, 1] and distill_temperature > 0")
+        if self.jepa_mode not in ("token", "state") or (self.jepa_mode == "state" and self.jepa_state_tokens <= 0):
+            raise ValueError("jepa_mode must be 'token' or 'state' (the latter with jepa_state_tokens > 0)")
         if self.jepa_weight < 0 or not 0.0 < self.jepa_ema < 1.0:
             raise ValueError("jepa_weight must be >= 0 and jepa_ema in (0, 1)")
         if self.jepa_weight and (self.mir or self.distill_teacher or self.master_weights_offload):

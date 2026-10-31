@@ -31,7 +31,7 @@ from slm import interp
 from slm.config import ModelConfig, TrainConfig, config_hash, load_model_config
 from slm.data.shards import TokenShards
 from slm.model import SLM, document_ids
-from slm.jepa import JEPAPredictor, core_state, jepa_loss, make_target, update_target
+from slm.jepa import JEPAPredictor, jepa_loss, make_target, state_jepa_loss, update_target
 from slm.optim import MasterOffloadAdamW, build_optimizer
 from slm.runlog import (JsonlLogger, assert_tokenizer_compatible, code_revision, environment_info,
                         read_json, sha256_file, write_json)
@@ -420,7 +420,9 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
     if cfg.mir:
         # Both clean and masked objectives contribute a forward/backward pass.
         flops_per_step *= 2
-    probe = torch.from_numpy(val_data.sample(batch_rng(cfg.seed + 2, 0, 0, 0), 2, min(cfg.seq_len, 128))[0]).to(device)
+    # Row-aligned data (one record per window) cannot be cut shorter; text uses a short probe.
+    probe_len = cfg.seq_len if val_data.manifest.get("row_length") else min(cfg.seq_len, 128)
+    probe = torch.from_numpy(val_data.sample(batch_rng(cfg.seed + 2, 0, 0, 0), 2, probe_len)[0]).to(device)
     last_loss = float("nan")
     t0 = time.perf_counter()
 
@@ -462,8 +464,12 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
                 if jepa_target is not None:
                     with torch.no_grad():
                         jepa_target(x)
-                    j_loss = jepa_loss(model.jepa_predictor, model.last_hidden, jepa_target.last_hidden, x,
-                                       ignore_action=jepa_ignore)
+                    if cfg.jepa_mode == "state":
+                        j_loss = state_jepa_loss(model.jepa_predictor, model.last_hidden, jepa_target.last_hidden, x,
+                                                 cfg.jepa_state_tokens)
+                    else:
+                        j_loss = jepa_loss(model.jepa_predictor, model.last_hidden, jepa_target.last_hidden, x,
+                                           ignore_action=jepa_ignore)
                     total_loss = total_loss + cfg.jepa_weight * j_loss
                     jepa_sum += j_loss.item()
                 (total_loss / cfg.grad_accum_steps).backward()

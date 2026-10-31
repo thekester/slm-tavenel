@@ -47,6 +47,19 @@ def jepa_loss(predictor: JEPAPredictor, h: torch.Tensor, target_h: torch.Tensor,
     return (per_position * mask).sum() / mask.sum().clamp_min(1)
 
 
+def state_jepa_loss(predictor: JEPAPredictor, h: torch.Tensor, target_h: torch.Tensor, input_ids: torch.Tensor,
+                    state_tokens: int) -> torch.Tensor:
+    """State-level variant for fixed-layout transition rows [state(t) | action | state(t+1)], each state
+    ``state_tokens`` long: from the hidden state at the action position (which has read state(t) and the
+    action) and the action itself, predict the layer-normalised mean EMA representation of the
+    state(t+1) block. Fixed before any gridworld result (EXP-0039 preregistration)."""
+    s = state_tokens
+    pred = predictor(h[:, s], input_ids[:, s]).float()
+    target = target_h[:, s + 1 : 2 * s + 1].float().mean(1)
+    target = F.layer_norm(target, (target.size(-1),)).detach()
+    return (pred - target).pow(2).mean()
+
+
 def make_target(model: SLM) -> SLM:
     """Frozen EMA copy of the language model (without the predictor)."""
     target = SLM(model.cfg).to(next(model.parameters()).device)

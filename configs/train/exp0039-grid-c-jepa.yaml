@@ -1,0 +1,31 @@
+# EXP-0039 arm C ("world model"): arm A plus the state-level action-conditioned JEPA loss
+# (slm.jepa.state_jepa_loss, fixed before any gridworld result): from the hidden state at the action
+# position, predict the pooled EMA representation of the next 65-token state; weight 1.0, EMA 0.996.
+model: configs/model/gridworld-25m.yaml
+data_dir: data/worlds/gridworld-v1/transitions
+out_dir: runs/EXP-0039-grid-c-jepa
+seed: 20261101
+seq_len: 130
+micro_batch_size: 64
+grad_accum_steps: 1
+max_steps: 10000
+optimizer: muon
+lr: 3.0e-3
+min_lr: 3.0e-4
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 300
+decay_fraction: 0.2
+dtype: bfloat16
+jepa_weight: 1.0
+jepa_ema: 0.996
+jepa_mode: state
+jepa_state_tokens: 65
+deterministic: false
+log_interval: 100
+eval_interval: 1000
+eval_batches: 20
+observe_interval: 5000
+ckpt_interval: 1000
+keep_checkpoints: 2
+resume: true

@@ -44,6 +44,8 @@ def main() -> None:
                         help="documents held in CPU memory per scoring batch")
     parser.add_argument("--forward-batch", type=int, default=2,
                         help="sequences per model forward pass; keep small for 8 GiB GPUs")
+    parser.add_argument("--every", type=int, default=1,
+                        help="score every N-th test document (systematic subsample); 1 scores all")
     args = parser.parse_args()
 
     checkpoint = args.checkpoint.resolve()
@@ -98,6 +100,7 @@ def main() -> None:
             seen += 1
         pending.clear()
 
+    index = -1
     with gzip.open(test_path, "rt", encoding="utf-8") as stream:
         for line in stream:
             if not line.strip():
@@ -105,6 +108,9 @@ def main() -> None:
             row = json.loads(line)
             if not isinstance(row.get("text"), str) or not row["text"]:
                 continue
+            index += 1
+            if index % args.every:
+                continue  # systematic subsample keeps the file's language/source proportions
             pending.append(row)
             if len(pending) >= args.document_batch:
                 score_pending()
@@ -137,6 +143,7 @@ def main() -> None:
         "test_sha256": expected_test_sha,
         "evaluation_script_sha256": sha256_file(Path(__file__).resolve()),
         "documents_scored": seen,
+        "systematic_subsample_every": args.every,
         "groups": summaries,
         "per_document": per_document,
         "limitations": [

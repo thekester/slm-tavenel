@@ -30,6 +30,24 @@ def test_jepa_loss_trains_model_and_predictor_but_not_target():
     assert all(p.grad is None for p in target.parameters())
 
 
+def test_state_level_jepa_uses_action_position_and_next_state_block():
+    from slm.jepa import state_jepa_loss
+
+    torch.manual_seed(0)
+    model = SLM(tiny_config(max_seq_len=16))
+    model.keep_hidden = True
+    predictor = JEPAPredictor(32, 97)
+    target = make_target(model)
+    x = torch.randint(1, 97, (3, 15))  # state of 7 tokens, action, next state of 7 tokens
+    model(x)
+    with torch.no_grad():
+        target(x)
+    loss = state_jepa_loss(predictor, model.last_hidden, target.last_hidden, x, state_tokens=7)
+    loss.backward()
+    assert torch.isfinite(loss) and predictor.net[0].weight.grad is not None
+    assert model.embed.weight.grad is not None
+
+
 def test_ema_update_moves_target_towards_model():
     torch.manual_seed(0)
     model = SLM(tiny_config())
