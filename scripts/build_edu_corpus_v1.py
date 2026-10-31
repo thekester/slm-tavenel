@@ -16,6 +16,7 @@ import argparse
 import hashlib
 import json
 import sys
+import time
 from collections import Counter
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
@@ -111,7 +112,13 @@ def iter_batches(path: Path, batch_rows: int = 2000):
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workers", type=int, default=12)
+    parser.add_argument("--fr-files", type=int, default=1,
+                        help="number of FineWeb2-HQ fra_Latn shards (v1 used 1; v2 uses 5 for ~25%% French)")
+    parser.add_argument("--out", type=Path, default=OUT)
+    parser.add_argument("--schema-version", default="v1")
     args = parser.parse_args()
+    out_dir = args.out.resolve()
+    SOURCES["fr"]["files"] = [f"fra_Latn/000_{i:05d}.parquet" for i in range(args.fr_files)]
     shards = []
     for language, src in SOURCES.items():
         card = hf_hub_download(repo_id=src["dataset"], filename="README.md", repo_type="dataset",
@@ -125,7 +132,7 @@ def main() -> int:
         print(f"downloaded {language}: {src['files']}", flush=True)
 
     grams, benchmark_inputs = benchmark_ngrams()
-    OUT.mkdir(parents=True, exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
     seen: set[str] = set()
     totals: dict[str, Counter] = {lang: Counter() for lang in SOURCES}
     buffers: dict[str, list[dict]] = {"train": [], "dev": [], "test": []}
@@ -143,7 +150,7 @@ def main() -> int:
                     yield language, future.result()
                 print(f"processed {path.name}: {dict(totals[language])}", flush=True)
 
-    writers = {split: (OUT / f"{split}.jsonl").open("w", encoding="utf-8") for split in buffers}
+    writers = {split: (out_dir /f"{split}.jsonl").open("w", encoding="utf-8") for split in buffers}
     try:
         for language, (kept, counts) in kept_rows():
             totals[language].update(counts)
@@ -161,20 +168,21 @@ def main() -> int:
 
     files = {}
     for split in buffers:
-        plain = OUT / f"{split}.jsonl"
+        plain = out_dir / f"{split}.jsonl"
 
         def rows(p=plain):
             with p.open("r", encoding="utf-8") as stream:
                 for line in stream:
                     yield json.loads(line)
-        files[split] = write_jsonl_gz(OUT / f"{split}.jsonl.gz", rows())
+        files[split] = write_jsonl_gz(out_dir /f"{split}.jsonl.gz", rows())
         plain.unlink()
 
     manifest = {
-        "schema": "slm-tavenel.edu_corpus_candidate.v1",
+        "schema": f"slm-tavenel.edu_corpus_candidate.{args.schema_version}",
         "status": "candidate_not_legal_clearance",
-        "created": "2026-10-29",
+        "created": time.strftime("%Y-%m-%d"),
         "purpose": "EXP-0034 classic 362M from-scratch pretraining (EN/FR educational web)",
+        "builder_arguments": {"fr_files": args.fr_files, "out": out_dir.relative_to(ROOT).as_posix()},
         "sources": SOURCES,
         "filters": {
             "characters": [MIN_CHARS, MAX_CHARS],
@@ -195,7 +203,7 @@ def main() -> int:
             "Candidate corpus for exploratory training; not a legal clearance or release authorization.",
         ],
     }
-    (OUT / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (out_dir /"manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"counts": manifest["counts"], "records": manifest["records_by_split_language"]}, indent=2))
     return 0
 

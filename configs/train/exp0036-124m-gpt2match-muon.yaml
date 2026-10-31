@@ -1,0 +1,28 @@
+# EXP-0036: GPT-2-matched 124M (124.0M parameters) from scratch on edu corpus v2, Muon optimizer
+# (EXP-0036a: -0.18 nats validation CE vs AdamW at 75M, same throughput). Same learning-rate schedule
+# shape as the 75M proxy. 15,000 updates x 65,536 token positions = 983M token positions (~45 h).
+model: configs/model/slm-124m-gpt2match.yaml
+data_dir: data/tokens/slm-tavenel-edu-corpus-v2-smollm2
+out_dir: runs/EXP-0036-124m-gpt2match-muon
+seed: 20261031
+seq_len: 2048
+micro_batch_size: 4
+grad_accum_steps: 8
+max_steps: 15000
+optimizer: muon
+lr: 3.0e-3
+min_lr: 3.0e-4
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 300
+decay_fraction: 0.2
+dtype: bfloat16
+activation_checkpointing: true
+deterministic: false
+log_interval: 50
+eval_interval: 500
+eval_batches: 20
+observe_interval: 2500
+ckpt_interval: 250
+keep_checkpoints: 2
+resume: true

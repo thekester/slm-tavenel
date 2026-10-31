@@ -1,6 +1,11 @@
 # EXP-0034: classic 362M from scratch on educational web, with a distillation ablation
 
-**Status (2026-10-29): preregistered; corpus being built.** Replaces the EXP-0026 498M growth run,
+**Status (2026-10-30): EXP-0034a complete (results below); corpus v2 built and encoded; EXP-0034b recipe pending a clean 362M throughput measurement.**
+Corpus v2 (`data/processed/slm-tavenel-edu-corpus-v2`, same builder with five FineWeb2-HQ French
+shards) has 1,996,506 train documents (587,744 French) and 2.140B train tokens with the SmolLM2
+tokenizer (`data/tokens/slm-tavenel-edu-corpus-v2-smollm2`); French is estimated at about 30% of
+train tokens (v2 minus v1 token totals, since the English shards are identical).
+Initial status (2026-10-29): preregistered; corpus being built. Replaces the EXP-0026 498M growth run,
 stopped on 2026-10-29 before its first checkpoint after EXP-0025 showed that FFN growth followed by a
 49M-token continuation gives only 0.0012 BPB over a token-matched 100M control.
 
@@ -48,6 +53,40 @@ paired item bootstrap. Training time is reported, because the teacher forward pa
 **Decision rule.** The 362M run uses distillation if the treatment lowers held-out BPB with a 95%
 interval excluding zero and the six-benchmark mean accuracy does not decrease, after accounting for
 its throughput cost; otherwise it uses cross-entropy only.
+
+### EXP-0034a results (2026-10-30)
+
+Both arms completed 1,500/1,500 updates (98.3M token positions) on corpus v1. The CE arm stopped at
+step 350 when the PC shut down and resumed from its step-250 checkpoint. Throughput measured with an
+idle CPU: 12,100 token positions/s (CE) and 5,760 (distillation), so the distillation arm costs about
+2.1x the GPU time per token at 75M. Paired analysis:
+`runs/EXP-0034-evaluations/exp0034a-paired-comparison.json`.
+
+| Measure | CE | Distill | Distill effect (95% paired bootstrap) |
+|---|---:|---:|---|
+| Validation CE (same windows, step 1,500) | 3.840 | 3.743 | −0.097 nats |
+| Held-out test BPB, all (30,824 docs) | 1.3300 | 1.2989 | −0.0310 [−0.0313, −0.0308] |
+| Held-out test BPB, EN (25,395) | 1.3094 | 1.2756 | −0.0338 [−0.0339, −0.0336] |
+| Held-out test BPB, FR (5,429) | 1.4710 | 1.4584 | −0.0126 [−0.0131, −0.0120] |
+| ARC-Easy acc | 0.364 | 0.385 | +0.021 [+0.004, +0.037] |
+| ARC-Challenge acc | 0.184 | 0.166 | −0.019 [−0.038, +0.001] |
+| HellaSwag acc | 0.260 | 0.263 | +0.003 [−0.001, +0.008] |
+| Belebele EN acc | 0.272 | 0.297 | +0.024 [+0.003, +0.047] |
+| Belebele FR acc | 0.308 | 0.301 | −0.007 [−0.027, +0.013] |
+| WinoGrande acc | 0.507 | 0.492 | −0.016 [−0.042, +0.010] |
+| Six-task mean acc | 0.316 | 0.317 | +0.002 |
+
+At equal tokens, distillation lowers held-out BPB by 2.3% (larger in English than French, matching
+the teacher's mostly English pretraining). Benchmark effects are mixed: ARC-Easy and Belebele EN
+improve with intervals excluding zero, ARC-Challenge and WinoGrande move the other way without
+excluding zero, and the six-task mean is unchanged. With twelve contrasts, single intervals are not
+treated as findings. The preregistered token-level criterion is met (BPB lower, mean accuracy not lower).
+
+**Compute.** The gain must be set against a 2.1x GPU cost. Within the CE arm, validation CE fell from
+4.341 at 49M tokens to 3.840 at 98M (including the learning-rate decay), far more than the 0.097-nat
+distillation gain, so at 75M and this budget, spending the teacher's compute on more CE tokens is
+likely better. A compute-matched CE arm was not run, so this is an inference from the learning curve,
+not a measured comparison. Corpus v1 was also French-light (6.4% of bytes).
 
 ## EXP-0034b: classic 362M main run
 

@@ -31,7 +31,7 @@ from slm import interp
 from slm.config import ModelConfig, TrainConfig, config_hash, load_model_config
 from slm.data.shards import TokenShards
 from slm.model import SLM, document_ids
-from slm.optim import build_optimizer
+from slm.optim import MasterOffloadAdamW, build_optimizer
 from slm.runlog import (JsonlLogger, assert_tokenizer_compatible, code_revision, environment_info,
                         read_json, sha256_file, write_json)
 
@@ -122,6 +122,31 @@ def load_teacher(cfg: TrainConfig, device: torch.device, vocab_size: int) -> tor
 @torch.no_grad()
 def teacher_logits(teacher: torch.nn.Module | None, x: torch.Tensor) -> torch.Tensor | None:
     return None if teacher is None else teacher(input_ids=x, use_cache=False).logits
+
+
+def build_model_and_optimizer(model_cfg: ModelConfig, cfg: TrainConfig, device: torch.device):
+    model = SLM(model_cfg).to(device)
+    model.activation_checkpointing = cfg.activation_checkpointing
+    # The optimizer copies the fp32 initial weights first, so master-weight offload keeps them exact.
+    opt = build_optimizer(model, cfg.optimizer, cfg.lr, cfg.weight_decay, (cfg.beta1, cfg.beta2), cfg.eps,
+                          momentum=cfg.muon_momentum, fused=device.type == "cuda", offload=cfg.optimizer_offload,
+                          master_offload=cfg.master_weights_offload)
+    if cfg.master_weights_offload:
+        with torch.no_grad():
+            for p in model.parameters():  # parameters only: RoPE tables stay fp32
+                p.data = p.data.to(torch.bfloat16)
+    return model, opt
+
+
+def accumulate_gradients(opt) -> None:
+    if isinstance(opt, MasterOffloadAdamW):
+        opt.accumulate()
+
+
+def clip_gradients(model: SLM, opt, max_norm: float) -> float:
+    if isinstance(opt, MasterOffloadAdamW):
+        return opt.clip_grad_norm_(max_norm)
+    return torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm).item()
 
 
 def checkpoint_path(out_dir: Path, step: int) -> Path:
@@ -220,10 +245,7 @@ def benchmark(model_cfg: ModelConfig, cfg: TrainConfig, steps: int = 30, warmup:
     """
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     torch.manual_seed(cfg.seed)
-    model = SLM(model_cfg).to(device)
-    model.activation_checkpointing = cfg.activation_checkpointing
-    opt = build_optimizer(model, cfg.optimizer, cfg.lr, cfg.weight_decay, (cfg.beta1, cfg.beta2), cfg.eps,
-                          momentum=cfg.muon_momentum, fused=device.type == "cuda", offload=cfg.optimizer_offload)
+    model, opt = build_model_and_optimizer(model_cfg, cfg, device)
     teacher = load_teacher(cfg, device, model_cfg.vocab_size)
     gen = torch.Generator().manual_seed(cfg.seed)
     eos = 0
@@ -245,7 +267,8 @@ def benchmark(model_cfg: ModelConfig, cfg: TrainConfig, steps: int = 30, warmup:
                                 teacher_logits=teacher_logits(teacher, x[:, :-1]),
                                 distill_weight=cfg.distill_weight, distill_temperature=cfg.distill_temperature)
                 (loss / cfg.grad_accum_steps).backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_clip)
+            accumulate_gradients(opt)
+        clip_gradients(model, opt, cfg.grad_clip)
         opt.step()
         opt.zero_grad(set_to_none=True)
         if device.type == "cuda":
@@ -297,13 +320,10 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
         elif cfg.init_from:
             tokenizer_lineage = assert_tokenizer_compatible(cfg.init_from, data_tokenizer_sha)
 
-    model = SLM(model_cfg).to(device)
-    model.activation_checkpointing = cfg.activation_checkpointing
-    opt = build_optimizer(model, cfg.optimizer, cfg.lr, cfg.weight_decay, (cfg.beta1, cfg.beta2), cfg.eps,
-                          momentum=cfg.muon_momentum, fused=device.type == "cuda", offload=cfg.optimizer_offload)
+    model, opt = build_model_and_optimizer(model_cfg, cfg, device)
     teacher = load_teacher(cfg, device, model_cfg.vocab_size)
-    if teacher is not None and world > 1:
-        raise ValueError("distillation is implemented for single-process training")
+    if (teacher is not None or cfg.master_weights_offload) and world > 1:
+        raise ValueError("distillation and master-weight offload are implemented for single-process training")
     eos_id = int(train_data.manifest["eos_id"]) if cfg.doc_mask else None
 
     resume_from = latest_checkpoint(out_dir) if cfg.resume else None
@@ -315,6 +335,8 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
         if ModelConfig(**init["model_config"]) != model_cfg:
             raise ValueError(f"{cfg.init_from} was built for a different model configuration")
         model.load_state_dict(init["model"])
+        if isinstance(opt, MasterOffloadAdamW):
+            opt.sync_from_device()  # initial weights pass through bfloat16 once
         init_info = {"path": cfg.init_from, "sha256": sha256_file(cfg.init_from), "grown_from": init.get("grown_from")}
 
     start_step = 0
@@ -420,9 +442,10 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
                     total_loss = loss + cfg.mir_aux_weight * mir_loss
                     mir_loss_sum += mir_loss.item()
                 (total_loss / cfg.grad_accum_steps).backward()
+            accumulate_gradients(opt)
             clean_loss_sum += loss.item()
             loss_sum += total_loss.item()
-        grad_norm = torch.nn.utils.clip_grad_norm_(model.parameters(), cfg.grad_clip).item()
+        grad_norm = clip_gradients(model, opt, cfg.grad_clip)
         observing = master and cfg.observe_interval and step % cfg.observe_interval == 0
         if observing:
             obs_record = observe(model, probe)

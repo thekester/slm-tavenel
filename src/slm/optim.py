@@ -147,6 +147,116 @@ class CPUOffloadAdamW:
         self.inner.load_state_dict(state["offload_adamw"])
 
 
+class MasterOffloadAdamW:
+    """AdamW with fp32 master weights, fp32 gradient accumulators and moments all in host memory.
+
+    For models whose fp32 weights and gradients do not fit on the device (the 1B target on 8 GB):
+    the device holds bfloat16 weights and the bfloat16 gradients of one micro-batch only. After each
+    backward pass ``accumulate()`` adds those gradients into fp32 host accumulators and frees them, so
+    accumulation over micro-batches happens in fp32. ``step()`` clips on the host gradients, updates
+    the fp32 masters with ``torch.optim.AdamW`` and writes them back to the device in bfloat16.
+    The host masters are authoritative and are saved with the optimizer state (ZeRO-Offload design,
+    Ren et al., 2021, arXiv:2101.06840; mixed precision after Micikevicius et al., 2018).
+
+    Groups flagged ``"muon": True`` are updated with Muon instead (see ``Muon``): the momentum buffer
+    stays on the host, the Newton-Schulz orthogonalization runs on the device in bfloat16 (as in
+    ``Muon`` itself), and the scaled update is applied to the fp32 master.
+    """
+
+    def __init__(self, groups: list[dict[str, Any]], lr: float, betas: tuple[float, float], eps: float,
+                 momentum: float = 0.95, ns_steps: int = 5) -> None:
+        self.device_params: list[torch.nn.Parameter] = []
+        adam_groups, self.muon_groups = [], []
+        for group in groups:
+            host = []
+            for p in group["params"]:
+                h = torch.empty(p.shape, dtype=torch.float32)
+                h.copy_(p.detach())
+                h.grad = torch.zeros_like(h)
+                self.device_params.append(p)
+                host.append(h)
+            if group.get("muon"):
+                self.muon_groups.append({**group, "params": host, "lr": lr, "momentum": momentum, "ns_steps": ns_steps,
+                                         "buffers": [torch.zeros_like(h) for h in host]})
+            else:
+                adam_groups.append({**group, "params": host})
+        self.host_params = self._ordered_host_params(groups, adam_groups)
+        self.inner = torch.optim.AdamW(adam_groups, lr=lr, betas=betas, eps=eps, foreach=True) if adam_groups else None
+
+    def _ordered_host_params(self, groups, adam_groups) -> list[torch.Tensor]:
+        """Host tensors in the same order as ``device_params`` (input group order)."""
+        adam_iter, muon_iter = iter(adam_groups), iter(self.muon_groups)
+        ordered = []
+        for group in groups:
+            ordered.extend(next(muon_iter if group.get("muon") else adam_iter)["params"])
+        return ordered
+
+    @property
+    def param_groups(self) -> list[dict[str, Any]]:
+        return (self.inner.param_groups if self.inner else []) + self.muon_groups
+
+    @torch.no_grad()
+    def sync_from_device(self) -> None:
+        """Reset the masters from the device weights (after loading initial weights into the model)."""
+        for p, h in zip(self.device_params, self.host_params):
+            h.copy_(p.detach())
+
+    @torch.no_grad()
+    def accumulate(self) -> None:
+        for p, h in zip(self.device_params, self.host_params):
+            if p.grad is not None:
+                h.grad.add_(p.grad.to("cpu", torch.float32))
+                p.grad = None
+
+    @torch.no_grad()
+    def clip_grad_norm_(self, max_norm: float) -> float:
+        return torch.nn.utils.clip_grad_norm_(self.host_params, max_norm).item()
+
+    @torch.no_grad()
+    def _muon_step(self) -> None:
+        device = self.device_params[0].device
+        for group in self.muon_groups:
+            lr, wd, mom = group["lr"], group["weight_decay"], group["momentum"]
+            for h, buf in zip(group["params"], group["buffers"]):
+                buf.mul_(mom).add_(h.grad)
+                g = h.grad.add(buf, alpha=mom)  # Nesterov, as in Muon
+                update = newton_schulz(g.to(device), group["ns_steps"]).to("cpu", torch.float32)
+                h.mul_(1 - lr * wd)
+                h.add_(update, alpha=-lr * 0.2 * max(h.size(0), h.size(1)) ** 0.5)
+
+    @torch.no_grad()
+    def step(self) -> None:
+        self.accumulate()
+        if self.inner is not None:
+            self.inner.step()
+        self._muon_step()
+        for p, h in zip(self.device_params, self.host_params):
+            p.copy_(h)
+
+    def zero_grad(self, set_to_none: bool = True) -> None:
+        for p, h in zip(self.device_params, self.host_params):
+            p.grad = None
+            h.grad.zero_()
+
+    def state_dict(self) -> dict[str, Any]:
+        return {"master_offload_adamw": self.inner.state_dict() if self.inner else None,
+                "muon_buffers": [[b.detach() for b in g["buffers"]] for g in self.muon_groups],
+                "master_weights": [h.detach() for h in self.host_params]}
+
+    @torch.no_grad()
+    def load_state_dict(self, state: dict[str, Any]) -> None:
+        if "master_offload_adamw" not in state:
+            raise ValueError("checkpoint optimizer state was not saved by MasterOffloadAdamW")
+        if self.inner is not None:
+            self.inner.load_state_dict(state["master_offload_adamw"])
+        for group, saved in zip(self.muon_groups, state.get("muon_buffers", [])):
+            for b, s in zip(group["buffers"], saved):
+                b.copy_(s)
+        for p, h, saved in zip(self.device_params, self.host_params, state["master_weights"]):
+            h.copy_(saved)
+            p.copy_(h)
+
+
 def muon_params(model: SLM) -> tuple[list[torch.nn.Parameter], list[torch.nn.Parameter]]:
     """Split parameters into (2D matrices inside blocks -> Muon, everything else -> AdamW)."""
     muon, other, seen = [], [], set()
@@ -159,9 +269,22 @@ def muon_params(model: SLM) -> tuple[list[torch.nn.Parameter], list[torch.nn.Par
 
 
 def build_optimizer(model: SLM, name: str, lr: float, weight_decay: float, betas: tuple[float, float],
-                    eps: float, momentum: float = 0.95, fused: bool = False, offload: bool = False):
+                    eps: float, momentum: float = 0.95, fused: bool = False, offload: bool = False,
+                    master_offload: bool = False):
     from slm.train import param_groups
 
+    if master_offload:
+        if name == "adamw":
+            return MasterOffloadAdamW(param_groups(model, weight_decay), lr=lr, betas=betas, eps=eps)
+        if name == "muon":
+            muon, other = muon_params(model)
+            decay = [p for p in other if p.dim() >= 2 and p is not model.embed.weight]
+            no_decay = [p for p in other if p.dim() < 2 or p is model.embed.weight]
+            groups = [g for g in ({"params": decay, "weight_decay": weight_decay},
+                                  {"params": no_decay, "weight_decay": 0.0}) if g["params"]]
+            groups.append({"params": muon, "weight_decay": weight_decay, "muon": True})
+            return MasterOffloadAdamW(groups, lr=lr, betas=betas, eps=eps, momentum=momentum)
+        raise ValueError(f"master-weight offload does not support optimizer {name!r}")
     if offload:
         if name != "adamw":
             raise ValueError("optimizer offload supports adamw only")

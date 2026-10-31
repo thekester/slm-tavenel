@@ -1,0 +1,30 @@
+# EXP-0034b: classic 362M from scratch on edu corpus v2 (EN FineWeb-Edu + FR FineWeb2-HQ, ~30% French),
+# SmolLM2 tokenizer, next-token cross-entropy only (EXP-0034a: distillation's token-level gain did not
+# clearly outweigh its 1.47x throughput cost at 362M; see the experiment record).
+# 8,000 updates x 65,536 token positions = 524.3M token positions (~44 h at 3,280 tokens/s).
+model: configs/model/slm-360m-classic.yaml
+data_dir: data/tokens/slm-tavenel-edu-corpus-v2-smollm2
+out_dir: runs/EXP-0034b-360m-ce
+seed: 20261030
+seq_len: 2048
+micro_batch_size: 2
+grad_accum_steps: 16
+max_steps: 8000
+optimizer: adamw
+lr: 2.0e-3
+min_lr: 2.0e-4
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 300
+decay_fraction: 0.2
+dtype: bfloat16
+activation_checkpointing: true
+optimizer_offload: true
+deterministic: false
+log_interval: 25
+eval_interval: 250
+eval_batches: 20
+observe_interval: 1000
+ckpt_interval: 200
+keep_checkpoints: 2
+resume: true

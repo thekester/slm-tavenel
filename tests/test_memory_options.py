@@ -80,6 +80,105 @@ def test_offloaded_adamw_state_roundtrip_and_lr_groups():
         restored.load_state_dict({"state": {}, "param_groups": []})
 
 
+def test_master_offload_matches_fp32_adamw_and_keeps_fp32_masters():
+    from slm.config import TrainConfig
+    from slm.optim import MasterOffloadAdamW
+    from slm.train import accumulate_gradients, build_model_and_optimizer, clip_gradients
+
+    torch.manual_seed(0)
+    reference = SLM(tiny_config())
+    ref_opt = build_optimizer(reference, "adamw", 1e-2, 0.1, (0.9, 0.95), 1e-8)
+    cfg = TrainConfig(optimizer="adamw", lr=1e-2, master_weights_offload=True)
+    torch.manual_seed(0)
+    model, opt = build_model_and_optimizer(tiny_config(), cfg, torch.device("cpu"))
+    assert isinstance(opt, MasterOffloadAdamW)
+    assert all(p.dtype == torch.bfloat16 for p in model.parameters())
+    assert model.rope_cos.dtype == torch.float32
+    names = {id(p): n for n, p in model.named_parameters()}
+    ref = dict(reference.named_parameters())
+    pairs = [(ref[names[id(p)]], h) for p, h in zip(opt.device_params, opt.host_params)]
+    for a, h in pairs:
+        torch.testing.assert_close(a.detach(), h)  # masters start from the exact fp32 initialization
+
+    # Exact mechanics: feed the reference fp32 AdamW the same fp32 sum of the micro-batch gradients.
+    gen = torch.Generator().manual_seed(1)
+    losses = []
+    for _ in range(3):
+        accumulated = {}
+        for _ in range(2):
+            x = torch.randint(0, 97, (2, 16), generator=gen)
+            with torch.autocast("cpu", dtype=torch.bfloat16):
+                _, loss = model(x[:, :-1], x[:, 1:], return_logits=False)
+            (loss / 2).backward()
+            losses.append(loss.item())
+            for p in model.parameters():
+                accumulated[id(p)] = accumulated.get(id(p), 0) + p.grad.float()
+            accumulate_gradients(opt)
+        assert all(p.grad is None for p in model.parameters())
+        for p, h in zip(opt.device_params, opt.host_params):
+            torch.testing.assert_close(h.grad, accumulated[id(p)])  # fp32 accumulation on the host
+        for p, _ in zip(opt.device_params, opt.host_params):
+            ref[names[id(p)]].grad = accumulated[id(p)].clone()
+        torch.nn.utils.clip_grad_norm_(reference.parameters(), 1.0)
+        ref_opt.step()
+        ref_opt.zero_grad(set_to_none=True)
+        clip_gradients(model, opt, 1.0)
+        opt.step()
+        opt.zero_grad()
+        for a, h in pairs:
+            assert h.dtype == torch.float32
+            torch.testing.assert_close(a.detach(), h)
+    assert losses[-1] < losses[0]
+    for p, h in zip(opt.device_params, opt.host_params):
+        torch.testing.assert_close(p.detach(), h.to(torch.bfloat16))
+
+    state = opt.state_dict()
+    _, fresh = build_model_and_optimizer(tiny_config(), cfg, torch.device("cpu"))
+    fresh.load_state_dict(state)
+    for a, b in zip(opt.host_params, fresh.host_params):
+        torch.testing.assert_close(a, b)
+
+
+def test_master_offload_muon_matches_muon_on_same_gradients():
+    from slm.config import TrainConfig
+    from slm.optim import MasterOffloadAdamW
+    from slm.train import accumulate_gradients, build_model_and_optimizer
+
+    torch.manual_seed(0)
+    reference = SLM(tiny_config())
+    ref_opt = build_optimizer(reference, "muon", 1e-2, 0.1, (0.9, 0.95), 1e-8)
+    cfg = TrainConfig(optimizer="muon", lr=1e-2, master_weights_offload=True)
+    torch.manual_seed(0)
+    model, opt = build_model_and_optimizer(tiny_config(), cfg, torch.device("cpu"))
+    assert isinstance(opt, MasterOffloadAdamW) and opt.muon_groups
+    names = {id(p): n for n, p in model.named_parameters()}
+    ref = dict(reference.named_parameters())
+    pairs = [(ref[names[id(p)]], h) for p, h in zip(opt.device_params, opt.host_params)]
+    gen = torch.Generator().manual_seed(2)
+    for _ in range(3):
+        x = torch.randint(0, 97, (2, 16), generator=gen)
+        with torch.autocast("cpu", dtype=torch.bfloat16):
+            _, loss = model(x[:, :-1], x[:, 1:], return_logits=False)
+        loss.backward()
+        grads = {id(p): p.grad.float() for p in model.parameters()}
+        accumulate_gradients(opt)
+        for p in opt.device_params:
+            ref[names[id(p)]].grad = grads[id(p)].clone()
+        for group in opt.param_groups + ref_opt.param_groups:
+            group["lr"] = 1e-2
+        ref_opt.step()
+        ref_opt.zero_grad()
+        opt.step()
+        opt.zero_grad()
+        for a, h in pairs:
+            torch.testing.assert_close(a.detach(), h)
+    state = opt.state_dict()
+    _, fresh = build_model_and_optimizer(tiny_config(), cfg, torch.device("cpu"))
+    fresh.load_state_dict(state)
+    for a, b in zip(opt.muon_groups[0]["buffers"], fresh.muon_groups[0]["buffers"]):
+        torch.testing.assert_close(a, b)
+
+
 def test_offload_requires_adamw():
     with pytest.raises(ValueError):
         TrainConfig(optimizer="muon", optimizer_offload=True)

@@ -1,0 +1,15 @@
+# ~549M parameters, Qwen3-0.6B scale, same family as slm-360m-classic / slm-1b-classic:
+# SmolLM2 tokenizer (49,152; Qwen3-0.6B's 151,936-token vocabulary puts ~156M of its parameters in
+# embeddings), 28 layers like Qwen3-0.6B, width 1,280, 20 query / 5 key-value heads of width 64,
+# SwiGLU 3,456, tied embeddings, QK-norm and the head-wise attention gate.
+vocab_size: 49152
+d_model: 1280
+n_layers: 28
+n_heads: 20
+n_kv_heads: 5
+ffn_hidden: 3456
+max_seq_len: 2048
+rope_theta: 100000.0
+qk_norm: true
+attn_gate: headwise
+window_pattern: []

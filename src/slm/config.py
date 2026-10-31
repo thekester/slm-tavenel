@@ -137,6 +137,8 @@ class TrainConfig:
     activation_checkpointing: bool = False
     # Keep AdamW moments in host memory and run the update on the CPU (ZeRO-Offload style)
     optimizer_offload: bool = False
+    # bfloat16 weights/gradients on the device; fp32 masters, accumulators and AdamW moments on the host
+    master_weights_offload: bool = False
     deterministic: bool = True
     peak_tflops: float = 0.0  # per device; enables MFU logging when > 0
     # Logging, evaluation, observability, checkpointing
@@ -169,6 +171,8 @@ class TrainConfig:
             raise ValueError("distill_weight must be in [0, 1] and distill_temperature > 0")
         if self.distill_teacher and self.mir:
             raise ValueError("distillation and MIR cannot be combined")
+        if self.master_weights_offload and self.optimizer_offload:
+            raise ValueError("master_weights_offload replaces optimizer_offload")
         if self.optimizer_offload and self.optimizer != "adamw":
             raise ValueError("optimizer_offload supports adamw only")
 

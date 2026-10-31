@@ -1,0 +1,15 @@
+# EXP-0035 throughput/memory probe for the classic 1.04B shape (random tokens; `slm bench`).
+# bfloat16 device weights, fp32 masters / accumulators / AdamW moments in host memory.
+model: configs/model/slm-1b-classic.yaml
+data_dir: data/tokens/smoke
+out_dir: runs/EXP-0035-throughput
+seed: 20261030
+seq_len: 2048
+micro_batch_size: 1
+grad_accum_steps: 16
+optimizer: adamw
+lr: 2.0e-3
+dtype: bfloat16
+activation_checkpointing: true
+master_weights_offload: true
+deterministic: false

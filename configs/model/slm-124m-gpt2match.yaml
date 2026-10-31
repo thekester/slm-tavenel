@@ -1,0 +1,14 @@
+# Parameter-matched to GPT-2 small (124.4M including its 38.6M token and 0.8M position embeddings).
+# Modern decoder (RoPE, RMSNorm, SwiGLU, GQA, QK-norm, head-wise gate, no biases) in the deep-thin
+# SmolLM2-135M shape with 27 instead of 30 layers; SmolLM2 tokenizer (49,152) and tied embeddings.
+vocab_size: 49152
+d_model: 576
+n_layers: 27
+n_heads: 9
+n_kv_heads: 3
+ffn_hidden: 1536
+max_seq_len: 2048
+rope_theta: 100000.0
+qk_norm: true
+attn_gate: headwise
+window_pattern: []

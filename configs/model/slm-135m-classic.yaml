@@ -1,0 +1,14 @@
+# ~135M parameters, SmolLM2-135M shape (30 layers, width 576, 9 query / 3 key-value heads of width 64,
+# SwiGLU 1,536, tied 49,152-token SmolLM2 embeddings), plus the project's QK-norm and head-wise
+# attention gate; same family as slm-360m-classic / slm-550m-classic / slm-1b-classic.
+vocab_size: 49152
+d_model: 576
+n_layers: 30
+n_heads: 9
+n_kv_heads: 3
+ffn_hidden: 1536
+max_seq_len: 2048
+rope_theta: 100000.0
+qk_norm: true
+attn_gate: headwise
+window_pattern: []

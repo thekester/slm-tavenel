@@ -41,6 +41,87 @@
       "gated": true,
       "access_status": "Current authenticated Hub request returned 403; evaluation awaits repository access approval.",
       "notes": "Evaluation requires access to the pinned repository and compliance with Meta's license terms."
+    },
+    {
+      "name": "Pythia-70M",
+      "repo": "EleutherAI/pythia-70m",
+      "revision": "a39f36b100fe8a5377810d56c3f4789b9c53ac42",
+      "nominal_parameters": 70000000,
+      "license_label": "apache-2.0",
+      "gated": false,
+      "access_status": "Public revision; added 2026-10-30 for same-harness evaluation.",
+      "pretraining_data_note": "The Pile (open data), 300B tokens"
+    },
+    {
+      "name": "Pythia-160M",
+      "repo": "EleutherAI/pythia-160m",
+      "revision": "50f5173d932e8e61f858120bcb800b97af589f46",
+      "nominal_parameters": 160000000,
+      "license_label": "apache-2.0",
+      "gated": false,
+      "access_status": "Public revision; added 2026-10-30 for same-harness evaluation.",
+      "pretraining_data_note": "The Pile (open data), 300B tokens"
+    },
+    {
+      "name": "Pythia-410M",
+      "repo": "EleutherAI/pythia-410m",
+      "revision": "9879c9b5f8bea9051dcb0e68dff21493d67e9d4f",
+      "nominal_parameters": 410000000,
+      "license_label": "apache-2.0",
+      "gated": false,
+      "access_status": "Public revision; added 2026-10-30 for same-harness evaluation.",
+      "pretraining_data_note": "The Pile (open data), 300B tokens"
+    },
+    {
+      "name": "GPT-2",
+      "repo": "openai-community/gpt2",
+      "revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+      "nominal_parameters": 124000000,
+      "license_label": "mit",
+      "gated": false,
+      "access_status": "Public revision; added 2026-10-30 for same-harness evaluation.",
+      "pretraining_data_note": "WebText (not released)"
+    },
+    {
+      "name": "GPT-2 Medium",
+      "repo": "openai-community/gpt2-medium",
+      "revision": "6dcaa7a952f72f9298047fd5137cd6e4f05f41da",
+      "nominal_parameters": 355000000,
+      "license_label": "mit",
+      "gated": false,
+      "access_status": "Public revision; added 2026-10-30 for same-harness evaluation.",
+      "pretraining_data_note": "WebText (not released)"
+    },
+    {
+      "name": "Qwen2.5-0.5B",
+      "repo": "Qwen/Qwen2.5-0.5B",
+      "revision": "060db6499f32faf8b98477b0a26969ef7d8b9987",
+      "nominal_parameters": 494000000,
+      "license_label": "apache-2.0",
+      "gated": false,
+      "access_status": "Public revision; added 2026-10-30 for same-harness evaluation.",
+      "pretraining_data_note": "undisclosed, ~18T tokens per Qwen2.5 report"
+    },
+    {
+      "name": "OLMo-2-1B",
+      "repo": "allenai/OLMo-2-0425-1B",
+      "revision": "a1847dff35000b4271fa70afc5db10fd29fedbdf",
+      "nominal_parameters": 1000000000,
+      "license_label": "apache-2.0",
+      "gated": false,
+      "access_status": "Public revision; added 2026-10-30 for same-harness evaluation.",
+      "pretraining_data_note": "OLMo-mix / Dolmino (open data)"
+    },
+    {
+      "name": "SmolLM2-1.7B",
+      "repo": "HuggingFaceTB/SmolLM2-1.7B",
+      "revision": "effd688a12921b4cc83e3312b6feb579f70f9c71",
+      "nominal_parameters": 1710000000,
+      "license_label": "apache-2.0",
+      "gated": false,
+      "access_status": "Public revision; added 2026-10-30 for same-harness evaluation.",
+      "pretraining_data_note": "SmolLM corpus (largely open), ~11T tokens"
     }
-  ]
+  ],
+  "retrieved_utc_additions": "2026-10-30"
 }

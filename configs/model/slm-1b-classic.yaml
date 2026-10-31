@@ -1,0 +1,15 @@
+# ~1.04B parameters (EXP-0035 target), same family as slm-360m-classic: SmolLM2 tokenizer
+# (49,152), tied embeddings, GQA (12 query / 4 key-value heads of width 128), SwiGLU, QK-norm,
+# head-wise attention gate. Shape of the project's earlier 1B target (configs/model/slm-1b.yaml)
+# with the adopted gate and a 2,048-token context.
+vocab_size: 49152
+d_model: 1536
+n_layers: 28
+n_heads: 12
+n_kv_heads: 4
+ffn_hidden: 6144
+max_seq_len: 2048
+rope_theta: 100000.0
+qk_norm: true
+attn_gate: headwise
+window_pattern: []
