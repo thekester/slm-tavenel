@@ -282,6 +282,9 @@ class SLM(nn.Module):
         self.register_buffer("rope_sin", sin, persistent=False)
         # Training-time memory option, not part of the architecture or its config hash.
         self.activation_checkpointing = False
+        # When set, the final normalised hidden states of the last forward pass are kept in
+        # ``last_hidden`` (with gradients), for auxiliary objectives such as slm.jepa.
+        self.keep_hidden = False
         self.reset_parameters()
 
     @torch.no_grad()
@@ -341,6 +344,8 @@ class SLM(nn.Module):
             else:
                 x = block(x, self.rope_cos, self.rope_sin, offset, cache, doc_mask)
         h = self.final_norm(x)
+        if self.keep_hidden:
+            self.last_hidden = h
         if targets is not None and not return_logits and teacher_logits is not None:
             ce, kl = chunked_distillation_loss(h, self.lm_head.weight, targets, teacher_logits, distill_temperature)
             self.last_loss_parts = {"ce": ce.detach(), "kl": kl.detach()}
@@ -365,7 +370,8 @@ class SLM(nn.Module):
             block.attn.capture_pattern = enabled
 
     def num_params(self, non_embedding: bool = False) -> int:
-        n = sum(p.numel() for p in self.parameters())
+        # Auxiliary training heads (JEPA predictor) are not part of the language model.
+        n = sum(p.numel() for name, p in self.named_parameters() if not name.startswith("jepa_predictor."))
         if non_embedding:
             n -= self.embed.weight.numel()
             if not self.cfg.tie_embeddings:

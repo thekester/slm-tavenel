@@ -1,0 +1,13 @@
+# EXP-0038 Othello world-model pilot: 8 layers x 512 like Othello-GPT (Li et al., 2023), with the
+# project's decoder (RoPE, RMSNorm, SwiGLU, GQA, QK-norm, head-wise gate). 65 tokens: end-of-game + 64 squares.
+vocab_size: 65
+d_model: 512
+n_layers: 8
+n_heads: 8
+n_kv_heads: 4
+ffn_hidden: 2048
+max_seq_len: 64
+rope_theta: 10000.0
+qk_norm: true
+attn_gate: headwise
+window_pattern: []

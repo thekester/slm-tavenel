@@ -126,6 +126,10 @@ class TrainConfig:
     distill_revision: str = ""
     distill_weight: float = 0.5
     distill_temperature: float = 1.0
+    # Action-conditioned JEPA auxiliary loss (slm.jepa); 0 disables it
+    jepa_weight: float = 0.0
+    jepa_ema: float = 0.996
+    jepa_predictor_hidden: int = 0
     # Schedule: "wsd" (warmup-stable-decay) or "cosine"
     schedule: str = "wsd"
     warmup_steps: int = 20
@@ -169,6 +173,10 @@ class TrainConfig:
             raise ValueError("distill_teacher needs a pinned distill_revision")
         if not 0.0 <= self.distill_weight <= 1.0 or self.distill_temperature <= 0:
             raise ValueError("distill_weight must be in [0, 1] and distill_temperature > 0")
+        if self.jepa_weight < 0 or not 0.0 < self.jepa_ema < 1.0:
+            raise ValueError("jepa_weight must be >= 0 and jepa_ema in (0, 1)")
+        if self.jepa_weight and (self.mir or self.distill_teacher or self.master_weights_offload):
+            raise ValueError("the JEPA objective is not combined with MIR, distillation or master-weight offload")
         if self.distill_teacher and self.mir:
             raise ValueError("distillation and MIR cannot be combined")
         if self.master_weights_offload and self.optimizer_offload:

@@ -31,6 +31,7 @@ from slm import interp
 from slm.config import ModelConfig, TrainConfig, config_hash, load_model_config
 from slm.data.shards import TokenShards
 from slm.model import SLM, document_ids
+from slm.jepa import JEPAPredictor, core_state, jepa_loss, make_target, update_target
 from slm.optim import MasterOffloadAdamW, build_optimizer
 from slm.runlog import (JsonlLogger, assert_tokenizer_compatible, code_revision, environment_info,
                         read_json, sha256_file, write_json)
@@ -127,6 +128,9 @@ def teacher_logits(teacher: torch.nn.Module | None, x: torch.Tensor) -> torch.Te
 def build_model_and_optimizer(model_cfg: ModelConfig, cfg: TrainConfig, device: torch.device):
     model = SLM(model_cfg).to(device)
     model.activation_checkpointing = cfg.activation_checkpointing
+    if cfg.jepa_weight:
+        model.jepa_predictor = JEPAPredictor(model_cfg.d_model, model_cfg.vocab_size, cfg.jepa_predictor_hidden).to(device)
+        model.keep_hidden = True
     # The optimizer copies the fp32 initial weights first, so master-weight offload keeps them exact.
     opt = build_optimizer(model, cfg.optimizer, cfg.lr, cfg.weight_decay, (cfg.beta1, cfg.beta2), cfg.eps,
                           momentum=cfg.muon_momentum, fused=device.type == "cuda", offload=cfg.optimizer_offload,
@@ -153,10 +157,12 @@ def checkpoint_path(out_dir: Path, step: int) -> Path:
     return out_dir / "checkpoints" / f"step_{step:08d}.pt"
 
 
-def save_checkpoint(out_dir: Path, step: int, model: SLM, opt: torch.optim.Optimizer, cfg: TrainConfig, keep: int) -> Path:
+def save_checkpoint(out_dir: Path, step: int, model: SLM, opt: torch.optim.Optimizer, cfg: TrainConfig, keep: int,
+                    extra: dict[str, Any] | None = None) -> Path:
     path = checkpoint_path(out_dir, step)
     path.parent.mkdir(parents=True, exist_ok=True)
     state = {
+        **(extra or {}),
         "step": step,
         "model": model.state_dict(),
         "optimizer": opt.state_dict(),
@@ -182,7 +188,8 @@ def latest_checkpoint(out_dir: Path) -> Path | None:
 def load_model(checkpoint: str | Path, device: str | torch.device = "cpu") -> SLM:
     state = torch.load(checkpoint, map_location=device, weights_only=False)
     model = SLM(ModelConfig(**state["model_config"])).to(device)
-    model.load_state_dict(state["model"])
+    # Auxiliary training heads (e.g. the JEPA predictor) are not part of the evaluated model.
+    model.load_state_dict({k: v for k, v in state["model"].items() if not k.startswith("jepa_predictor.")})
     return model
 
 
@@ -349,6 +356,11 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
             torch.cuda.set_rng_state_all(state["cuda_rng"])
         start_step = state["step"]
 
+    jepa_target = make_target(model) if cfg.jepa_weight else None
+    jepa_ignore = int(train_data.manifest["eos_id"]) if jepa_target is not None else None
+    if jepa_target is not None and resume_from is not None and "jepa_target" in state:
+        jepa_target.load_state_dict(state["jepa_target"])
+
     run_model: torch.nn.Module = model
     if cfg.compile:
         run_model = torch.compile(run_model)
@@ -391,6 +403,11 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
                 "weight": cfg.distill_weight, "temperature": cfg.distill_temperature,
                 "objective": "(1 - w) * CE + w * T^2 * KL(teacher || student), full vocabulary",
             },
+            "jepa": None if jepa_target is None else {
+                "weight": cfg.jepa_weight, "ema": cfg.jepa_ema,
+                "predictor_params": sum(p.numel() for p in model.jepa_predictor.parameters()),
+                "objective": "CE + w * MSE(predictor(h_t, a_t+1), layer_norm(EMA h_t+1)), end-of-sequence actions excluded",
+            },
             "code": code_revision(),
             "environment": environment_info(),
         })
@@ -415,6 +432,7 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
         clean_loss_sum = 0.0
         mir_loss_sum = 0.0
         kl_sum = 0.0
+        jepa_sum = 0.0
         for micro in range(cfg.grad_accum_steps):
             rng = batch_rng(cfg.seed, step, rank, micro)
             x, y = train_data.sample(rng, cfg.micro_batch_size, cfg.seq_len)
@@ -441,6 +459,13 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
                     _, mir_loss = run_model(x_masked, y, return_logits=False, doc_ids=doc_ids)
                     total_loss = loss + cfg.mir_aux_weight * mir_loss
                     mir_loss_sum += mir_loss.item()
+                if jepa_target is not None:
+                    with torch.no_grad():
+                        jepa_target(x)
+                    j_loss = jepa_loss(model.jepa_predictor, model.last_hidden, jepa_target.last_hidden, x,
+                                       ignore_action=jepa_ignore)
+                    total_loss = total_loss + cfg.jepa_weight * j_loss
+                    jepa_sum += j_loss.item()
                 (total_loss / cfg.grad_accum_steps).backward()
             accumulate_gradients(opt)
             clean_loss_sum += loss.item()
@@ -452,6 +477,8 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
             before = matrix_weights(model)
         opt.step()
         opt.zero_grad(set_to_none=True)
+        if jepa_target is not None:
+            update_target(jepa_target, model, cfg.jepa_ema)
         if observing:
             obs.log(step=step, **obs_record, update_ratio=update_ratios(model, before))
         last_loss = loss_sum / cfg.grad_accum_steps
@@ -475,6 +502,8 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
                 record["mir_aux_loss"] = round(mir_loss_sum / cfg.grad_accum_steps, 5)
             if teacher is not None:
                 record["distill_kl"] = round(kl_sum / cfg.grad_accum_steps, 5)
+            if jepa_target is not None:
+                record["jepa_loss"] = round(jepa_sum / cfg.grad_accum_steps, 5)
             if cfg.peak_tflops > 0:
                 record["mfu"] = round(steps_timed * flops_per_step / dt / (cfg.peak_tflops * 1e12 * world), 4)
             if device.type == "cuda":
@@ -484,7 +513,8 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
         if master and cfg.eval_interval and (done % cfg.eval_interval == 0 or done == cfg.max_steps):
             evals.log(step=done, val_loss=round(evaluate_loss(model, val_data, cfg, device, eos_id), 5))
         if master and cfg.ckpt_interval and (done % cfg.ckpt_interval == 0 or done == cfg.max_steps):
-            save_checkpoint(out_dir, done, model, opt, cfg, cfg.keep_checkpoints)
+            save_checkpoint(out_dir, done, model, opt, cfg, cfg.keep_checkpoints,
+                            extra={"jepa_target": jepa_target.state_dict()} if jepa_target is not None else None)
         if world > 1:
             dist.barrier()
 

@@ -207,6 +207,18 @@ class TokenShards:
 
     def sample(self, rng: np.random.Generator, batch: int, seq_len: int) -> tuple[np.ndarray, np.ndarray]:
         """Random windows of seq_len + 1 tokens; shards are chosen in proportion to size."""
+        row_length = int(self.manifest.get("row_length", 0))
+        if row_length:
+            # Fixed-length records (e.g. one game per row): windows start at a record boundary.
+            if seq_len + 1 != row_length:
+                raise ValueError(f"row-aligned data needs seq_len + 1 == row_length ({row_length})")
+            rows = self.sizes // row_length
+            shard_ids = rng.choice(len(self.arrays), size=batch, p=rows / rows.sum())
+            out = np.empty((batch, row_length), dtype=np.int64)
+            for row, sid in enumerate(shard_ids):
+                start = int(rng.integers(0, rows[sid])) * row_length
+                out[row] = self.arrays[sid][start : start + row_length]
+            return out[:, :-1], out[:, 1:]
         eligible = np.maximum(self.sizes - seq_len - 1, 0)
         if eligible.sum() == 0:
             raise ValueError(f"no shard is longer than seq_len + 1 = {seq_len + 1} tokens")
