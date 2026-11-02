@@ -264,7 +264,8 @@ def muon_params(model: SLM) -> tuple[list[torch.nn.Parameter], list[torch.nn.Par
         if not p.requires_grad or id(p) in seen:
             continue
         seen.add(id(p))
-        (muon if name.startswith("blocks.") and p.dim() == 2 else other).append(p)
+        # Hidden matrices of transformer blocks (SLM "blocks.*", H-Net "*_blocks.*") go to Muon.
+        (muon if "blocks." in name and p.dim() == 2 else other).append(p)
     return muon, other
 
 

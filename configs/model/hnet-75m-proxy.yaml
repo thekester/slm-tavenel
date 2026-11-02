@@ -1,0 +1,25 @@
+# EXP-0040: one-stage byte-level H-Net whose main network is exactly the 75M BPE proxy's transformer
+# (16 layers x 512, 8 query / 4 key-value heads, SwiGLU 1,536, head-wise gate, QK-norm).
+# Outer encoder/decoder: 2 + 2 sliding-window (256-byte) attention blocks of width 384 (Mamba-2 in
+# the paper). Target compression 4.42 bytes per chunk = the SmolLM2 tokenizer's bytes per token on corpus v1.
+arch: hnet
+vocab_size: 257
+max_seq_len: 8192
+d_outer: 384
+d_main: 512
+encoder_layers: 2
+decoder_layers: 2
+outer_heads: 6
+outer_kv_heads: 2
+outer_ffn: 1024
+outer_window: 256
+main_layers: 16
+main_heads: 8
+main_kv_heads: 4
+main_ffn: 1536
+rope_theta: 100000.0
+qk_norm: true
+attn_gate: headwise
+target_ratio: 4.42
+ratio_loss_weight: 0.03
+ema_window: 32

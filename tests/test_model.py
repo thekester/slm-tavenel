@@ -7,6 +7,25 @@ from slm.model import SLM, attention_mask
 from conftest import tiny_config
 
 
+def test_gated_short_conv_hybrid_is_causal_and_trains():
+    from slm.model import GatedShortConv
+
+    torch.manual_seed(0)
+    model = SLM(tiny_config(n_layers=3, conv_layers=[0, 2])).eval()
+    assert isinstance(model.blocks[0].attn, GatedShortConv) and not isinstance(model.blocks[1].attn, GatedShortConv)
+    x = torch.randint(0, 97, (2, 16))
+    with torch.no_grad():
+        a, _ = model(x)
+        y = x.clone()
+        y[:, 10:] = (y[:, 10:] + 1) % 97
+        b, _ = model(y)
+    torch.testing.assert_close(a[:, :10], b[:, :10])
+    model.train()
+    _, loss = model(x, x, return_logits=False)
+    loss.backward()
+    assert model.blocks[0].attn.conv.weight.grad is not None
+
+
 def test_forward_shapes_and_loss(tiny_model):
     x = torch.randint(0, 97, (2, 10))
     logits, loss = tiny_model(x, x)

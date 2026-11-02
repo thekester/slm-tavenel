@@ -91,6 +91,30 @@ def attention_mask(q_len: int, k_len: int, offset: int, window: int, device: tor
     return allowed
 
 
+def local_attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, window: int) -> torch.Tensor:
+    """Causal sliding-window attention in blocks of ``window`` queries, each attending to its own and
+    the previous key block: exactly the masked computation, with O(T * window) memory instead of O(T^2).
+    q, k, v: B x H x T x D (keys already repeated for grouped heads)."""
+    B, H, T, D = q.shape
+    n = -(-T // window)
+    pad = n * window - T
+    if pad:
+        q, k, v = (F.pad(t, (0, 0, 0, pad)) for t in (q, k, v))
+    qb = q.view(B, H, n, window, D)
+    kb, vb = (t.view(B, H, n, window, D) for t in (k, v))
+    kb = torch.cat([F.pad(kb, (0, 0, 0, 0, 1, 0))[:, :, :-1], kb], dim=3)  # previous block, current block
+    vb = torch.cat([F.pad(vb, (0, 0, 0, 0, 1, 0))[:, :, :-1], vb], dim=3)
+    i = torch.arange(window, device=q.device)[:, None]
+    j = torch.arange(2 * window, device=q.device)[None, :]
+    rel = window + i - j  # query position minus key position
+    allowed = (rel >= 0) & (rel < window)
+    mask = allowed.expand(n, window, 2 * window).clone()
+    mask[0, :, :window] = False  # no block before the first one
+    y = F.scaled_dot_product_attention(qb.reshape(B, H * n, window, D), kb.reshape(B, H * n, 2 * window, D),
+                                       vb.reshape(B, H * n, 2 * window, D), attn_mask=mask.repeat(H, 1, 1))
+    return y.view(B, H, n * window, D)[:, :, :T]
+
+
 class Attention(nn.Module):
     def __init__(self, cfg: ModelConfig, layer: int) -> None:
         super().__init__()
@@ -158,6 +182,8 @@ class Attention(nn.Module):
             scores = scores.masked_fill(~mask, float("-inf"))
             probs = self.hook_pattern(scores.softmax(dim=-1))
             y = probs.to(v.dtype) @ v
+        elif self.window and offset == 0 and S == T and doc_mask is None and T > 2 * self.window:
+            y = local_attention(q, k, v, self.window)
         else:
             mask = None
             if not simple_causal:
@@ -188,11 +214,33 @@ class SwiGLU(nn.Module):
         return self.down_proj(h)
 
 
+class GatedShortConv(nn.Module):
+    """LFM2-style token mixer (Liquid AI, arXiv:2511.23404): x -> (b, c, h) = in_proj(x);
+    y = c * causal_depthwise_conv(b * h); out = o_proj(y). Input-dependent gates around a short
+    (kernel ``conv_kernel``) convolution; no attention, no position encoding."""
+
+    def __init__(self, cfg: ModelConfig) -> None:
+        super().__init__()
+        self.in_proj = nn.Linear(cfg.d_model, 3 * cfg.d_model, bias=False)
+        self.conv = nn.Conv1d(cfg.d_model, cfg.d_model, cfg.conv_kernel, groups=cfg.d_model, bias=False)
+        self.o_proj = nn.Linear(cfg.d_model, cfg.d_model, bias=False)
+        self.kernel = cfg.conv_kernel
+        self.capture_pattern = False
+
+    def forward(self, x, cos=None, sin=None, offset=0, cache=None, doc_mask=None):
+        if cache is not None or doc_mask is not None:
+            raise NotImplementedError("gated short convolution supports full-sequence scoring and training only")
+        b, c, h = self.in_proj(x).chunk(3, dim=-1)
+        y = F.pad((b * h).transpose(1, 2), (self.kernel - 1, 0))  # left padding keeps the convolution causal
+        y = self.conv(y).transpose(1, 2)
+        return self.o_proj(c * y)
+
+
 class Block(nn.Module):
     def __init__(self, cfg: ModelConfig, layer: int) -> None:
         super().__init__()
         self.attn_norm = RMSNorm(cfg.d_model, cfg.norm_eps)
-        self.attn = Attention(cfg, layer)
+        self.attn = GatedShortConv(cfg) if layer in cfg.conv_layers else Attention(cfg, layer)
         self.mlp_norm = RMSNorm(cfg.d_model, cfg.norm_eps)
         self.mlp = SwiGLU(cfg)
         self.hook_resid_pre = HookPoint()

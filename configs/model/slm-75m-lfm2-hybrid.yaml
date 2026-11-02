@@ -1,0 +1,16 @@
+# EXP-0041: the 75M proxy (16 x 512) with an LFM2-style hybrid layout: gated short causal convolutions
+# (kernel 3) in 10 layers and grouped-query attention in 6, at LFM2-350M's attention positions
+# (2, 5, 8, 10, 12, 14; Liquid AI, arXiv:2511.23404). Everything else equals slm-75m-classic-proxy.yaml.
+vocab_size: 49152
+d_model: 512
+n_layers: 16
+n_heads: 8
+n_kv_heads: 4
+ffn_hidden: 1536
+max_seq_len: 2048
+rope_theta: 100000.0
+qk_norm: true
+attn_gate: headwise
+window_pattern: []
+conv_layers: [0, 1, 3, 4, 6, 7, 9, 11, 13, 15]
+conv_kernel: 3

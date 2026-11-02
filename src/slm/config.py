@@ -67,6 +67,10 @@ class ModelConfig:
     # Per-layer sliding window sizes, repeated cyclically over layers. 0 means global
     # attention; an empty list means every layer is global.
     window_pattern: list[int] = field(default_factory=list)
+    # Layers whose token mixer is a gated short causal convolution instead of attention
+    # (LFM2-style hybrid, Liquid AI, arXiv:2511.23404); empty means attention everywhere.
+    conv_layers: list[int] = field(default_factory=list)
+    conv_kernel: int = 3
     init_std: float = 0.02
 
     def __post_init__(self) -> None:
@@ -191,8 +195,14 @@ class TrainConfig:
             raise ValueError("optimizer_offload supports adamw only")
 
 
-def load_model_config(path: str | Path) -> ModelConfig:
-    return from_dict(ModelConfig, load_yaml(path))
+def load_model_config(path: str | Path):
+    """ModelConfig, or HNetConfig when the file declares ``arch: hnet`` (slm.hnet)."""
+    data = load_yaml(path)
+    if data.get("arch") == "hnet":
+        from slm.hnet import HNetConfig
+
+        return from_dict(HNetConfig, data)
+    return from_dict(ModelConfig, data)
 
 
 def load_train_config(path: str | Path, overrides: dict[str, Any] | None = None) -> TrainConfig:

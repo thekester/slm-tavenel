@@ -31,6 +31,7 @@ from slm import interp
 from slm.config import ModelConfig, TrainConfig, config_hash, load_model_config
 from slm.data.shards import TokenShards
 from slm.model import SLM, document_ids
+from slm.hnet import HNet, HNetConfig
 from slm.jepa import JEPAPredictor, jepa_loss, make_target, state_jepa_loss, update_target
 from slm.optim import MasterOffloadAdamW, build_optimizer
 from slm.runlog import (JsonlLogger, assert_tokenizer_compatible, code_revision, environment_info,
@@ -125,8 +126,12 @@ def teacher_logits(teacher: torch.nn.Module | None, x: torch.Tensor) -> torch.Te
     return None if teacher is None else teacher(input_ids=x, use_cache=False).logits
 
 
+def make_model(model_cfg) -> torch.nn.Module:
+    return HNet(model_cfg) if isinstance(model_cfg, HNetConfig) else SLM(model_cfg)
+
+
 def build_model_and_optimizer(model_cfg: ModelConfig, cfg: TrainConfig, device: torch.device):
-    model = SLM(model_cfg).to(device)
+    model = make_model(model_cfg).to(device)
     model.activation_checkpointing = cfg.activation_checkpointing
     if cfg.jepa_weight:
         model.jepa_predictor = JEPAPredictor(model_cfg.d_model, model_cfg.vocab_size, cfg.jepa_predictor_hidden).to(device)
@@ -187,7 +192,9 @@ def latest_checkpoint(out_dir: Path) -> Path | None:
 
 def load_model(checkpoint: str | Path, device: str | torch.device = "cpu") -> SLM:
     state = torch.load(checkpoint, map_location=device, weights_only=False)
-    model = SLM(ModelConfig(**state["model_config"])).to(device)
+    saved = state["model_config"]
+    model_cfg = HNetConfig(**saved) if saved.get("arch") == "hnet" else ModelConfig(**saved)
+    model = make_model(model_cfg).to(device)
     # Auxiliary training heads (e.g. the JEPA predictor) are not part of the evaluated model.
     model.load_state_dict({k: v for k, v in state["model"].items() if not k.startswith("jepa_predictor.")})
     return model
@@ -510,6 +517,8 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
                 record["distill_kl"] = round(kl_sum / cfg.grad_accum_steps, 5)
             if jepa_target is not None:
                 record["jepa_loss"] = round(jepa_sum / cfg.grad_accum_steps, 5)
+            if isinstance(model, HNet):
+                record.update({k: round(v, 5) for k, v in model.last_chunk_stats.items()})
             if cfg.peak_tflops > 0:
                 record["mfu"] = round(steps_timed * flops_per_step / dt / (cfg.peak_tflops * 1e12 * world), 4)
             if device.type == "cuda":

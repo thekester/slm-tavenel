@@ -101,10 +101,45 @@ def train(
     return manifest
 
 
-def load(path: str | Path) -> Tokenizer:
+class _ByteEncoding:
+    def __init__(self, ids: list[int]) -> None:
+        self.ids = ids
+
+
+class ByteTokenizer:
+    """Tokenizer-free input for byte-level models: UTF-8 byte b -> id b + 1, id 0 = end of text.
+
+    Exposes the subset of the ``tokenizers.Tokenizer`` interface used by this repository. It is
+    described by a small JSON file (``{"type": "slm.bytes", ...}``) so that its SHA-256 can be
+    recorded in data manifests and checkpoint lineage like any other tokenizer.
+    """
+
+    vocab_size = 257
+
+    def encode(self, text: str) -> _ByteEncoding:
+        return _ByteEncoding([b + 1 for b in text.encode("utf-8")])
+
+    def encode_batch(self, texts: list[str]) -> list[_ByteEncoding]:
+        return [self.encode(t) for t in texts]
+
+    def decode(self, ids: list[int]) -> str:
+        return bytes(i - 1 for i in ids if i > 0).decode("utf-8", errors="replace")
+
+    def token_to_id(self, token: str) -> int | None:
+        return 0 if token == EOS else None
+
+    def get_vocab_size(self) -> int:
+        return self.vocab_size
+
+
+def load(path: str | Path) -> Tokenizer | ByteTokenizer:
     path = Path(path)
     if path.is_dir():
         path = path / "tokenizer.json"
+    with open(path, encoding="utf-8") as f:
+        head = f.read(256)
+    if '"slm.bytes"' in head:
+        return ByteTokenizer()
     return Tokenizer.from_file(str(path))
 
 
