@@ -1,0 +1,26 @@
+# EXP-0038 symmetry arm: the same 50,000 games presented under the 4 opening-preserving symmetries, 5,000 updates.
+model: configs/model/othello-31m.yaml
+data_dir: data/worlds/othello-v1-50k-sym4
+out_dir: runs/EXP-0038-othello-s1-50k-sym4
+seed: 20261031
+seq_len: 63
+micro_batch_size: 128
+grad_accum_steps: 1
+max_steps: 5000
+optimizer: muon
+lr: 3.0e-3
+min_lr: 3.0e-4
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 100
+decay_fraction: 0.2
+dtype: bfloat16
+deterministic: false
+log_interval: 100
+eval_interval: 1000
+eval_batches: 20
+observe_interval: 5000
+ckpt_interval: 1000
+keep_checkpoints: 2
+resume: true
+

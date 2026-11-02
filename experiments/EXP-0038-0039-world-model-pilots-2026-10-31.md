@@ -26,6 +26,25 @@ baseline. **Criterion:** C is "better as a world model" if its best-layer probe 
 both test sets by at least one percentage point without a lower legal-move rate. Smaller differences
 are reported as no measurable difference.
 
+### Amendment 2026-11-02 (before any EXP-0038 run): symmetry arms
+
+Motivated by the geometric-deep-learning argument that built-in symmetries improve data efficiency
+(Bronstein et al., 2021). Only 4 of the board's 8 symmetries leave the Othello opening unchanged
+(identity, 180-degree rotation, both diagonal reflections; `slm.worlds.othello.SYMMETRIES`); only they
+map legal games to legal games. Because the uniform random policy already makes the game distribution
+symmetric, augmentation is tested in a low-data regime:
+
+| Arm | Data | Updates |
+|---|---|---|
+| S0 | first 50,000 training games (`data/worlds/othello-v1-50k`) | 5,000 x 128 games |
+| S1 | the same games under the 4 symmetries, 200,000 rows (`data/worlds/othello-v1-50k-sym4`) | 5,000 x 128 games |
+
+Same model, optimizer, schedule shape, evaluation games and metrics as A and C, plus an equivariance
+measure for every arm (top-move agreement and mean total-variation distance between p(next | s(g)) and
+p(next | g) mapped by s, on 500 validation games). **Criterion:** S1 shows a data-efficiency gain if its
+legal-move rate and best-layer probe accuracy both exceed S0's by at least one percentage point;
+equivariance is reported for all arms (A and C included) as a descriptive measure.
+
 ## EXP-0039: key-door gridworld (prediction, interventions, planning)
 
 World (`src/slm/worlds/gridworld.py`): 6 x 6 room, internal wall with a locked door, key, goal; six

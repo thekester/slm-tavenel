@@ -59,6 +59,37 @@ def activations(model, games: list[np.ndarray], device: torch.device, batch: int
     return [torch.cat(f) for f in feats], torch.cat(labels), legal_hits / max(1, legal_total)
 
 
+@torch.no_grad()
+def equivariance(model, games: list[np.ndarray], device: torch.device, batch: int = 128) -> dict:
+    """Does the prediction transform with the board? For each game prefix g and opening-preserving
+    symmetry s, compare p(next | s(g)) with p(next | g) mapped by s: top-move agreement and mean total
+    variation distance (0 = perfectly equivariant)."""
+    agree = tv = n = 0
+    for name, mapping in othello.SYMMETRIES.items():
+        if name == "identity":
+            continue
+        perm = torch.as_tensor(mapping)
+        for i in range(0, len(games), batch):
+            chunk = [list(map(int, g)) for g in games[i : i + batch]]
+            length = max(len(g) for g in chunk)
+            ids = torch.zeros((2, len(chunk), length), dtype=torch.long)
+            for r, g in enumerate(chunk):
+                ids[0, r, : len(g)] = torch.tensor(g) + 1
+                ids[1, r, : len(g)] = torch.tensor(othello.transform(g, name)) + 1
+            logits_g, _ = model(ids[0].to(device))
+            logits_s, _ = model(ids[1].to(device))
+            p_g = logits_g.float()[..., 1:].softmax(-1).cpu()  # over the 64 squares
+            p_s = logits_s.float()[..., 1:].softmax(-1).cpu()
+            mapped = torch.zeros_like(p_g)
+            mapped[..., perm] = p_g  # probability of square m moves to square s(m)
+            for r, g in enumerate(chunk):
+                k = len(g) - 1  # positions with a next move
+                agree += int((p_s[r, :k].argmax(-1) == mapped[r, :k].argmax(-1)).sum())
+                tv += float(0.5 * (p_s[r, :k] - mapped[r, :k]).abs().sum(-1).sum())
+                n += k
+    return {"top_move_agreement": agree / max(1, n), "mean_total_variation": tv / max(1, n), "positions": n}
+
+
 def fit_probe(x: torch.Tensor, y: torch.Tensor, epochs: int = 8, lr: float = 1e-2) -> torch.nn.Linear:
     torch.manual_seed(0)
     probe = torch.nn.Linear(x.size(1), 64 * 3)
@@ -115,6 +146,7 @@ def main() -> None:
         "majority_class_square_accuracy": {"in_distribution": float((majority == id_y).float().mean()),
                                            "far_transfer_greedy": float((majority == tr_y).float().mean())},
         "probe_square_accuracy_by_layer": layers,
+        "equivariance_in_distribution_500_games": equivariance(model, list(val[half : half + 500]), device),
         "probe": "linear, standardised features, 3 classes x 64 squares, AdamW lr 1e-2, 8 epochs, seed 0",
     }
     args.out.parent.mkdir(parents=True, exist_ok=True)

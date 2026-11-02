@@ -123,5 +123,24 @@ def legal_after(moves: list[int]) -> Iterator[list[int]]:
         yield game.legal()
 
 
+def _square_map(f) -> np.ndarray:
+    return np.array([f(*divmod(s, 8)) for s in range(64)], dtype=np.int64)
+
+
+# Board symmetries that leave the opening position unchanged (a subgroup of order 4 of the dihedral
+# group D4): only these map every legal game to another legal game with the same colours.
+SYMMETRIES = {
+    "identity": _square_map(lambda r, c: r * 8 + c),
+    "rotate180": _square_map(lambda r, c: (7 - r) * 8 + (7 - c)),
+    "transpose": _square_map(lambda r, c: c * 8 + r),
+    "anti_transpose": _square_map(lambda r, c: (7 - c) * 8 + (7 - r)),
+}
+
+
+def transform(moves: list[int], symmetry: str) -> list[int]:
+    mapping = SYMMETRIES[symmetry]
+    return [int(mapping[m]) for m in moves]
+
+
 def encode(moves: list[int]) -> list[int]:
     return [m + 1 for m in moves] + [EOS]

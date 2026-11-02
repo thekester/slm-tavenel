@@ -30,6 +30,19 @@ def test_random_games_are_legal_and_terminal(policy):
         assert len(set(moves)) == len(moves) <= 60
 
 
+@pytest.mark.parametrize("name", list(othello.SYMMETRIES))
+def test_symmetries_map_legal_games_to_legal_games(name):
+    mapping = othello.SYMMETRIES[name]
+    board = othello.initial_board()
+    assert (board[mapping] == board).all()  # the opening position is invariant
+    rng = np.random.default_rng(2)
+    for _ in range(10):
+        moves = othello.random_game(rng)
+        image = othello.transform(moves, name)
+        states = othello.states(image)  # replays legally or raises
+        np.testing.assert_array_equal(states[:, mapping], othello.states(moves))
+
+
 def test_mover_relative_states_match_replay():
     rng = np.random.default_rng(1)
     moves = othello.random_game(rng)

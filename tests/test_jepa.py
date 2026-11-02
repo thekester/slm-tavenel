@@ -105,5 +105,7 @@ def test_train_with_jepa_on_othello_rows(tmp_path):
     feats, labels, legal_rate = evaluation.activations(model.eval(), games, torch.device("cpu"), batch=4)
     assert len(feats) == 3 and feats[0].shape[0] == labels.shape[0] == sum(len(g) for g in games)
     assert 0.0 <= legal_rate <= 1.0
+    eq = evaluation.equivariance(model.eval(), games, torch.device("cpu"), batch=4)
+    assert 0.0 <= eq["top_move_agreement"] <= 1.0 and eq["positions"] > 0
     probe = evaluation.fit_probe(feats[-1], labels, epochs=1)
     assert 0.0 <= evaluation.probe_accuracy(probe, feats[-1], labels) <= 1.0
