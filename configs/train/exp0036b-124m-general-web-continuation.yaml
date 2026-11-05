@@ -1,0 +1,31 @@
+# EXP-0036b: continue the EXP-0036 GPT-2-matched 124M (final step-15,000 checkpoint) on a general-web
+# English mixture (FineWeb sample/10BT, no educational filter, plus FineWeb2-HQ French replay) for another
+# 15,000 updates x 65,536 token positions (983M). Fresh Muon state, re-warmed WSD schedule at half the
+# original peak (continual-pretraining practice: Ibrahim et al., 2024, "Simple and Scalable Strategies
+# to Continually Pre-train Large Language Models": re-warm, re-decay, replay).
+model: configs/model/slm-124m-gpt2match.yaml
+data_dir: data/tokens/slm-tavenel-general-web-v1-smollm2
+out_dir: runs/EXP-0036b-124m-general-web
+init_from: runs/EXP-0036-124m-gpt2match-muon/checkpoints/step_00015000.pt
+seed: 20261105
+seq_len: 2048
+micro_batch_size: 4
+grad_accum_steps: 8
+max_steps: 15000
+optimizer: muon
+lr: 1.5e-3
+min_lr: 1.5e-4
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 300
+decay_fraction: 0.2
+dtype: bfloat16
+activation_checkpointing: true
+deterministic: false
+log_interval: 50
+eval_interval: 500
+eval_batches: 20
+observe_interval: 2500
+ckpt_interval: 250
+keep_checkpoints: 2
+resume: true

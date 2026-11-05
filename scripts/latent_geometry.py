@@ -34,11 +34,15 @@ def two_nn(x: torch.Tensor, discard: float = 0.1) -> float:
     """Facco et al.'s estimator: mu follows a Pareto law, so -log(1 - F(mu)) = d log(mu); d is the slope
     of a least-squares line through the origin over the empirical CDF, the largest ``discard`` fraction
     of mu (sensitive to noise) being left out of the fit."""
-    x = torch.unique(x, dim=0)  # repeated tokens give identical vectors (zero distances) at early layers
-    d = torch.cdist(x, x)
+    # Exact float64 distances (the default matrix-product formula rounds tiny distances to 0), and
+    # near-duplicate points (the same token in near-identical contexts at early layers) are dropped,
+    # as their nearest-neighbour ratios carry no information about the manifold's dimension.
+    x = x.double()
+    d = torch.cdist(x, x, compute_mode="donot_use_mm_for_euclid_dist")
     d.fill_diagonal_(float("inf"))
     r = d.topk(2, largest=False).values
-    mu = (r[:, 1] / r[:, 0].clamp_min(1e-12)).sort().values.double()
+    r = r[r[:, 0] > 1e-6 * r[:, 0].median()]
+    mu = (r[:, 1] / r[:, 0]).sort().values
     n = len(mu)
     keep = int(n * (1 - discard))
     log_mu = torch.log(mu[:keep])

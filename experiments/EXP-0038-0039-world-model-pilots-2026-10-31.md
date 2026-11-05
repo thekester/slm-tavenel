@@ -45,6 +45,62 @@ p(next | g) mapped by s, on 500 validation games). **Criterion:** S1 shows a dat
 legal-move rate and best-layer probe accuracy both exceed S0's by at least one percentage point;
 equivariance is reported for all arms (A and C included) as a descriptive measure.
 
+### Results A vs C (2026-11-04)
+
+Both arms ran the full 15,000 updates without instability (C: JEPA loss ~0.058 at the end).
+Evaluations: `runs/EXP-0038-evaluations/othello-a-ntp.json` and `othello-c-jepa.json` (final
+checkpoints, sha256 `7a6afc39…` and `8b1e4de5…`).
+
+| Measure | A, next move | C, + JEPA | C − A |
+|---|---:|---:|---:|
+| Legal-move rate, in distribution | 98.59% | 98.45% | −0.14 pt |
+| Legal-move rate, greedy transfer | 97.92% | 97.88% | −0.04 pt |
+| Best-layer probe accuracy, in distribution | 92.28% (layer 7) | 93.00% (layer 8) | +0.72 pt |
+| Best-layer probe accuracy, greedy transfer | 91.95% (layer 7) | 92.66% (layer 8) | +0.71 pt |
+| Majority-class baseline (in dist. / transfer) | 53.3% / 53.9% | same | – |
+| Equivariance: top-move agreement / mean TV | 0.239 / 0.109 | 0.234 / 0.114 | – |
+
+**Verdict: no measurable difference** under the preregistered rule (probe gain below one point on both
+test sets, and a slightly lower legal-move rate). Descriptively, JEPA shifts where the board is most
+linearly decodable: C is lower than A at layers 5–6 (81.8/89.0% vs 83.0/90.9%) but higher at the
+output layers 7–8, where A's accuracy drops after layer 7 and C's keeps rising, consistent with the
+JEPA loss being applied to the last hidden state. Both models track the board well above the majority
+baseline and transfer to the greedy play style with under one point of loss, so the linear world
+representation emerges from next-move prediction alone, as in Li et al. (2023) and Nanda et al.
+(2023, where a linear "mine/theirs" encoding is found).
+Equivariance is low for both (top-move agreement ~0.24): under a uniformly random training policy many
+legal moves are near-equally likely, so the top move is unstable; the total-variation distance (~0.11)
+is the more informative number and is similar for A and C. Single seed per arm.
+
+### Results S0 vs S1, symmetry arms (2026-11-05)
+
+Evaluations: `runs/EXP-0038-evaluations/othello-s0-50k.json` and `othello-s1-50k-sym4.json` (final
+checkpoints, sha256 `d4b98f6f…` and `eb39b2bc…`). The S1 evaluation crashed natively on the GPU
+(exit 0xC0000005, no Python traceback) and was rerun unchanged on the CPU.
+
+| Measure | S0, 50k games | S1, same games x 4 symmetries | S1 − S0 |
+|---|---:|---:|---:|
+| Legal-move rate, in distribution | 80.62% | 94.49% | +13.9 pt |
+| Legal-move rate, greedy transfer | 78.93% | 92.79% | +13.9 pt |
+| Best-layer probe accuracy (layer 7), in distribution | 78.33% | 85.89% | +7.6 pt |
+| Best-layer probe accuracy (layer 7), greedy transfer | 78.74% | 85.60% | +6.9 pt |
+| Validation loss, step 1,000 / 3,000 / 5,000 | 2.58 / 3.08 / 4.29 | 2.33 / 2.24 / 2.23 | – |
+| Equivariance: top-move agreement / mean TV | 0.141 / 0.710 | 0.243 / 0.246 | – |
+
+**Verdict: the preregistered data-efficiency criterion is met** (both legal-move rate and best-layer
+probe accuracy higher by far more than one point). The mechanism is visible in the validation loss: S0
+sees each of its 50,000 games about 13 times and overfits from step 1,000 on (validation loss rises
+from 2.58 to 4.29), while S1 sees each of its 200,000 symmetric rows about 3 times and keeps improving.
+Augmentation also makes the model far more equivariant (TV 0.71 to 0.25), approaching the 1M-game arms
+(0.11). For reference, A (1M distinct games, 15,000 updates) reaches 98.6% legal moves and 92.3% probe
+accuracy, so four symmetric copies recover a large part, but not all, of the gap to 20x more data.
+
+Limits: this shows that the 4 opening-preserving symmetries are a valid and effective data multiplier
+in a low-data regime, as the geometric-deep-learning argument predicts; it does not separate symmetry
+from "any 4x more distinct sequences" (an arm with 200,000 real games would, and is a cheap follow-up).
+Single seed; S0's numbers are those of its final, overfitted checkpoint, as preregistered (no early
+stopping).
+
 ## EXP-0039: key-door gridworld (prediction, interventions, planning)
 
 World (`src/slm/worlds/gridworld.py`): 6 x 6 room, internal wall with a locked door, key, goal; six

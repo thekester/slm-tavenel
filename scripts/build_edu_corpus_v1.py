@@ -48,6 +48,14 @@ SOURCES = {
         "selection": "FineWeb2-HQ: top-quality FineWeb-2 French pages selected by an embedding-based classifier",
     },
 }
+# General-web English alternative (EXP-0036b): FineWeb itself, without the educational filter.
+GENERAL_ENGLISH = {
+    "dataset": "HuggingFaceFW/fineweb",
+    "revision": "9bb295ddab0e05d785b879661af7260fed5140fc",
+    "files": ["sample/10BT/000_00000.parquet", "sample/10BT/001_00000.parquet"],
+    "declared_license": "ODC-By 1.0 (dataset card); also subject to Common Crawl terms of use",
+    "selection": "FineWeb: deduplicated, heuristically filtered Common Crawl English pages (no educational filter)",
+}
 RAW = ROOT / "data/raw/edu-corpus-v1-2026-10-29"
 OUT = ROOT / "data/processed/slm-tavenel-edu-corpus-v1"
 MIN_CHARS = 200
@@ -116,8 +124,14 @@ def main() -> int:
                         help="number of FineWeb2-HQ fra_Latn shards (v1 used 1; v2 uses 5 for ~25%% French)")
     parser.add_argument("--out", type=Path, default=OUT)
     parser.add_argument("--schema-version", default="v1")
+    parser.add_argument("--en-source", choices=("fineweb-edu", "fineweb"), default="fineweb-edu")
+    parser.add_argument("--en-files", type=int, default=2, help="number of English sample/10BT shards")
+    parser.add_argument("--purpose", default="EXP-0034 classic 362M from-scratch pretraining (EN/FR educational web)")
     args = parser.parse_args()
     out_dir = args.out.resolve()
+    if args.en_source == "fineweb":
+        SOURCES["en"] = dict(GENERAL_ENGLISH)
+    SOURCES["en"]["files"] = [f"sample/10BT/{i:03d}_00000.parquet" for i in range(args.en_files)]
     SOURCES["fr"]["files"] = [f"fra_Latn/000_{i:05d}.parquet" for i in range(args.fr_files)]
     shards = []
     for language, src in SOURCES.items():
@@ -181,8 +195,9 @@ def main() -> int:
         "schema": f"slm-tavenel.edu_corpus_candidate.{args.schema_version}",
         "status": "candidate_not_legal_clearance",
         "created": time.strftime("%Y-%m-%d"),
-        "purpose": "EXP-0034 classic 362M from-scratch pretraining (EN/FR educational web)",
-        "builder_arguments": {"fr_files": args.fr_files, "out": out_dir.relative_to(ROOT).as_posix()},
+        "purpose": args.purpose,
+        "builder_arguments": {"fr_files": args.fr_files, "en_source": args.en_source, "en_files": args.en_files,
+                              "out": out_dir.relative_to(ROOT).as_posix()},
         "sources": SOURCES,
         "filters": {
             "characters": [MIN_CHARS, MAX_CHARS],
