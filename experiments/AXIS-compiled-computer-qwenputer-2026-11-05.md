@@ -1,6 +1,17 @@
 # Axis: a compiled computer inside an SLM-Tavenel model (Qwenputer study, 2026-11-05)
 
-Status: study and proposal only; nothing implemented or run.
+Status: user decision 2026-11-05: route (B) first (LFM3-VL-2B + compiled computer, computer as a
+separate compiled stream exchanging tokens with LFM3), then (A) a small own vision-language model.
+Step 1 done: `src/slm/computer.py` (gated delta-rule scan, `DeltaRAM`), `tests/test_computer.py` (exact
+under 2,000 random reads/writes in bf16; clear/halve gates; scan equals the textbook recurrence).
+Step 2 (data path) done 2026-11-05: `LookupMLP` (exact table MLP, one ReLU AND-unit per input
+combination) and `CompiledCalculator` (decimal add and schoolbook multiply; operands/result as digit bytes
+in `DeltaRAM`, every digit operation through a compiled table, Qwenputer-style ADDR/VAL/STEP trace).
+Tests: every table entry exact in fp32 and bf16; addition on a two-digit grid and 50 random 12-digit
+pairs; multiplication on a two-digit grid, 30 random 8-digit pairs and 48213 x 9917; RAM state stays
+exactly 0/1. **Still host-controlled:** the loops (which cell to read next) run in Python. Qwenputer also
+compiles the controller (program counter and decode in layers); compiling ours (program counter in RAM,
+next-address and opcode decode as further lookup tables, one layer pass per trace token) is step 2b.
 
 ## What Qwenputer is
 
@@ -44,6 +55,40 @@ weight memory (Schlag et al., 2021). Tool use as the alternative: Toolformer (Sc
    reading operands from the token stream simpler than with multi-digit tokens.
 4. **Honest baseline.** By the author's own numbers a host tool is at least as accurate and much faster;
    the scientific interest is self-containment (the weights alone compute exactly), not accuracy.
+
+## Target named by the user (2026-11-05): LFM3-VL-2B with a compiled computer inside
+
+**LFM3-VL-2B** (`LiquidAI/LFM3-VL-2B@71d8e745`, 2026): 1.92B parameters = LFM3 language backbone
+(1.73B; 24 layers: 13 gated short convolutions, 5 sliding-window attention (window 256), 6 global
+attention; hidden 2048, 16 heads / 4 KV heads, 128k vocabulary, 128k context) + in-house 164M vision
+encoder (14 layers: 8 gated depthwise 2-D convolutions, 6 bidirectional attention; 16x16 patches, native
+resolution, 2x2 patch merge) + 25M projector. Base LM pre-trained on 22T tokens (datasets not named),
+then SFT, vision RL and on-policy distillation. XML tool calls (`<tool_call><function=...>`).
+Requires `transformers>=5.21` with remote code (installed here: 4.57.6). Checkpoint 3.84 GB (bf16).
+**Licence: LFM Open License v1.0**, not OSI open source: free for research and for commercial use by
+entities under USD 10M annual revenue (the threshold also applies to modified models); above it a paid
+licence is required. Training data undisclosed.
+
+Two readings of the goal:
+
+- **(A) Our own model of that kind, from scratch.** Not reachable on this machine: the backbone alone
+  had 22T tokens (our 1B gets ~2-4B), plus image/video data and RL. A scaled-down own analogue is
+  possible later (e.g. a ~0.5B "SLM-Tavenel-VL": our 362M LFM-style hybrid if EXP-0041 supports it + a
+  small vision encoder, trained on open image-text data), compared with SmolVLM-256M/500M (Apache-2.0).
+- **(B) LFM3-VL-2B + compiled computer, a derivative of Liquid's weights (Qwenputer recipe).** Feasible:
+  nothing is trained, inference of a 2B in bf16 fits in 8 GB. Specific issues:
+  1. LFM3 has no delta-rule layer, so the RAM must live in the inserted computer layers (compiled
+     gated delta-rule heads), unlike Qwenputer which reuses Qwen3.5's own Gated DeltaNet layers.
+  2. Inserted layers must leave LFM3 unchanged when idle. Qwenputer widens the hidden size and keeps
+     the computer in extra dimensions; LFM3's RMS norms would see those dimensions, so either norms are
+     patched to ignore them or the computer runs as a separate compiled stream that only exchanges
+     tokens with LFM3 (simpler, still weights-only, but further from "inside the forward pass").
+  3. Trigger: LFM3-VL already emits XML tool calls, so the computer reads
+     `<tool_call><function=calc>...` and LFM3 writes the response, exactly as in Qwenputer.
+  4. Environment: a separate virtual environment with `transformers>=5.21` so the training pipeline
+     (4.57.6) is not disturbed.
+  5. The result inherits the LFM Open License (derivative), recorded as such; it is not an SLM-Tavenel
+     model trained by us.
 
 ## Proposed plan (needs a decision; GPU only at step 3)
 
