@@ -18,9 +18,9 @@ The head-wise gate adds a learned scalar per head and token position. Its presen
 
 | Hub checkpoint | Parameters | Layers | Width | Query heads | KV heads | Head dimension | SwiGLU width | Context | Training lineage |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| [SLM-Tavenel 1M EXP-0010](https://huggingface.co/athenista/slm-tavenel-1m-exp0010) | 1,181,920 | 4 | 96 | 3 | 1 | 32 | 256 | 1,024 | Trained from scratch; selected gated seed from ten paired seeds |
-| [SLM-Tavenel 10M EXP-0009](https://huggingface.co/athenista/slm-tavenel-10m-exp0009) | 9,978,368 | 10 | 256 | 4 | 2 | 64 | 768 | 1,024 | Trained from scratch; one seed |
-| [SLM-Tavenel grown 25M EXP-0009](https://huggingface.co/athenista/slm-tavenel-25m-exp0009) | 25,723,648 | 20 | 256 | 4 | 2 | 64 | 1,280 | 1,024 | Grown from the trained 10M model, then continued for 15,000 steps |
+| [SLM-Tavenel 1M (EXP-0010)](https://huggingface.co/athenista/slm-tavenel-1m) | 1,181,920 | 4 | 96 | 3 | 1 | 32 | 256 | 1,024 | Trained from scratch; selected gated seed from ten paired seeds |
+| [SLM-Tavenel 10M pilot](https://huggingface.co/athenista/slm-tavenel-10m) | 9,978,368 | 10 | 256 | 4 | 2 | 64 | 768 | 1,024 | Trained from scratch; one seed |
+| [SLM-Tavenel grown 25M](https://huggingface.co/athenista/slm-tavenel-25m) | 25,723,648 | 20 | 256 | 4 | 2 | 64 | 1,280 | 1,024 | Grown from the trained 10M model, then continued for 15,000 steps |
 
 All three use QK normalization, RoPE with θ = 10,000, head-wise sigmoid attention gating, RMSNorm, SwiGLU, and tied embeddings. The parameter totals include embeddings and the full output-vocabulary projection as implemented by the model.
 

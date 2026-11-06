@@ -1,4 +1,6 @@
-# Roadmap
+# Initial roadmap draft (historical)
+
+> This is the project's original milestone plan. Later work produced and evaluated 1M, 10M, 25M, and 124M checkpoints, so the milestone states below are no longer a current task list. Use the model cards and experiment archive linked from the [repository README](../README.md) for current artifact status and evidence. This draft is retained as project history; future priorities should be recorded in a dated plan.
 
 Milestones follow the progression in the README: a reproducible baseline first, then small controlled experiments, then the 1B run. Each milestone has an exit criterion that can be checked.
 
