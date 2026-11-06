@@ -131,3 +131,43 @@ def test_compiled_multiplication_matches_python():
 def test_calculator_rejects_operands_that_do_not_fit():
     with pytest.raises(ValueError):
         CompiledCalculator(max_digits=3).add_numbers(1000, 1)
+
+
+def _digits(n: int) -> list[int]:
+    return [int(d) for d in reversed(str(n))]
+
+
+def test_compiled_machine_adds_with_its_own_program():
+    from slm.computer import ADD_PROGRAM, CompiledMachine
+
+    machine = CompiledMachine()
+    rng = random.Random(3)
+    for a, b in [(0, 0), (9, 1), (999, 1), (48213, 9917)] + [(rng.randrange(10**15), rng.randrange(10**15)) for _ in range(5)]:
+        width = max(len(str(a)), len(str(b)))
+        machine.boot(ADD_PROGRAM, _digits(a), _digits(b), registers={2: width})
+        machine.run()
+        assert machine.result() == a + b
+
+
+def test_compiled_machine_multiplies_with_its_own_program():
+    from slm.computer import MUL_PROGRAM, CompiledMachine
+
+    machine = CompiledMachine()
+    rng = random.Random(4)
+    for a, b in [(0, 7), (9, 9), (12, 34), (48213, 9917)] + [(rng.randrange(10**6), rng.randrange(10**6)) for _ in range(3)]:
+        machine.boot(MUL_PROGRAM, _digits(a), _digits(b), registers={2: len(str(b)), 13: len(str(a))})
+        steps = machine.run()
+        assert machine.result() == a * b
+        assert steps > 0 and machine.trace[-1] == ("STEP",)
+    assert set(machine.ram.state.unique().tolist()) <= {0.0, 1.0}
+
+
+def test_compiled_machine_halts_and_rejects_runaway_programs():
+    from slm.computer import CompiledMachine
+
+    machine = CompiledMachine()
+    machine.boot([(0, 0, 0, 0)])
+    assert machine.run() == 1
+    machine.boot([(9, 0, 0, 0)])  # JMP 0 forever
+    with pytest.raises(RuntimeError):
+        machine.run(max_steps=50)

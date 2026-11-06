@@ -154,6 +154,165 @@ class LookupMLP(torch.nn.Module):
         return tuple(result)
 
 
+def gate(index: int, candidates: list[int], dtype: torch.dtype = torch.bfloat16) -> int:
+    """Multiplicative selection (as in a gated MLP): one-hot(index) . candidates. Exact for integers
+    below 256 in bfloat16, since only one product is nonzero."""
+    onehot = torch.nn.functional.one_hot(torch.tensor(index), len(candidates)).to(dtype)
+    return int((onehot @ torch.tensor(candidates, dtype=dtype)).item())
+
+
+class CompiledMachine:
+    """A stored-program machine whose whole step is compiled: the program, data, registers and program
+    counter live in a 256-byte :class:`DeltaRAM`; fetch addresses, register addresses, indexed
+    addresses, opcode decode, the ALU and the branch decision are :class:`LookupMLP` tables; the choice
+    between datapaths is a multiplicative :func:`gate`. The host only repeats ``step()`` until the decoded
+    instruction says HALT (as a decoder repeats forward passes until end-of-sequence); it contains no
+    task logic. Values in registers must stay below 64.
+
+    Memory map: program at [0, 128) (32 instructions of 4 bytes: op, a, b, c), operand A digits at
+    [128, 144), B at [144, 160), result at [160, 192), registers r0..r15 at [192, 208), scratch 254,
+    program counter 255. Bases for indexed access: 0 -> A, 1 -> B, 2 -> R.
+
+    Instructions: 0 HALT; 1 LDI r,imm; 2 LDX r,base,ri (r = mem[base + ri]); 3 STX r,base,ri;
+    4 ADDD r,x,y (r, r15 = digit sum of x, y and carry r15); 5 MULD r,x,y (r, r14 = units, tens of x*y);
+    6 INC r; 7 DEC r; 8 JZ r,t; 9 JMP _,t; 10 MOV r,x; 11 JNZ r,t.
+    """
+
+    A, B, R, REGS, SCRATCH, PC = 128, 144, 160, 192, 254, 255
+    CARRY, HI = 15, 14
+
+    def __init__(self, dtype: torch.dtype = torch.bfloat16):
+        self.dtype = dtype
+        self.ram = DeltaRAM(heads=8, rows=32, dtype=dtype)
+        reg = lambda x: self.REGS + x % 16  # noqa: E731
+        bases = {0: self.A, 1: self.B, 2: self.R}
+        self.fetch_addr = LookupMLP([32, 4], [256], lambda pc, k: 4 * pc + k, dtype)
+        self.reg_addr = LookupMLP([64], [256], reg, dtype)
+        self.index_addr = LookupMLP([64, 64], [256], lambda b, i: bases[b] + i if b in bases and i < 32 else self.SCRATCH, dtype)
+        self.digit = LookupMLP([64], [10], lambda v: v if v < 10 else 0, dtype)
+        self.acc = LookupMLP([10, 10, 10], [10, 10], lambda x, y, c: ((x + y + c) % 10, (x + y + c) // 10), dtype)
+        self.mul = LookupMLP([10, 10], [10, 10], lambda x, y: ((x * y) % 10, (x * y) // 10), dtype)
+        self.inc = LookupMLP([64], [64], lambda v: (v + 1) % 64, dtype)
+        self.dec = LookupMLP([64], [64], lambda v: (v - 1) % 64, dtype)
+        self.is_zero = LookupMLP([64], [2], lambda v: int(v == 0), dtype)
+        # opcode -> (first-write address source, first-write value source, second write, pc rule)
+        decode = {0: (2, 8, 0, 4), 1: (0, 0, 0, 0), 2: (0, 1, 0, 0), 3: (1, 2, 0, 0), 4: (0, 3, 1, 0),
+                  5: (0, 4, 2, 0), 6: (0, 5, 0, 0), 7: (0, 6, 0, 0), 8: (2, 8, 0, 2), 9: (2, 8, 0, 1),
+                  10: (0, 7, 0, 0), 11: (2, 8, 0, 3)}
+        self.decode = LookupMLP([16], [3, 9, 3, 5], lambda op: decode.get(op, decode[0]), dtype)
+        # (pc rule, register is zero) -> 0 sequential, 1 jump target, 2 stay (halt)
+        branch = lambda rule, z: [0, 1, 1 if z else 0, 0 if z else 1, 2][rule]  # noqa: E731
+        self.branch = LookupMLP([5, 2], [3], branch, dtype)
+        self.trace: list[tuple] = []
+        self.steps = 0
+
+    def _read(self, address: int) -> int:
+        value = self.ram.read(address)
+        self.trace += [("ADDR", address), ("VAL", value)]
+        return value
+
+    def _write(self, address: int, value: int) -> None:
+        self.ram.write(address, value)
+        self.trace += [("ADDR", address), ("VAL", value)]
+
+    def boot(self, program: list[tuple[int, int, int, int]], a: list[int] = (), b: list[int] = (),
+             registers: dict[int, int] | None = None) -> None:
+        """Load the program and the inputs (digits least significant first) into a zeroed memory."""
+        if len(program) > 32 or len(a) > 16 or len(b) > 16:
+            raise ValueError("program or operands too large for the memory map")
+        self.ram = DeltaRAM(heads=8, rows=32, dtype=self.dtype)
+        for i, instruction in enumerate(program):
+            for k, byte in enumerate(instruction):
+                self.ram.write(4 * i + k, byte)
+        for base, digits in ((self.A, a), (self.B, b)):
+            for i, digit in enumerate(digits):
+                self.ram.write(base + i, digit)
+        for r, value in (registers or {}).items():
+            self.ram.write(self.REGS + r, value)
+        self.trace, self.steps = [], 0
+
+    def step(self) -> bool:
+        """Execute one instruction; returns False once the machine has halted."""
+        pc = self._read(self.PC)
+        op, a, b, c = (self._read(self.fetch_addr(pc, k)[0]) for k in range(4))
+        w1_addr_sel, w1_val_sel, w2_sel, pc_rule = self.decode(op % 16)
+        ra = self._read(self.reg_addr(a % 64)[0])
+        rb = self._read(self.reg_addr(b % 64)[0])
+        rc = self._read(self.reg_addr(c % 64)[0])
+        carry = self._read(self.REGS + self.CARRY)
+        x_addr = self.index_addr(b % 64, rc % 64)[0]
+        x_val = self._read(x_addr)
+        db, dc, dcarry = (self.digit(v % 64)[0] for v in (rb, rc, carry))
+        add_d, add_c = self.acc(db, dc, dcarry)
+        mul_lo, mul_hi = self.mul(db, dc)
+        values = [b, x_val, ra, add_d, mul_lo, self.inc(ra % 64)[0], self.dec(ra % 64)[0], rb, 0]
+        self._write(gate(w1_addr_sel, [self.reg_addr(a % 64)[0], x_addr, self.SCRATCH], self.dtype),
+                    gate(w1_val_sel, values, self.dtype))
+        self._write(gate(w2_sel, [self.SCRATCH, self.REGS + self.CARRY, self.REGS + self.HI], self.dtype),
+                    gate(w2_sel, [0, add_c, mul_hi], self.dtype))
+        choice = self.branch(pc_rule, self.is_zero(ra % 64)[0])[0]
+        self._write(self.PC, gate(choice, [self.inc(pc % 64)[0], b % 32, pc], self.dtype))
+        self.trace.append(("STEP",))
+        self.steps += 1
+        return choice != 2
+
+    def run(self, max_steps: int = 100_000) -> int:
+        while self.step():
+            if self.steps >= max_steps:
+                raise RuntimeError(f"no HALT within {max_steps} steps")
+        return self.steps
+
+    def result(self, digits: int = 32) -> int:
+        return int("".join(str(self.ram.read(self.R + i)) for i in reversed(range(digits))))
+
+
+# Programs for CompiledMachine (inputs: digits of A and B, r2 = len(B) or len, r13 = len(A)).
+ADD_PROGRAM = [  # r2 = max(len A, len B); r1 = index; r15 = carry
+    (8, 2, 8, 0),    # 0: JZ r2 -> 8
+    (2, 3, 0, 1),    # 1: r3 = A[r1]
+    (2, 4, 1, 1),    # 2: r4 = B[r1]
+    (4, 5, 3, 4),    # 3: r5, carry = r3 + r4 + carry
+    (3, 5, 2, 1),    # 4: R[r1] = r5
+    (6, 1, 0, 0),    # 5: r1 += 1
+    (7, 2, 0, 0),    # 6: r2 -= 1
+    (9, 0, 0, 0),    # 7: JMP 0
+    (3, 15, 2, 1),   # 8: R[r1] = carry
+    (0, 0, 0, 0),    # 9: HALT
+]
+MUL_PROGRAM = [  # r1 = j, r2 = len B left, r3 = i, r4 = len A left, r5 = k = i + j, r13 = len A
+    (8, 2, 29, 0),   # 0: outer: JZ r2 -> END
+    (2, 7, 1, 1),    # 1: r7 = B[j]
+    (1, 3, 0, 0),    # 2: i = 0
+    (10, 4, 13, 0),  # 3: r4 = len A
+    (10, 5, 1, 0),   # 4: k = j
+    (8, 4, 26, 0),   # 5: inner: JZ r4 -> NEXTJ
+    (2, 6, 0, 3),    # 6: r6 = A[i]
+    (5, 8, 6, 7),    # 7: r8, r14 = units, tens of A[i] * B[j]
+    (2, 9, 2, 5),    # 8: r9 = R[k]
+    (4, 9, 9, 8),    # 9: r9, carry = R[k] + units (carry is 0 here)
+    (3, 9, 2, 5),    # 10: R[k] = r9
+    (10, 12, 5, 0),  # 11: r12 = k
+    (6, 12, 0, 0),   # 12: r12 = k + 1
+    (2, 9, 2, 12),   # 13: r9 = R[k + 1]
+    (4, 9, 9, 14),   # 14: r9, carry = R[k + 1] + tens + carry
+    (3, 9, 2, 12),   # 15: R[k + 1] = r9
+    (8, 15, 22, 0),  # 16: ripple: JZ carry -> CONT
+    (6, 12, 0, 0),   # 17: r12 += 1
+    (2, 9, 2, 12),   # 18: r9 = R[r12]
+    (4, 9, 9, 10),   # 19: r9, carry = R[r12] + 0 + carry (r10 is always 0)
+    (3, 9, 2, 12),   # 20: R[r12] = r9
+    (9, 0, 16, 0),   # 21: JMP ripple
+    (6, 3, 0, 0),    # 22: CONT: i += 1
+    (6, 5, 0, 0),    # 23: k += 1
+    (7, 4, 0, 0),    # 24: r4 -= 1
+    (9, 0, 5, 0),    # 25: JMP inner
+    (6, 1, 0, 0),    # 26: NEXTJ: j += 1
+    (7, 2, 0, 0),    # 27: r2 -= 1
+    (9, 0, 0, 0),    # 28: JMP outer
+    (0, 0, 0, 0),    # 29: END: HALT
+]
+
+
 class CompiledCalculator:
     """Exact decimal addition and multiplication by a compiled machine: operands and result are digit
     bytes in a :class:`DeltaRAM`, every digit operation goes through a :class:`LookupMLP`, and each

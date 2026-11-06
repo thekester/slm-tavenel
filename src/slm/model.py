@@ -112,7 +112,8 @@ def local_attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, window: i
     mask[0, :, :window] = False  # no block before the first one
     y = F.scaled_dot_product_attention(qb.reshape(B, H * n, window, D), kb.reshape(B, H * n, 2 * window, D),
                                        vb.reshape(B, H * n, 2 * window, D), attn_mask=mask.repeat(H, 1, 1))
-    return y.view(B, H, n * window, D)[:, :, :T]
+    # The CUDA attention kernels may return a non-contiguous layout, so reshape rather than view.
+    return y.reshape(B, H, n * window, D)[:, :, :T]
 
 
 class Attention(nn.Module):

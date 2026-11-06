@@ -124,6 +124,33 @@ exact-match and held-out-layout planning success are both higher by at least two
 B is compared with A/C on planning success only, reporting first attempt and with the verifier tool
 separately (the tool gives B information A and C do not get).
 
+### Results A / B / C (2026-11-05)
+
+All arms ran 10,000 updates without instability (final grad_norm 0.02–0.04; C's JEPA loss fell to ~1e-5).
+Evaluations: `runs/EXP-0039-evaluations/` (final checkpoints, sha256 A `b8f775b5…`, B `40dde040…`, C
+`af1aa208…`).
+
+| Measure | A, transitions | C, + JEPA | B, plans |
+|---|---:|---:|---:|
+| Next-state exact match, validation (5,000) | 99.98% | 100% | – |
+| Intervention split, exact match (4,998) | 99.94% (3 errors, all on state-changing actions) | 100% | – |
+| Held-out layouts, exact match (5,000) | 100% | 100% | – |
+| Planning success, in distribution (200) | 100%, optimal length | 100%, optimal length | 100% first attempt |
+| Planning success, held-out layouts (200) | 100%, optimal length | 100%, optimal length | 100% first attempt |
+
+**Verdict: no measurable difference; the pilot is at ceiling and therefore uninformative.** C vs A:
++0.06 pt on interventions and 0 pt on held-out planning, far below the preregistered two points. B solves
+every world on its first plan, so its verifier tool was never needed (mean attempts 1.0). A and C also
+expand exactly the same number of nodes (277.1 / 270.9 on average), because the model-based BFS only
+depends on predicted transitions, which are all correct. A 6 x 6 room with one key and one door and
+plans of 6–19 steps is too easy for 25M-parameter models trained on 1M transitions; held-out layouts are
+solved perfectly too, so this world does not separate "next-token learner" from "world model".
+
+Consequence for phase 2 (to be preregistered before any run): a harder world where errors exist, e.g.
+larger rooms (10 x 10+), several keys/doors with ordering constraints, partial observability or
+stochastic transitions, longer optimal plans (30+ steps), and fewer training transitions (data-efficiency
+curve), before testing D (closed loop). Single seed per arm.
+
 Configuration D (closed loop: training on the model's own verifier-graded transitions) is a second
 phase, designed after A/B/C, because its data depend on a trained model; it will be preregistered
 separately before it runs.

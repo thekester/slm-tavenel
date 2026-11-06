@@ -12,6 +12,20 @@ pairs; multiplication on a two-digit grid, 30 random 8-digit pairs and 48213 x 9
 exactly 0/1. **Still host-controlled:** the loops (which cell to read next) run in Python. Qwenputer also
 compiles the controller (program counter and decode in layers); compiling ours (program counter in RAM,
 next-address and opcode decode as further lookup tables, one layer pass per trace token) is step 2b.
+Step 2b done 2026-11-06: `CompiledMachine`, a stored-program machine (12 instructions, 32-instruction
+programs) whose program, data, registers and program counter all live in a 256-byte `DeltaRAM`; fetch,
+register and indexed addressing, opcode decode, ALU and branch decision are `LookupMLP` tables, and
+datapath choice is a multiplicative gate. The host loop only repeats `step()` until the decoded
+instruction is HALT and holds no task logic. `ADD_PROGRAM` (10 instructions) and `MUL_PROGRAM` (30,
+schoolbook) are tested against Python (sums up to 15 digits, products up to 6x6 digits and 48213 x 9917).
+Cost: 48213 x 9917 takes 376 instructions = 10,152 trace tokens (~3 s on CPU in this unbatched
+reference implementation); 48213 + 9917 takes 43 instructions = 1,161 trace tokens. Remaining gap to
+Qwenputer: the machine runs as Python calls of the compiled modules, not yet as transformer layers
+emitting one trace token per forward pass, and it is not connected to a language model (step 3).
+Step 3 started 2026-11-06: LFM3-VL-2B snapshot downloaded and running (CPU, bf16) with
+`transformers==5.21.1` in `data/envs/tf5`; relay `scripts/lfm3_compiled_computer.py` connects its XML
+tool calls to `CompiledMachine`; smoke test correct on 3/3; EXP-0042 preregistered
+(`experiments/EXP-0042-lfm3-compiled-computer-2026-11-06.md`).
 
 ## What Qwenputer is
 
