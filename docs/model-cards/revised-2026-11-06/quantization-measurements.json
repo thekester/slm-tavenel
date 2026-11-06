@@ -1,0 +1,174 @@
+{
+  "kind": "slm.quantization_measurements",
+  "torch": "2.10.0+cu130",
+  "transformers": "4.57.6",
+  "sample": "first 100 EN + 100 FR documents of slm-tavenel-edu-corpus-v2 test split, truncated to context",
+  "documents": 200,
+  "results": [
+    {
+      "repo": "athenista/slm-tavenel-1m",
+      "rows": [
+        {
+          "variant": "float32",
+          "device": "cpu",
+          "bpb": 2.4715,
+          "delta_bpb": 0.0,
+          "top1_agreement": 1.0,
+          "file_mb": 4.7,
+          "tokens_per_s": 334.2
+        },
+        {
+          "variant": "bfloat16",
+          "device": "cuda",
+          "bpb": 2.4716,
+          "delta_bpb": 0.0001,
+          "top1_agreement": 0.9798,
+          "file_mb": 2.4,
+          "tokens_per_s": 131.6
+        },
+        {
+          "variant": "int8-dynamic",
+          "device": "cpu",
+          "bpb": 2.4753,
+          "delta_bpb": 0.0038,
+          "top1_agreement": 0.8986,
+          "file_mb": 4.3,
+          "file_note": "in-memory size estimate; not saved as a file",
+          "tokens_per_s": 149.4
+        }
+      ]
+    },
+    {
+      "repo": "athenista/slm-tavenel-10m",
+      "rows": [
+        {
+          "variant": "float32",
+          "device": "cpu",
+          "bpb": 1.4634,
+          "delta_bpb": 0.0,
+          "top1_agreement": 1.0,
+          "file_mb": 39.9,
+          "tokens_per_s": 106.8
+        },
+        {
+          "variant": "bfloat16",
+          "device": "cuda",
+          "bpb": 1.4636,
+          "delta_bpb": 0.0002,
+          "top1_agreement": 0.9876,
+          "file_mb": 20.0,
+          "tokens_per_s": 54.4
+        },
+        {
+          "variant": "int8-dynamic",
+          "device": "cpu",
+          "bpb": 1.4872,
+          "delta_bpb": 0.0238,
+          "top1_agreement": 0.8572,
+          "file_mb": 18.4,
+          "file_note": "in-memory size estimate; not saved as a file",
+          "tokens_per_s": 57.3
+        }
+      ]
+    },
+    {
+      "repo": "athenista/slm-tavenel-25m",
+      "rows": [
+        {
+          "variant": "float32",
+          "device": "cpu",
+          "bpb": 1.4019,
+          "delta_bpb": 0.0,
+          "top1_agreement": 1.0,
+          "file_mb": 102.9,
+          "tokens_per_s": 62.0
+        },
+        {
+          "variant": "bfloat16",
+          "device": "cuda",
+          "bpb": 1.402,
+          "delta_bpb": 0.0002,
+          "top1_agreement": 0.9871,
+          "file_mb": 51.5,
+          "tokens_per_s": 28.9
+        },
+        {
+          "variant": "int8-dynamic",
+          "device": "cpu",
+          "bpb": 1.4276,
+          "delta_bpb": 0.0257,
+          "top1_agreement": 0.847,
+          "file_mb": 34.2,
+          "file_note": "in-memory size estimate; not saved as a file",
+          "tokens_per_s": 16.4
+        }
+      ]
+    },
+    {
+      "repo": "athenista/slm-tavenel-25m-hplt-10pct",
+      "rows": [
+        {
+          "variant": "float32",
+          "device": "cpu",
+          "bpb": 1.3481,
+          "delta_bpb": 0.0,
+          "top1_agreement": 1.0,
+          "file_mb": 102.9,
+          "tokens_per_s": 26.4
+        },
+        {
+          "variant": "bfloat16",
+          "device": "cuda",
+          "bpb": 1.3483,
+          "delta_bpb": 0.0002,
+          "top1_agreement": 0.9863,
+          "file_mb": 51.5,
+          "tokens_per_s": 22.3
+        },
+        {
+          "variant": "int8-dynamic",
+          "device": "cpu",
+          "bpb": 1.3743,
+          "delta_bpb": 0.0262,
+          "top1_agreement": 0.8434,
+          "file_mb": 34.2,
+          "file_note": "in-memory size estimate; not saved as a file",
+          "tokens_per_s": 29.3
+        }
+      ]
+    },
+    {
+      "repo": "athenista/slm-tavenel-124m",
+      "rows": [
+        {
+          "variant": "float32",
+          "device": "cpu",
+          "bpb": 1.0397,
+          "delta_bpb": 0.0,
+          "top1_agreement": 1.0,
+          "file_mb": 496.2,
+          "tokens_per_s": 31.5
+        },
+        {
+          "variant": "bfloat16",
+          "device": "cuda",
+          "bpb": 1.0398,
+          "delta_bpb": 0.0001,
+          "top1_agreement": 0.9859,
+          "file_mb": 248.1,
+          "tokens_per_s": 22.2
+        },
+        {
+          "variant": "int8-dynamic",
+          "device": "cpu",
+          "bpb": 1.1084,
+          "delta_bpb": 0.0687,
+          "top1_agreement": 0.7562,
+          "file_mb": 237.4,
+          "file_note": "in-memory size estimate; not saved as a file",
+          "tokens_per_s": 19.4
+        }
+      ]
+    }
+  ]
+}

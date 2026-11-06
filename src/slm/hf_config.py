@@ -5,6 +5,10 @@ from transformers import PretrainedConfig
 
 class SlmTavenelConfig(PretrainedConfig):
     model_type = "slm_tavenel"
+    # Standard names expected by Transformers utilities (e.g. the generation KV cache).
+    attribute_map = {"num_hidden_layers": "n_layers", "hidden_size": "d_model",
+                     "num_attention_heads": "n_heads", "num_key_value_heads": "n_kv_heads",
+                     "max_position_embeddings": "max_seq_len"}
 
     def __init__(
         self,
@@ -41,7 +45,7 @@ class SlmTavenelConfig(PretrainedConfig):
         kwargs.setdefault("is_decoder", True)
         kwargs.setdefault("is_encoder_decoder", False)
         kwargs.setdefault("tie_word_embeddings", tie_embeddings)
-        kwargs.setdefault("use_cache", False)
+        kwargs.setdefault("use_cache", True)
         super().__init__(**kwargs)
         if d_model % n_heads or n_heads % n_kv_heads or (d_model // n_heads) % 2:
             raise ValueError("Invalid head dimensions in SLM-Tavenel config")

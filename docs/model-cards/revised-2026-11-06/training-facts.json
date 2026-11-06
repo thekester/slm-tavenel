@@ -1,0 +1,72 @@
+{
+  "slm-tavenel-1m": {
+    "revision": "23c1e8a371b461c807f22cc7d5349ca4f4b0e068",
+    "steps": 488,
+    "token_positions": 15990784,
+    "gpu_compute_hours_from_logged_throughput": 0.06,
+    "median_tokens_per_s": 76317.9,
+    "peak_allocated_gpu_gb": 1.926,
+    "gpu": null,
+    "torch": "2.10.0+cu130",
+    "python": "3.11.9",
+    "dtype": "bfloat16",
+    "metrics_file": "training_record/selected-metrics.jsonl",
+    "energy": "not measured (no power log recorded)"
+  },
+  "slm-tavenel-10m": {
+    "revision": "81165901ea45f9d882862b7297422e0560e60687",
+    "steps": 15000,
+    "token_positions": 491520000,
+    "gpu_compute_hours_from_logged_throughput": 2.48,
+    "median_tokens_per_s": 56841.1,
+    "peak_allocated_gpu_gb": 3.701,
+    "gpu": null,
+    "torch": "2.10.0+cu130",
+    "python": "3.11.9",
+    "dtype": "bfloat16",
+    "metrics_file": "training_record/metrics.jsonl",
+    "energy": "not measured (no power log recorded)"
+  },
+  "slm-tavenel-25m": {
+    "revision": "a34c08d1bd4b91a244f170ae26096ff059afc37a",
+    "steps": 15000,
+    "token_positions": 491520000,
+    "gpu_compute_hours_from_logged_throughput": 5.53,
+    "median_tokens_per_s": 28499.2,
+    "peak_allocated_gpu_gb": 2.875,
+    "gpu": null,
+    "torch": "2.10.0+cu130",
+    "python": "3.11.9",
+    "dtype": "bfloat16",
+    "metrics_file": "training_record/metrics.jsonl",
+    "energy": "not measured (no power log recorded)"
+  },
+  "slm-tavenel-25m-hplt-10pct": {
+    "revision": "d377cfb8cae4a6018ea44d9133da5f82dce6b4d3",
+    "steps": 1500,
+    "token_positions": 49152000,
+    "gpu_compute_hours_from_logged_throughput": 0.81,
+    "median_tokens_per_s": 17233.8,
+    "peak_allocated_gpu_gb": 2.862,
+    "gpu": null,
+    "torch": null,
+    "python": null,
+    "dtype": "bfloat16",
+    "metrics_file": "training_record/treatment/metrics.jsonl",
+    "energy": "not measured (no power log recorded)"
+  },
+  "slm-tavenel-124m": {
+    "revision": "a4ccf8189c738eab28ab5d78990974e98930b9a7",
+    "steps": 15000,
+    "token_positions": 983040000,
+    "gpu_compute_hours_from_logged_throughput": 57.05,
+    "median_tokens_per_s": 6072.3,
+    "peak_allocated_gpu_gb": 6.276,
+    "gpu": null,
+    "torch": "2.10.0+cu130",
+    "python": "3.11.9",
+    "dtype": "bfloat16",
+    "metrics_file": "training_record/metrics.jsonl",
+    "energy": "not measured (no power log recorded)"
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "code": {
+    "commit": "21aaf6a03d1bab6770dfd37d358e144af62d67c9",
+    "dirty": true
+  },
+  "data": {
+    "dir": "data/tokens/slm-tavenel-edu-corpus-v2-smollm2",
+    "manifest_sha256": "ef1de4543ca415b3877e751a0306c18d1527f5471ba7e985596e22f824ab997d",
+    "provenance": null,
+    "provenance_path": null,
+    "splits": {
+      "test": {
+        "shards": [
+          "9b21af793bd1c61fccd508fe22f8a8120b2dbb0a2e1222b33d2aa4bff4058265"
+        ],
+        "tokens": 85306487
+      },
+      "train": {
+        "shards": [
+          "b723337b00dab46be2fd096198f032a5c944e8ca0411b34b1faffa432ce47807",
+          "d2609be89cf48a36d04df246f05a60c0a1bc1bab2adc1d453dffe56231786868",
+          "4c0d74f0706be8d3fdd5d4fe72d217b594d6c93ab97c388a8a9c35e4dfe01079",
+          "fb2ff812b08d540be4cd37a8496c7e03bb487761e71f995f38a02c24af54631c",
+          "15f71c38c4ee85146060d689804b6d95f11e94cdbe854928986041fb9c936f5e",
+          "731b0d9a54bc5d4f1309b391f93558180ac7c6c24af80c8dc3348bd6ed0d2a17",
+          "700d335a4b7ca38151bd3168bd2b4140c262f28023796522c7a72caeecc4c91c",
+          "8b473d72ac1760736e70173478b54514e64f0ba9afa29230956fb34e5de5fa4b",
+          "c5cf31e58116649e798fe6c7a48f85239b424573af0975c57f1779ede7581f64",
+          "c8e96a354bc7b8bd6f221983730f0b0260640144bf57939951dbb3cd80a43692",
+          "8824ce271e957b6191a657402ab821548f8bf464836577a7b3539dd3ea9a3c5d"
+        ],
+        "tokens": 2139672344
+      },
+      "val": {
+        "shards": [
+          "5dffe3ced94e4e70c7a37aeda36145224bdd9f1f4253856fc0a6b749b750e64f"
+        ],
+        "tokens": 16420644
+      }
+    },
+    "tokenizer_compatibility": {
+      "dataset_tokenizer_sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+      "source_checkpoint_lineage": [
+        {
+          "checkpoint": "D:\\slm-tavenel\\runs\\EXP-0036-124m-gpt2match-muon\\checkpoints\\step_00012000.pt",
+          "tokenizer_sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+        }
+      ],
+      "verified": true
+    },
+    "tokenizer_sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c"
+  },
+  "distillation": null,
+  "environment": {
+    "cuda": "13.0",
+    "cudnn": 91200,
+    "devices": [
+      "NVIDIA GeForce RTX 4060 Laptop GPU"
+    ],
+    "numpy": "2.4.4",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "python": "3.11.9",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.22.2",
+    "torch": "2.10.0+cu130"
+  },
+  "initialized_from": null,
+  "jepa": null,
+  "kind": "slm.train",
+  "model_config": {
+    "attn_gate": "headwise",
+    "conv_kernel": 3,
+    "conv_layers": [],
+    "d_model": 576,
+    "ffn_hidden": 1536,
+    "init_std": 0.02,
+    "max_seq_len": 2048,
+    "n_heads": 9,
+    "n_kv_heads": 3,
+    "n_layers": 27,
+    "norm_eps": 1e-06,
+    "qk_norm": true,
+    "rope_theta": 100000.0,
+    "tie_embeddings": true,
+    "vocab_size": 49152,
+    "window_pattern": []
+  },
+  "model_config_hash": "2c8e0b8a869c7607",
+  "params": 124038144,
+  "params_non_embedding": 95726592,
+  "resumed_from": "runs\\EXP-0036-124m-gpt2match-muon\\checkpoints\\step_00012000.pt",
+  "train_config": {
+    "activation_checkpointing": true,
+    "beta1": 0.9,
+    "beta2": 0.95,
+    "ckpt_interval": 250,
+    "compile": false,
+    "data_dir": "data/tokens/slm-tavenel-edu-corpus-v2-smollm2",
+    "decay_fraction": 0.2,
+    "deterministic": false,
+    "distill_revision": "",
+    "distill_teacher": "",
+    "distill_temperature": 1.0,
+    "distill_weight": 0.5,
+    "doc_mask": false,
+    "dtype": "bfloat16",
+    "eps": 1e-08,
+    "eval_batches": 20,
+    "eval_interval": 500,
+    "grad_accum_steps": 8,
+    "grad_clip": 1.0,
+    "init_from": "",
+    "jepa_ema": 0.996,
+    "jepa_mode": "token",
+    "jepa_predictor_hidden": 0,
+    "jepa_state_tokens": 0,
+    "jepa_weight": 0.0,
+    "keep_checkpoints": 2,
+    "log_interval": 50,
+    "lr": 0.003,
+    "master_weights_offload": false,
+    "max_steps": 15000,
+    "micro_batch_size": 4,
+    "min_lr": 0.0003,
+    "mir": false,
+    "mir_aux_weight": 0.4,
+    "mir_mask_ratio_max": 0.5,
+    "mir_mask_ratio_min": 0.0,
+    "mir_mask_token_id": 10,
+    "model": "configs/model/slm-124m-gpt2match.yaml",
+    "muon_momentum": 0.95,
+    "observe_interval": 2500,
+    "optimizer": "muon",
+    "optimizer_offload": false,
+    "out_dir": "runs/EXP-0036-124m-gpt2match-muon",
+    "peak_tflops": 0.0,
+    "resume": true,
+    "schedule": "wsd",
+    "seed": 20261031,
+    "seq_len": 2048,
+    "warmup_steps": 300,
+    "weight_decay": 0.1
+  },
+  "train_config_hash": "8a31da271ac60df9",
+  "world_size": 1
+}

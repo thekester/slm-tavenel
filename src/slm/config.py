@@ -153,6 +153,8 @@ class TrainConfig:
     master_weights_offload: bool = False
     deterministic: bool = True
     peak_tflops: float = 0.0  # per device; enables MFU logging when > 0
+    # Log GPU board energy (NVML) with the metrics; cumulative across resumes via the checkpoint
+    measure_energy: bool = True
     # Logging, evaluation, observability, checkpointing
     log_interval: int = 10
     eval_interval: int = 100

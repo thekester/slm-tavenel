@@ -29,6 +29,7 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 
 from slm import interp
 from slm.config import ModelConfig, TrainConfig, config_hash, load_model_config
+from slm.energy import GpuEnergyMeter
 from slm.data.shards import TokenShards
 from slm.model import SLM, document_ids
 from slm.hnet import HNet, HNetConfig
@@ -354,8 +355,10 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
         init_info = {"path": cfg.init_from, "sha256": sha256_file(cfg.init_from), "grown_from": init.get("grown_from")}
 
     start_step = 0
+    energy_before_wh = 0.0  # energy of earlier segments of this run, restored from the checkpoint
     if resume_from is not None:
         state = torch.load(resume_from, map_location="cpu", weights_only=False)
+        energy_before_wh = float(state.get("gpu_energy_wh") or 0.0)
         model.load_state_dict(state["model"])
         opt.load_state_dict(state["optimizer"])
         torch.set_rng_state(state["torch_rng"])
@@ -431,6 +434,18 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
     probe_len = cfg.seq_len if val_data.manifest.get("row_length") else min(cfg.seq_len, 128)
     probe = torch.from_numpy(val_data.sample(batch_rng(cfg.seed + 2, 0, 0, 0), 2, probe_len)[0]).to(device)
     last_loss = float("nan")
+    meter = GpuEnergyMeter(device.index or 0) if master and cfg.measure_energy and device.type == "cuda" else None
+    if meter is not None and meter.available:
+        write_json(out_dir / f"energy_meter_{start_step:08d}.json", {
+            "method": meter.method, "start_step": start_step, "gpu_energy_wh_before": energy_before_wh,
+            "scope": "GPU board only (NVML); CPU, RAM and power-supply losses not measured; includes every process "
+                     "using this GPU during the run",
+        })
+
+    def energy_wh() -> float | None:
+        current = meter.energy_wh() if meter is not None else None
+        return None if current is None else energy_before_wh + current
+
     t0 = time.perf_counter()
 
     for step in range(start_step, cfg.max_steps):
@@ -523,16 +538,23 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
                 record["mfu"] = round(steps_timed * flops_per_step / dt / (cfg.peak_tflops * 1e12 * world), 4)
             if device.type == "cuda":
                 record["max_mem_gb"] = round(torch.cuda.max_memory_allocated(device) / 1e9, 3)
+            if energy_wh() is not None:
+                record["gpu_energy_wh"] = round(energy_wh(), 3)
+                record["gpu_power_w"] = round(meter.power_w() or 0.0, 1)
             metrics.log(**record)
             t0 = time.perf_counter()
         if master and cfg.eval_interval and (done % cfg.eval_interval == 0 or done == cfg.max_steps):
             evals.log(step=done, val_loss=round(evaluate_loss(model, val_data, cfg, device, eos_id), 5))
         if master and cfg.ckpt_interval and (done % cfg.ckpt_interval == 0 or done == cfg.max_steps):
-            save_checkpoint(out_dir, done, model, opt, cfg, cfg.keep_checkpoints,
-                            extra={"jepa_target": jepa_target.state_dict()} if jepa_target is not None else None)
+            extra = {"jepa_target": jepa_target.state_dict()} if jepa_target is not None else {}
+            if energy_wh() is not None:
+                extra["gpu_energy_wh"] = energy_wh()
+            save_checkpoint(out_dir, done, model, opt, cfg, cfg.keep_checkpoints, extra=extra or None)
         if world > 1:
             dist.barrier()
 
+    if meter is not None:
+        meter.close()
     if world > 1:
         dist.destroy_process_group()
     return {"final_step": cfg.max_steps, "final_loss": last_loss}

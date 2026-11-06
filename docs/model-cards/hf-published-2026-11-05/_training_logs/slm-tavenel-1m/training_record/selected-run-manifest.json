@@ -1,0 +1,177 @@
+{
+  "code": {
+    "commit": "02396acd15ef9bcdc453bcd53aade40819e2f69f",
+    "dirty": false
+  },
+  "data": {
+    "dir": "D:\\slm-tavenel\\data\\tokens\\fsc-cc0-open-weights-v4\\training",
+    "manifest_sha256": "58065825d94485cca526f93ec993d5cfc8bec25ad742a2f6d6c32213370d48b8",
+    "provenance": {
+      "candidate_id": "slm-tavenel-1m-cc0-v4-pilot-s421021",
+      "documents": {
+        "input": 3450,
+        "retained": 1229
+      },
+      "exclusions": {
+        "blocklist": {
+          "blocklist:[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}": 5,
+          "blocklist:\\b(patient|participant|entretien|consentement|essai clinique|cas clinique|sujet humain|dossier m\\u00e9dical|diagnostic)\\b": 61,
+          "blocklist:\\b(patient|participant|interview|consent|clinical trial|case report|human subject|medical record|diagnosis|facial recognition|face recognition|biometric(s)?|fingerprint(s|ing)?|surveillance|vocal fold(s)?|laryngeal)\\b": 244,
+          "blocklist:\\uFFFD": 2
+        },
+        "gopher_quality": {
+          "alpha_words": 21,
+          "mean_word_length": 8,
+          "symbol_ratio": 2,
+          "too_many_words": 3
+        },
+        "min_length": {
+          "too_short": 4
+        },
+        "publication_risk_metadata": {
+          "excluded_discipline": 1848,
+          "human_subject_title_signal": 23
+        }
+      },
+      "manifests": {
+        "pipeline_sha256": "d6585bebec5c779414dee2f35c714eca46366f64a7207fda393c7687eed12cae"
+      },
+      "pipeline_config_sha256": "96a27121edd8365e",
+      "privacy": {
+        "manual_review_signed": false,
+        "manual_review_status": "automated scan and 20-excerpt sample recorded; maintainer attestation pending",
+        "metadata_screening": "excluded records tagged with human-subject-sensitive disciplines and/or title risk terms",
+        "pii_redactions": {
+          "email": 2579,
+          "ip": 3,
+          "phone": 158
+        },
+        "screen_report_sha256": "81304fa28f7836c2ec592284251bf863bb8a34cc0e59fbe7674be59b29cf4f25",
+        "training_text_distributed": false
+      },
+      "schema": "slm.open_weight_data_provenance.v1",
+      "source": {
+        "dataset": "PleIAs/French-Science-Commons",
+        "hal_audit_report_sha256": "e79fd757123cfdb2328b950bb23a4c698a8de18f676e7bd0d3349b79dc2d7abb",
+        "record_license_policy": "CC0 label matched against every HAL API version; unresolved records excluded",
+        "revision": "bfa114c09d7c28dcd0a8a47fe445c64b4a3c6156",
+        "source_review_signed": false,
+        "source_review_status": "candidate; maintainer source sign-off pending",
+        "subset": "french_open_science"
+      },
+      "splits": {
+        "manifest_sha256": "abc8371759211a9ade705fa251e6a5f978b34ea1d41353831066d0ab97661f47",
+        "salt": "slm-tavenel-cc0-v4-privacy-integrity-20261021",
+        "sealed_test_scored": false
+      },
+      "tokenizer": {
+        "manifest_sha256": "3c64accd293de08468f3f3b93cf9ed56e26e4fac26a7bd36d52cf1129fd618e4",
+        "tokenizer_sha256": "93c7b9364de2c42315571c851353862e63830bfbeb220dc14dde80e6ca82cfcb"
+      },
+      "tokens": {
+        "dev": 931435,
+        "manifest_sha256": "58065825d94485cca526f93ec993d5cfc8bec25ad742a2f6d6c32213370d48b8",
+        "sealed_test": 2032436,
+        "train": 15976924
+      }
+    },
+    "provenance_path": "D:\\slm-tavenel\\data\\tokens\\fsc-cc0-open-weights-v4\\training\\provenance.json",
+    "splits": {
+      "test": {
+        "shards": [
+          "83c365b9cabdb4f02385600ea6e2a58341e86167cc42ed379f82a2c2a118f1f6"
+        ],
+        "tokens": 2032436
+      },
+      "train": {
+        "shards": [
+          "830be43cf0017dcbc97fb6d44cf8fb80e8c6c0cfc36f20f09c37ed9d28d02974"
+        ],
+        "tokens": 15976924
+      },
+      "val": {
+        "shards": [
+          "270117ed139336579c3adc4500ae3631decbee0c2f5ecd9b107f24f7eb672e51"
+        ],
+        "tokens": 931435
+      }
+    },
+    "tokenizer_sha256": "93c7b9364de2c42315571c851353862e63830bfbeb220dc14dde80e6ca82cfcb"
+  },
+  "environment": {
+    "cuda": "13.0",
+    "cudnn": 91200,
+    "devices": [
+      "NVIDIA GeForce RTX 4060 Laptop GPU"
+    ],
+    "numpy": "2.4.4",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "python": "3.11.9",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.22.2",
+    "torch": "2.10.0+cu130"
+  },
+  "initialized_from": {
+    "grown_from": null,
+    "path": "D:\\slm-tavenel\\runs\\EXP-0010-1m-paired-replication-2026-10-22\\seed-421101\\initializations\\gated.pt",
+    "sha256": "5bccbf9432ce03e15527697fbc9314dd85ec9d324a6c6d0dd6d9ae2b7c710aa1"
+  },
+  "kind": "slm.train",
+  "model_config": {
+    "attn_gate": "headwise",
+    "d_model": 96,
+    "ffn_hidden": 256,
+    "init_std": 0.02,
+    "max_seq_len": 1024,
+    "n_heads": 3,
+    "n_kv_heads": 1,
+    "n_layers": 4,
+    "norm_eps": 1e-06,
+    "qk_norm": true,
+    "rope_theta": 10000.0,
+    "tie_embeddings": true,
+    "vocab_size": 8192,
+    "window_pattern": []
+  },
+  "model_config_hash": "d0f8525160e46dd2",
+  "params": 1181920,
+  "params_non_embedding": 395488,
+  "resumed_from": null,
+  "train_config": {
+    "beta1": 0.9,
+    "beta2": 0.95,
+    "ckpt_interval": 244,
+    "compile": false,
+    "data_dir": "D:\\slm-tavenel\\data\\tokens\\fsc-cc0-open-weights-v4\\training",
+    "decay_fraction": 0.2,
+    "deterministic": true,
+    "doc_mask": false,
+    "dtype": "bfloat16",
+    "eps": 1e-08,
+    "eval_batches": 20,
+    "eval_interval": 122,
+    "grad_accum_steps": 2,
+    "grad_clip": 1.0,
+    "init_from": "D:\\slm-tavenel\\runs\\EXP-0010-1m-paired-replication-2026-10-22\\seed-421101\\initializations\\gated.pt",
+    "keep_checkpoints": 2,
+    "log_interval": 25,
+    "lr": 0.003,
+    "max_steps": 488,
+    "micro_batch_size": 16,
+    "min_lr": 0.0003,
+    "model": "D:\\slm-tavenel\\configs\\model\\slm-1m-gated.yaml",
+    "muon_momentum": 0.95,
+    "observe_interval": 122,
+    "optimizer": "adamw",
+    "out_dir": "D:\\slm-tavenel\\runs\\EXP-0010-1m-paired-replication-2026-10-22\\seed-421101\\gated",
+    "peak_tflops": 0.0,
+    "resume": true,
+    "schedule": "wsd",
+    "seed": 421101,
+    "seq_len": 1024,
+    "warmup_steps": 48,
+    "weight_decay": 0.1
+  },
+  "train_config_hash": "79c02fe60f7d03a8",
+  "world_size": 1
+}
