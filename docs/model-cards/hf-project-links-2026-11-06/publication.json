@@ -1,0 +1,36 @@
+{
+  "date_utc": "2026-11-06T09:55:23.584213+00:00",
+  "change": "README navigation links to the canonical GitHub overview, model catalog, and research archive; model weights and other files unchanged.",
+  "models": [
+    {
+      "repo": "athenista/slm-tavenel-1m",
+      "previous_revision": "49644a2aadfe5b291202cdfcd8052e6a9c45377a",
+      "new_revision": "5a5d17d96783ac9fb4217cba6e2fa9128fbf91df",
+      "action": "uploaded"
+    },
+    {
+      "repo": "athenista/slm-tavenel-10m",
+      "previous_revision": "4b03f92843e485b46708f60fef92f374708ed1a5",
+      "new_revision": "a80caf6536a8a7e3886663d063687c2e6116abc1",
+      "action": "uploaded"
+    },
+    {
+      "repo": "athenista/slm-tavenel-25m",
+      "previous_revision": "a6c192c68b2b817f3a49dfaed43a150a2388b9bd",
+      "new_revision": "6200932631074507df896395e96647b81a8aa2cf",
+      "action": "uploaded"
+    },
+    {
+      "repo": "athenista/slm-tavenel-25m-hplt-10pct",
+      "previous_revision": "6ef4f4dd72fc89674d1c8c0e025fa24de896be13",
+      "new_revision": "6942413f6fdbbf58835d63c41e46d1d3a9f435da",
+      "action": "uploaded"
+    },
+    {
+      "repo": "athenista/slm-tavenel-124m",
+      "previous_revision": "3be27b7c858dea4cc77032a777f17a14108c9414",
+      "new_revision": "49d4ed062eb3d8a6bc2407b695e7883303905327",
+      "action": "uploaded"
+    }
+  ]
+}
