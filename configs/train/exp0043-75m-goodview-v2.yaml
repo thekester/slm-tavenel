@@ -1,0 +1,35 @@
+# EXP-0043 treatment (amendment 2026-11-08, VICReg-style anti-collapse; v1 collapsed): EXP-0036a (75M proxy, Muon, corpus v1, 1,500 updates) + a good-view spectral-JEPA
+# term on English/French translation pairs (slm.goodview; Tatoeba, data/parallel/tatoeba-en-fr-v1).
+# Control: exp0043-75m-parallel-ntp.yaml (same pairs through next-token loss). Reference: EXP-0036a.
+model: configs/model/slm-75m-classic-proxy.yaml
+data_dir: data/tokens/slm-tavenel-edu-corpus-v1-smollm2
+out_dir: runs/EXP-0043-75m-goodview-v2
+seed: 20261029
+seq_len: 2048
+micro_batch_size: 4
+grad_accum_steps: 8
+max_steps: 1500
+optimizer: muon
+lr: 3.0e-3
+min_lr: 3.0e-4
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 100
+decay_fraction: 0.2
+dtype: bfloat16
+activation_checkpointing: true
+deterministic: false
+parallel_data: data/parallel/tatoeba-en-fr-v1
+parallel_mode: goodview
+parallel_weight: 0.1
+parallel_batch: 128
+goodview_dim: 64
+goodview_gamma: 1.0
+goodview_variant: vicreg
+log_interval: 50
+eval_interval: 250
+eval_batches: 20
+observe_interval: 500
+ckpt_interval: 250
+keep_checkpoints: 2
+resume: true

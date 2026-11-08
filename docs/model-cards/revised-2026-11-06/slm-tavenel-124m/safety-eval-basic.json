@@ -1,0 +1,136 @@
+{
+  "kind": "slm.safety_eval_basic",
+  "rtp_revision": "f21629712ffd6a3d13a54fd2807ccd521c55ef74",
+  "classifier": "unitary/toxic-bert@4d6c22e74ba2fdd26bc4f7238f50766b045a0d94",
+  "prompts": 500,
+  "prompt_mean_toxicity": 0.7736,
+  "models": {
+    "slm-tavenel-1m": {
+      "toxicity_mean": 0.0175,
+      "toxicity_mean_ci95": [
+        0.0103,
+        0.0264
+      ],
+      "toxic_share_gt_0.5": 0.008,
+      "toxic_share_ci95": [
+        0.002,
+        0.016
+      ],
+      "pii_generations": 200,
+      "pii_shaped_share": 0.0,
+      "pii_shaped_by_kind": {
+        "email": 0,
+        "ip": 0,
+        "phone": 0,
+        "iban": 0
+      },
+      "redaction_placeholder_share": 0.02
+    },
+    "slm-tavenel-10m": {
+      "toxicity_mean": 0.0689,
+      "toxicity_mean_ci95": [
+        0.0504,
+        0.0891
+      ],
+      "toxic_share_gt_0.5": 0.062,
+      "toxic_share_ci95": [
+        0.042,
+        0.084
+      ],
+      "pii_generations": 200,
+      "pii_shaped_share": 0.0,
+      "pii_shaped_by_kind": {
+        "email": 0,
+        "ip": 0,
+        "phone": 0,
+        "iban": 0
+      },
+      "redaction_placeholder_share": 0.02
+    },
+    "slm-tavenel-25m": {
+      "toxicity_mean": 0.0831,
+      "toxicity_mean_ci95": [
+        0.0631,
+        0.1044
+      ],
+      "toxic_share_gt_0.5": 0.078,
+      "toxic_share_ci95": [
+        0.056,
+        0.102
+      ],
+      "pii_generations": 200,
+      "pii_shaped_share": 0.0,
+      "pii_shaped_by_kind": {
+        "email": 0,
+        "ip": 0,
+        "phone": 0,
+        "iban": 0
+      },
+      "redaction_placeholder_share": 0.015
+    },
+    "slm-tavenel-25m-hplt-10pct": {
+      "toxicity_mean": 0.107,
+      "toxicity_mean_ci95": [
+        0.084,
+        0.1316
+      ],
+      "toxic_share_gt_0.5": 0.096,
+      "toxic_share_ci95": [
+        0.072,
+        0.122
+      ],
+      "pii_generations": 200,
+      "pii_shaped_share": 0.0,
+      "pii_shaped_by_kind": {
+        "email": 0,
+        "ip": 0,
+        "phone": 0,
+        "iban": 0
+      },
+      "redaction_placeholder_share": 0.0
+    },
+    "slm-tavenel-124m": {
+      "toxicity_mean": 0.1306,
+      "toxicity_mean_ci95": [
+        0.1061,
+        0.1556
+      ],
+      "toxic_share_gt_0.5": 0.122,
+      "toxic_share_ci95": [
+        0.094,
+        0.15
+      ],
+      "pii_generations": 200,
+      "pii_shaped_share": 0.005,
+      "pii_shaped_by_kind": {
+        "email": 0,
+        "ip": 0,
+        "phone": 1,
+        "iban": 0
+      },
+      "redaction_placeholder_share": 0.265
+    },
+    "gpt2 (reference)": {
+      "toxicity_mean": 0.4172,
+      "toxicity_mean_ci95": [
+        0.3781,
+        0.4546
+      ],
+      "toxic_share_gt_0.5": 0.422,
+      "toxic_share_ci95": [
+        0.38,
+        0.466
+      ],
+      "pii_generations": 200,
+      "pii_shaped_share": 0.21,
+      "pii_shaped_by_kind": {
+        "email": 28,
+        "ip": 2,
+        "phone": 20,
+        "iban": 0
+      },
+      "redaction_placeholder_share": 0.0
+    }
+  },
+  "note": "One sampled continuation per prompt; English-only toxicity classifier; PII-shaped strings are not checked against real persons. Indicative screening, not a safety certification."
+}

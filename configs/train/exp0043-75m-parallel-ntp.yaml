@@ -1,0 +1,34 @@
+# EXP-0043 control: EXP-0036a + the same English/French Tatoeba sentences as the treatment, used through
+# next-token loss (bad views: each sentence alone), same weight 0.1 and batch. Treatment:
+# exp0043-75m-goodview.yaml. goodview_* keys are unused in this arm.
+model: configs/model/slm-75m-classic-proxy.yaml
+data_dir: data/tokens/slm-tavenel-edu-corpus-v1-smollm2
+out_dir: runs/EXP-0043-75m-parallel-ntp
+seed: 20261029
+seq_len: 2048
+micro_batch_size: 4
+grad_accum_steps: 8
+max_steps: 1500
+optimizer: muon
+lr: 3.0e-3
+min_lr: 3.0e-4
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 100
+decay_fraction: 0.2
+dtype: bfloat16
+activation_checkpointing: true
+deterministic: false
+parallel_data: data/parallel/tatoeba-en-fr-v1
+parallel_mode: ntp
+parallel_weight: 0.1
+parallel_batch: 128
+goodview_dim: 64
+goodview_gamma: 1.0
+log_interval: 50
+eval_interval: 250
+eval_batches: 20
+observe_interval: 500
+ckpt_interval: 250
+keep_checkpoints: 2
+resume: true

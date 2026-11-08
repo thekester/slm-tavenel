@@ -1,0 +1,79 @@
+{
+  "date": "2026-11-08",
+  "kind": "slm-tavenel.model-card-release",
+  "models": {
+    "athenista/slm-tavenel-1m": {
+      "revision": "77d1d8b09af0ff8583844460f383f8f1c4f9bd96",
+      "files": {
+        "README.md": "9605f239c37e2b7617eeec2b376bfa3de6148ff68dd956e8accfe05b070819a5",
+        "config.json": "bb8e7503a80f74451203abe430eda4924bc3c554a6a01a3e44487bfcabce6872",
+        "inference-benchmark.json": "698606890176dfe72bb14ee1b41a4dbb16128b3368f0a1d838d20673dfdc1158",
+        "kv-cache-verification.json": "bfae0d39780fd9325293c42bf2a466e8190ed2f738a0b2481cccaaa15825aa09",
+        "quantization-measurements.json": "d4c8f4783992b28b4848fba39d6b850c737d9ade2ecea32630d4b30e05e17936",
+        "safety-eval-basic.json": "347fff51f0d2ad695d3e34d7d8547fc0b72183d49989f1b622cb3ffef49d40bc",
+        "slm-tavenel-1m-observability.png": "1d7cc119b099572cda0db4022c1ba482ee98feacd8a299661bccd7626a79b039",
+        "slm-tavenel-1m-observability.svg": "8fb7ed70756e1092ea89179d9811e1beade22a21ddb36fd07ada94a8f7dbabc8"
+      },
+      "structured_results": 6
+    },
+    "athenista/slm-tavenel-10m": {
+      "revision": "f763b6f39d21baf388f8e0cd10f324a13a7caec8",
+      "files": {
+        "README.md": "24c5134d1b9b53065fbcfe4439eee9a668913902e3dfdd9a72659b62ddd34879",
+        "config.json": "e4d4239fbd26c708c500f8ce50a3b8e92fedd1d6e881c1657907adb46de8b237",
+        "inference-benchmark.json": "698606890176dfe72bb14ee1b41a4dbb16128b3368f0a1d838d20673dfdc1158",
+        "kv-cache-verification.json": "bfae0d39780fd9325293c42bf2a466e8190ed2f738a0b2481cccaaa15825aa09",
+        "quantization-measurements.json": "d4c8f4783992b28b4848fba39d6b850c737d9ade2ecea32630d4b30e05e17936",
+        "safety-eval-basic.json": "347fff51f0d2ad695d3e34d7d8547fc0b72183d49989f1b622cb3ffef49d40bc",
+        "slm-tavenel-10m-observability.png": "8c6c0d5cbdfafcb3266cdc4c45c45ead98374522eeb39c05849524dac3d92c2e",
+        "slm-tavenel-10m-observability.svg": "794e20504b43da2d41c2a1871073ea40ea3d40622ac5916f9e69842334624be6"
+      },
+      "structured_results": 6
+    },
+    "athenista/slm-tavenel-25m": {
+      "revision": "b0b5d762a500c8b14ccc9b7ddcddab6d5e49ec05",
+      "files": {
+        "README.md": "c5edb0d707d0bd94888e32cc1f78cc5f31679a0d2c0a54280bab7ada64616eae",
+        "config.json": "d0eaa03cab038126bbb09f08be04020fbcab57ad546a91d52c09471393591cc2",
+        "inference-benchmark.json": "698606890176dfe72bb14ee1b41a4dbb16128b3368f0a1d838d20673dfdc1158",
+        "kv-cache-verification.json": "bfae0d39780fd9325293c42bf2a466e8190ed2f738a0b2481cccaaa15825aa09",
+        "quantization-measurements.json": "d4c8f4783992b28b4848fba39d6b850c737d9ade2ecea32630d4b30e05e17936",
+        "safety-eval-basic.json": "347fff51f0d2ad695d3e34d7d8547fc0b72183d49989f1b622cb3ffef49d40bc",
+        "slm-tavenel-25m-observability.png": "95976693f54b9edefe592075b9ff2d02ec5c20ac04e8f27d725c5fdf50121a7e",
+        "slm-tavenel-25m-observability.svg": "4dedbad71980a3758016382e19fda24bfe5aad8a859f11b427599e27dd63050d"
+      },
+      "structured_results": 6
+    },
+    "athenista/slm-tavenel-25m-hplt-10pct": {
+      "revision": "98904f24de85ddbc5c9c243a695e3afe79930589",
+      "files": {
+        "README.md": "449740b595a1c881b1ce8cb9fed4dfe031d96aed7ec6f45cd965ae65aaf523f5",
+        "config.json": "d0eaa03cab038126bbb09f08be04020fbcab57ad546a91d52c09471393591cc2",
+        "inference-benchmark.json": "698606890176dfe72bb14ee1b41a4dbb16128b3368f0a1d838d20673dfdc1158",
+        "kv-cache-verification.json": "bfae0d39780fd9325293c42bf2a466e8190ed2f738a0b2481cccaaa15825aa09",
+        "quantization-measurements.json": "d4c8f4783992b28b4848fba39d6b850c737d9ade2ecea32630d4b30e05e17936",
+        "safety-eval-basic.json": "347fff51f0d2ad695d3e34d7d8547fc0b72183d49989f1b622cb3ffef49d40bc"
+      },
+      "structured_results": 6
+    },
+    "athenista/slm-tavenel-124m": {
+      "revision": "877392873e7e46c0e5946d6e943ce4e90f71a49f",
+      "files": {
+        "README.md": "13df5304cfdbb1e31d1bef0f7485b4cc388182472a92ae6fdbabc97972018b0c",
+        "config.json": "85776a4539302e166fac6e81833099914fdb349dd9a83239617fec114b6b3491",
+        "inference-benchmark.json": "698606890176dfe72bb14ee1b41a4dbb16128b3368f0a1d838d20673dfdc1158",
+        "kv-cache-verification.json": "bfae0d39780fd9325293c42bf2a466e8190ed2f738a0b2481cccaaa15825aa09",
+        "quantization-measurements.json": "d4c8f4783992b28b4848fba39d6b850c737d9ade2ecea32630d4b30e05e17936",
+        "safety-eval-basic.json": "347fff51f0d2ad695d3e34d7d8547fc0b72183d49989f1b622cb3ffef49d40bc",
+        "slm-tavenel-124m-observability.png": "6d5386ecc5b9fc17a6180a1419e27a5c60a7d389e7f50b641516b0e32edcba6f",
+        "slm-tavenel-124m-observability.svg": "bb24efb153a2ebcb97a139e34d3b0741741f84fe5302928a2c6493171ce82b84"
+      },
+      "structured_results": 6
+    }
+  },
+  "excluded": [
+    "raw generated continuation samples",
+    "model weights",
+    "new model code"
+  ]
+}

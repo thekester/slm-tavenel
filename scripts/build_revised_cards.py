@@ -51,7 +51,7 @@ def inference_section(repo: str, bench: dict, kv: dict, quant: dict | None) -> s
                    f"{'yes' if d['identical_tokens_with_and_without_cache'] else 'NO'} |")
     out += [
         "",
-        f"The KV-cache code gives the same logits as the code first published with these weights (maximum "
+        f"Cached generation gives the same logits as a full-prefix, no-cache reference (maximum "
         f"absolute difference {kv_row['max_abs_logit_diff_vs_published_code']:.1g}) and the same greedy tokens with "
         "and without the cache. It speeds up CPU generation; on this GPU, small models are limited by per-token "
         "kernel-launch overhead rather than arithmetic, so the cache brings no gain there.",
@@ -97,8 +97,39 @@ def inference_section(repo: str, bench: dict, kv: dict, quant: dict | None) -> s
     return "\n".join(out)
 
 
+def safety_section(repo: str, safety: dict) -> str:
+    me, ref = safety["models"][repo], safety["models"]["gpt2 (reference)"]
+
+    def row(name: str, m: dict) -> str:
+        lo, hi = m["toxicity_mean_ci95"]
+        slo, shi = m["toxic_share_ci95"]
+        return (f"| {name} | {m['toxicity_mean']:.3f} [{lo:.3f}, {hi:.3f}] | {m['toxic_share_gt_0.5']:.1%} "
+                f"[{slo:.1%}, {shi:.1%}] | {m['pii_shaped_share']:.1%} | {m['redaction_placeholder_share']:.1%} |")
+
+    return "\n".join([
+        "- **Safety evaluation**: a basic screening only (`scripts/safety_eval_basic.py`, results in "
+        "`safety-eval-basic.json`), not a safety certification. Toxicity: 500 prompts sampled from the "
+        "\"challenging\" subset of RealToxicityPrompts (English; Gehman et al., 2020), one sampled continuation "
+        "of 32 tokens each (top-p 0.9), scored by `unitary/toxic-bert`. Personal data: 20 English/French prompts "
+        "inviting contact details × 10 samples, scanned with the project's PII detector (email, phone, IPv4, "
+        f"IBAN). The prompts themselves score {safety['prompt_mean_toxicity']:.2f} mean toxicity.",
+        "",
+        "| Model | Mean toxicity [95% CI] | Continuations with toxicity > 0.5 [95% CI] | PII-shaped outputs | Redaction placeholders (`<EMAIL>`…) |",
+        "|---|---:|---:|---:|---:|",
+        row(f"**{repo}**", me),
+        row("GPT-2 Small (same harness, reference)", ref),
+        "",
+        "Lower toxicity than GPT-2 is not evidence of safety: small or domain-specific models often produce less "
+        "fluent continuations, which classifiers score as less toxic. The PII probe detects strings shaped like "
+        "personal data; it does not check whether they belong to real people. Not covered: French toxicity (no "
+        "French-capable classifier with a compatible license was found), bias, memorization of training text, "
+        "jailbreaks. No instruction, preference or safety tuning was applied.",
+    ])
+
+
 def main() -> None:
     bench, kv, quant = load("inference-benchmark.json"), load("kv-cache-verification.json"), load("quantization-measurements.json")
+    safety = load("safety-eval-basic.json")
     family = (STAGE / "_shared-family-benchmarks.md").read_text(encoding="utf-8").strip()
     for card in sorted(STAGE.glob("slm-tavenel-*/README.md")):
         repo = card.parent.name
@@ -106,12 +137,17 @@ def main() -> None:
         text = re.sub(r"<!-- generated:inference -->.*?<!-- /generated:inference -->",
                       lambda _: "<!-- generated:inference -->\n" + inference_section(repo, bench, kv, quant)
                       + "\n<!-- /generated:inference -->", text, flags=re.S)
+        if safety is not None:
+            text = re.sub(r"<!-- generated:safety -->.*?<!-- /generated:safety -->",
+                          lambda _: "<!-- generated:safety -->\n" + safety_section(repo, safety)
+                          + "\n<!-- /generated:safety -->", text, flags=re.S)
         card.write_text(text, encoding="utf-8", newline="\n")
         for ext in ("png", "svg"):
             figure = STAGE / "figures" / f"{repo}-observability.{ext}"
             if figure.exists():
                 shutil.copy2(figure, card.parent / figure.name)
-        for name in ("inference-benchmark.json", "kv-cache-verification.json", "quantization-measurements.json"):
+        for name in ("inference-benchmark.json", "kv-cache-verification.json", "quantization-measurements.json",
+                     "safety-eval-basic.json"):
             if (STAGE / name).exists():
                 shutil.copy2(STAGE / name, card.parent / name)
         for name in ("hf_model.py", "hf_config.py"):

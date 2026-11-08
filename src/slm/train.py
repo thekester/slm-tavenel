@@ -30,6 +30,7 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from slm import interp
 from slm.config import ModelConfig, TrainConfig, config_hash, load_model_config
 from slm.energy import GpuEnergyMeter
+from slm.goodview import GoodViewHead, ParallelPairs, goodview_loss, masked_mean, parallel_ntp_loss
 from slm.data.shards import TokenShards
 from slm.model import SLM, document_ids
 from slm.hnet import HNet, HNetConfig
@@ -136,6 +137,8 @@ def build_model_and_optimizer(model_cfg: ModelConfig, cfg: TrainConfig, device: 
     model.activation_checkpointing = cfg.activation_checkpointing
     if cfg.jepa_weight:
         model.jepa_predictor = JEPAPredictor(model_cfg.d_model, model_cfg.vocab_size, cfg.jepa_predictor_hidden).to(device)
+    if cfg.parallel_mode == "goodview":
+        model.jepa_predictor = GoodViewHead(model_cfg.d_model, cfg.goodview_dim).to(device)
         model.keep_hidden = True
     # The optimizer copies the fp32 initial weights first, so master-weight offload keeps them exact.
     opt = build_optimizer(model, cfg.optimizer, cfg.lr, cfg.weight_decay, (cfg.beta1, cfg.beta2), cfg.eps,
@@ -366,6 +369,7 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
             torch.cuda.set_rng_state_all(state["cuda_rng"])
         start_step = state["step"]
 
+    parallel = ParallelPairs(cfg.parallel_data) if cfg.parallel_mode else None
     jepa_target = make_target(model) if cfg.jepa_weight else None
     jepa_ignore = int(train_data.manifest["eos_id"]) if jepa_target is not None else None
     if jepa_target is not None and resume_from is not None and "jepa_target" in state:
@@ -457,6 +461,7 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
         mir_loss_sum = 0.0
         kl_sum = 0.0
         jepa_sum = 0.0
+        parallel_stats: dict[str, float] = {}
         for micro in range(cfg.grad_accum_steps):
             rng = batch_rng(cfg.seed, step, rank, micro)
             x, y = train_data.sample(rng, cfg.micro_batch_size, cfg.seq_len)
@@ -494,6 +499,23 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
                                            ignore_action=jepa_ignore)
                     total_loss = total_loss + cfg.jepa_weight * j_loss
                     jepa_sum += j_loss.item()
+                if parallel is not None and micro == 0:
+                    # Once per update: one batch of translation pairs, weighted so that after the division
+                    # by grad_accum_steps below its gradient has weight parallel_weight.
+                    en, en_len, fr, fr_len = (torch.from_numpy(a.astype(np.int64)).to(device)
+                                              for a in parallel.sample(batch_rng(cfg.seed + 7, step, rank, 0),
+                                                                       cfg.parallel_batch))
+                    if cfg.parallel_mode == "goodview":
+                        model(en)
+                        z_en = model.jepa_predictor(masked_mean(model.last_hidden, en_len))
+                        model(fr)
+                        z_fr = model.jepa_predictor(masked_mean(model.last_hidden, fr_len))
+                        p_loss, parallel_stats = goodview_loss(z_en, z_fr, cfg.goodview_gamma, cfg.goodview_variant)
+                    else:
+                        p_loss = 0.5 * (parallel_ntp_loss(model(en)[0], en, en_len)
+                                        + parallel_ntp_loss(model(fr)[0], fr, fr_len))
+                    parallel_stats["parallel_loss"] = p_loss.item()
+                    total_loss = total_loss + cfg.grad_accum_steps * cfg.parallel_weight * p_loss
                 (total_loss / cfg.grad_accum_steps).backward()
             accumulate_gradients(opt)
             clean_loss_sum += loss.item()
@@ -532,6 +554,7 @@ def train(cfg: TrainConfig) -> dict[str, Any]:
                 record["distill_kl"] = round(kl_sum / cfg.grad_accum_steps, 5)
             if jepa_target is not None:
                 record["jepa_loss"] = round(jepa_sum / cfg.grad_accum_steps, 5)
+            record.update({k: round(v, 5) for k, v in parallel_stats.items()})
             if isinstance(model, HNet):
                 record.update({k: round(v, 5) for k, v in model.last_chunk_stats.items()})
             if cfg.peak_tflops > 0:

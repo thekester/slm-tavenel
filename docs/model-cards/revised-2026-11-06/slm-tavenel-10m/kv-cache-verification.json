@@ -1,0 +1,114 @@
+{
+  "kind": "slm.kv_cache_verification",
+  "torch": "2.10.0+cu130",
+  "transformers": "4.57.6",
+  "prompt_tokens": 128,
+  "new_tokens": 64,
+  "results": [
+    {
+      "repo": "athenista/slm-tavenel-1m",
+      "revision": "33ddccd588a693efeaceae9ae239fa0fbd0c94b6",
+      "max_abs_logit_diff_vs_published_code": 0.0,
+      "cpu": {
+        "identical_tokens_with_and_without_cache": true,
+        "no_cache_s": 0.413,
+        "cache_s": 0.224,
+        "no_cache_tokens_per_s": 155.0,
+        "cache_tokens_per_s": 286.1,
+        "speedup": 1.85
+      },
+      "cuda": {
+        "identical_tokens_with_and_without_cache": true,
+        "no_cache_s": 0.486,
+        "cache_s": 0.469,
+        "no_cache_tokens_per_s": 131.6,
+        "cache_tokens_per_s": 136.4,
+        "speedup": 1.04
+      }
+    },
+    {
+      "repo": "athenista/slm-tavenel-10m",
+      "revision": "9818b706a2a2467efb22848967a5842871f7422c",
+      "max_abs_logit_diff_vs_published_code": 0.0,
+      "cpu": {
+        "identical_tokens_with_and_without_cache": true,
+        "no_cache_s": 1.461,
+        "cache_s": 0.499,
+        "no_cache_tokens_per_s": 43.8,
+        "cache_tokens_per_s": 128.3,
+        "speedup": 2.93
+      },
+      "cuda": {
+        "identical_tokens_with_and_without_cache": true,
+        "no_cache_s": 1.034,
+        "cache_s": 1.044,
+        "no_cache_tokens_per_s": 61.9,
+        "cache_tokens_per_s": 61.3,
+        "speedup": 0.99
+      }
+    },
+    {
+      "repo": "athenista/slm-tavenel-25m",
+      "revision": "a34c08d1bd4b91a244f170ae26096ff059afc37a",
+      "max_abs_logit_diff_vs_published_code": 0.0,
+      "cpu": {
+        "identical_tokens_with_and_without_cache": true,
+        "no_cache_s": 3.279,
+        "cache_s": 0.993,
+        "no_cache_tokens_per_s": 19.5,
+        "cache_tokens_per_s": 64.5,
+        "speedup": 3.3
+      },
+      "cuda": {
+        "identical_tokens_with_and_without_cache": true,
+        "no_cache_s": 1.945,
+        "cache_s": 1.992,
+        "no_cache_tokens_per_s": 32.9,
+        "cache_tokens_per_s": 32.1,
+        "speedup": 0.98
+      }
+    },
+    {
+      "repo": "athenista/slm-tavenel-25m-hplt-10pct",
+      "revision": "d377cfb8cae4a6018ea44d9133da5f82dce6b4d3",
+      "max_abs_logit_diff_vs_published_code": 0.0,
+      "cpu": {
+        "identical_tokens_with_and_without_cache": true,
+        "no_cache_s": 3.431,
+        "cache_s": 1.002,
+        "no_cache_tokens_per_s": 18.7,
+        "cache_tokens_per_s": 63.9,
+        "speedup": 3.43
+      },
+      "cuda": {
+        "identical_tokens_with_and_without_cache": true,
+        "no_cache_s": 1.956,
+        "cache_s": 1.982,
+        "no_cache_tokens_per_s": 32.7,
+        "cache_tokens_per_s": 32.3,
+        "speedup": 0.99
+      }
+    },
+    {
+      "repo": "athenista/slm-tavenel-124m",
+      "revision": "a4ccf8189c738eab28ab5d78990974e98930b9a7",
+      "max_abs_logit_diff_vs_published_code": 0.0,
+      "cpu": {
+        "identical_tokens_with_and_without_cache": true,
+        "no_cache_s": 11.028,
+        "cache_s": 2.002,
+        "no_cache_tokens_per_s": 5.8,
+        "cache_tokens_per_s": 32.0,
+        "speedup": 5.51
+      },
+      "cuda": {
+        "identical_tokens_with_and_without_cache": true,
+        "no_cache_s": 2.787,
+        "cache_s": 2.637,
+        "no_cache_tokens_per_s": 23.0,
+        "cache_tokens_per_s": 24.3,
+        "speedup": 1.06
+      }
+    }
+  ]
+}

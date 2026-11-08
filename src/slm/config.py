@@ -138,6 +138,15 @@ class TrainConfig:
     # two jepa_state_tokens-long states around one action, predict the pooled latent of the next state
     jepa_mode: str = "token"
     jepa_state_tokens: int = 0
+    # Parallel-sentence auxiliary objective (slm.goodview, EXP-0043): "" disables; "goodview" adds a
+    # spectral-JEPA term on translation pairs; "ntp" adds next-token loss on the same sentences (control)
+    parallel_data: str = ""
+    parallel_mode: str = ""
+    parallel_weight: float = 0.1
+    parallel_batch: int = 128
+    goodview_dim: int = 64
+    goodview_gamma: float = 1.0
+    goodview_variant: str = "vicreg"  # "cov" = EXP-0043 v1 (collapsed), "vicreg" = amendment
     # Schedule: "wsd" (warmup-stable-decay) or "cosine"
     schedule: str = "wsd"
     warmup_steps: int = 20
@@ -189,6 +198,14 @@ class TrainConfig:
             raise ValueError("jepa_weight must be >= 0 and jepa_ema in (0, 1)")
         if self.jepa_weight and (self.mir or self.distill_teacher or self.master_weights_offload):
             raise ValueError("the JEPA objective is not combined with MIR, distillation or master-weight offload")
+        if self.parallel_mode not in ("", "goodview", "ntp") or bool(self.parallel_mode) != bool(self.parallel_data):
+            raise ValueError("parallel_mode must be '', 'goodview' or 'ntp', and is set together with parallel_data")
+        if self.parallel_mode and (self.jepa_weight or self.mir or self.distill_teacher or self.master_weights_offload):
+            raise ValueError("the parallel objective is not combined with JEPA, MIR, distillation or master-weight offload")
+        if self.goodview_variant not in ("cov", "vicreg"):
+            raise ValueError("goodview_variant must be 'cov' or 'vicreg'")
+        if self.parallel_mode and (self.parallel_weight < 0 or self.parallel_batch < 2 or self.goodview_dim < 1):
+            raise ValueError("parallel_weight must be >= 0, parallel_batch >= 2 and goodview_dim >= 1")
         if self.distill_teacher and self.mir:
             raise ValueError("distillation and MIR cannot be combined")
         if self.master_weights_offload and self.optimizer_offload:

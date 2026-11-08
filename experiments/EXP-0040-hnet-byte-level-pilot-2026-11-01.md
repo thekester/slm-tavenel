@@ -51,3 +51,42 @@ slower per nominal FLOP on this GPU.
 One seed; 75M scale (the paper's controlled gains are measured above ~200M); no Mamba-2; untuned
 H-Net learning rates (the BPE arm's settings are reused); the comparison is not a test of the 2-stage
 H-Net or of Cartesia's unreleased improved model.
+
+## Results (2026-11-07)
+
+Run `runs/EXP-0040-hnet-75m-muon` (1,500 updates, no instability; final grad_norm 0.07). Analysis
+`runs/EXP-0040-evaluations/paired-comparison.json` (paired bootstrap, 10,000 draws; positive = H-Net better).
+
+| Measure | BPE (EXP-0036a Muon) | H-Net (bytes) | BPE − H-Net [95% paired interval] |
+|---|---:|---:|---|
+| Held-out test BPB, all (30,824 docs) | 1.2592 | 1.3685 | −0.1094 [−0.1099, −0.1088] |
+| BPB English (25,395) / French (5,429) | 1.2400 / 1.3901 | 1.3504 / 1.4924 | −0.1104 / −0.1023 |
+| ARC-Easy acc | 0.421 | 0.334 | H-Net −0.087 [−0.108, −0.066] |
+| ARC-Challenge acc | 0.172 | 0.157 | −0.015 [−0.037, +0.006] |
+| HellaSwag acc | 0.264 | 0.276 | +0.011 [+0.006, +0.017] |
+| Belebele EN / FR acc | 0.290 / 0.308 | 0.291 / 0.298 | +0.001 / −0.010 (intervals include 0) |
+| WinoGrande acc | 0.504 | 0.501 | −0.002 [−0.035, +0.030] |
+| Learned bytes per chunk (target 4.42) | — | 3.66 (step 100) → 3.59 (500) → 3.46 (1,000) → 3.30 (1,500) | — |
+| Training throughput | ~11,800 tokens/s ≈ 52,000 bytes/s | ~24,000 bytes/s | H-Net ~2.2x slower in wall clock |
+
+**Verdict: the H-Net is not better at matched data; it is clearly worse** (+8.7% BPB, interval far from
+zero, in both languages; the French gap is not smaller than the English one, contrary to the
+"weak-tokenizer" prediction). It is also much worse on ARC-Easy and slightly better on HellaSwag.
+
+Deviations to report:
+- **Compression target missed.** The router settled on ~3.3 bytes per chunk instead of 4.42 and kept
+  drifting down, despite the ratio loss (weight 0.03, final value 1.03). The main network therefore
+  processed ~34% more positions per byte than planned, i.e. the H-Net received *more* compute than the
+  preregistered +4–7%, and still lost. A stronger ratio-loss weight would be needed to hold the target.
+- **Micro-batch fallback.** Training ran at micro-batch 1 × 36 accumulation steps (same effective batch as
+  planned) because the micro-batch-2 pilot failed on 2026-11-05 — due to a reshape bug in blocked local
+  attention on CUDA (fixed the same day), not to memory. The run was resumed from checkpoints several
+  times (PC shutdowns, a user pause).
+- **Energy.** GPU board energy was measured for steps 500–1,500 only (logging added on 2026-11-06):
+  197 Wh, about 50 W on average. The first 500 steps and the BPE control were not measured.
+
+Interpretation: at 75M and ~440M bytes, with attention instead of Mamba-2 in the byte layers and the BPE
+arm's learning rates, dynamic chunking does not pay off; the H-Net paper reports its controlled gains
+from ~200M parameters upward with tuned per-stage learning rates. This pilot does not test those
+conditions. Single seed. Next option (not started): 2–3 short runs with a stronger ratio loss
+(e.g. 0.1–0.3) to first make the router hit 4.42, before any larger H-Net.

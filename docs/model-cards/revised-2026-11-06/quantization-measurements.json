@@ -15,7 +15,7 @@
           "delta_bpb": 0.0,
           "top1_agreement": 1.0,
           "file_mb": 4.7,
-          "tokens_per_s": 334.2
+          "tokens_per_s": 250.4
         },
         {
           "variant": "bfloat16",
@@ -24,7 +24,7 @@
           "delta_bpb": 0.0001,
           "top1_agreement": 0.9798,
           "file_mb": 2.4,
-          "tokens_per_s": 131.6
+          "tokens_per_s": 113.3
         },
         {
           "variant": "int8-dynamic",
@@ -34,7 +34,7 @@
           "top1_agreement": 0.8986,
           "file_mb": 4.3,
           "file_note": "in-memory size estimate; not saved as a file",
-          "tokens_per_s": 149.4
+          "tokens_per_s": 129.7
         }
       ]
     },
@@ -48,7 +48,7 @@
           "delta_bpb": 0.0,
           "top1_agreement": 1.0,
           "file_mb": 39.9,
-          "tokens_per_s": 106.8
+          "tokens_per_s": 103.6
         },
         {
           "variant": "bfloat16",
@@ -57,7 +57,7 @@
           "delta_bpb": 0.0002,
           "top1_agreement": 0.9876,
           "file_mb": 20.0,
-          "tokens_per_s": 54.4
+          "tokens_per_s": 53.8
         },
         {
           "variant": "int8-dynamic",
@@ -67,7 +67,7 @@
           "top1_agreement": 0.8572,
           "file_mb": 18.4,
           "file_note": "in-memory size estimate; not saved as a file",
-          "tokens_per_s": 57.3
+          "tokens_per_s": 58.3
         }
       ]
     },
@@ -81,7 +81,7 @@
           "delta_bpb": 0.0,
           "top1_agreement": 1.0,
           "file_mb": 102.9,
-          "tokens_per_s": 62.0
+          "tokens_per_s": 57.6
         },
         {
           "variant": "bfloat16",
@@ -90,7 +90,7 @@
           "delta_bpb": 0.0002,
           "top1_agreement": 0.9871,
           "file_mb": 51.5,
-          "tokens_per_s": 28.9
+          "tokens_per_s": 28.2
         },
         {
           "variant": "int8-dynamic",
@@ -100,7 +100,7 @@
           "top1_agreement": 0.847,
           "file_mb": 34.2,
           "file_note": "in-memory size estimate; not saved as a file",
-          "tokens_per_s": 16.4
+          "tokens_per_s": 28.5
         }
       ]
     },
@@ -114,7 +114,7 @@
           "delta_bpb": 0.0,
           "top1_agreement": 1.0,
           "file_mb": 102.9,
-          "tokens_per_s": 26.4
+          "tokens_per_s": 59.2
         },
         {
           "variant": "bfloat16",
@@ -123,7 +123,7 @@
           "delta_bpb": 0.0002,
           "top1_agreement": 0.9863,
           "file_mb": 51.5,
-          "tokens_per_s": 22.3
+          "tokens_per_s": 29.2
         },
         {
           "variant": "int8-dynamic",
@@ -133,7 +133,7 @@
           "top1_agreement": 0.8434,
           "file_mb": 34.2,
           "file_note": "in-memory size estimate; not saved as a file",
-          "tokens_per_s": 29.3
+          "tokens_per_s": 22.7
         }
       ]
     },
@@ -147,7 +147,7 @@
           "delta_bpb": 0.0,
           "top1_agreement": 1.0,
           "file_mb": 496.2,
-          "tokens_per_s": 31.5
+          "tokens_per_s": 29.8
         },
         {
           "variant": "bfloat16",
@@ -156,7 +156,7 @@
           "delta_bpb": 0.0001,
           "top1_agreement": 0.9859,
           "file_mb": 248.1,
-          "tokens_per_s": 22.2
+          "tokens_per_s": 21.6
         },
         {
           "variant": "int8-dynamic",
@@ -166,7 +166,7 @@
           "top1_agreement": 0.7562,
           "file_mb": 237.4,
           "file_note": "in-memory size estimate; not saved as a file",
-          "tokens_per_s": 19.4
+          "tokens_per_s": 19.1
         }
       ]
     }

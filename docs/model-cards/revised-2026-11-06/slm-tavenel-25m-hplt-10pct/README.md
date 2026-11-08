@@ -46,6 +46,8 @@ model-index:
 
 # SLM-Tavenel 25M HPLT 10% continuation
 
+> **Project links:** [SLM-Tavenel overview](https://github.com/thekester/slm-tavenel#slm-tavenel) · [published model catalog](https://github.com/thekester/slm-tavenel#published-models) · [research and reproducibility archive](https://github.com/thekester/slm-tavenel#research-and-reproducibility). This card describes this checkpoint; the repository overview links the related models and broader experiment record.
+
 **Experimental English/French base model (25.7M parameters), adapted to an HPLT-derived web mixture.**
 It continues the published SLM-Tavenel 25M for 1,500 steps on a frozen 90% French-Science-Commons /
 10% HPLT-derived token mixture. A separate variant: it does not replace the 25M checkpoint. Not
@@ -140,6 +142,38 @@ checkpoints, it is not a ranking of recipes.
 ## Local inference
 
 <!-- generated:inference -->
+Measured on NVIDIA GeForce RTX 4060 Laptop GPU (8 GB) and an Intel Core i7-12650H (10 cores, 68 GB RAM), Windows 11, Python 3.11.9, PyTorch 2.10.0+cu130, Transformers 4.57.6. Protocol: batch size 1, 128-token prompt, greedy decoding of exactly 64 new tokens, one warm-up run, median of timed runs (`scripts/benchmark_card_inference.py`, `scripts/verify_kv_cache_release.py`; raw results in `inference-benchmark.json` and `kv-cache-verification.json`).
+
+**Generation speed, with and without the KV cache** (generated tokens per second):
+
+| Device | Without cache | With KV cache | Speed-up | Same tokens with and without cache |
+|---|---:|---:|---:|---|
+| CPU, float32 | 18.7 | 63.9 | ×3.43 | yes |
+| GPU, float32 | 32.7 | 32.3 | ×0.99 | yes |
+
+Cached generation gives the same logits as a full-prefix, no-cache reference (maximum absolute difference 0) and the same greedy tokens with and without the cache. It speeds up CPU generation; on this GPU, small models are limited by per-token kernel-launch overhead rather than arithmetic, so the cache brings no gain there.
+
+**Latency and memory** (code without cache, as first published):
+
+| Device | Weights dtype | Prefill, 128 tokens (≈ time to first token) | 64 new tokens, total | Peak process RAM | Peak allocated VRAM |
+|---|---|---:|---:|---:|---:|
+| CPU | float32 | 45.2 ms | 3.52 s | 0.94 GB | — |
+| GPU | float32 | 30.3 ms | 1.87 s | 1.36 GB | 119 MB |
+| GPU | bfloat16 | 31.7 ms | 2.19 s | 1.55 GB | 64 MB |
+
+Peak process RAM includes the Python and PyTorch runtime (about 0.8 GB on CPU, 1.35 GB once CUDA is initialized), so it overstates the model's own footprint.
+
+**Reduced-precision variants** (`scripts/quantize_and_measure.py`, `quantization-measurements.json`). Quality on one fixed text sample (first 100 English + 100 French documents of the SLM-Tavenel corpus-v2 held-out test split; only the change against float32 is meaningful):
+
+| Variant | Device | Weights size | BPB on the sample | Change vs float32 | Next-token top-1 agreement with float32 | Tokens/s (KV cache) |
+|---|---|---:|---:|---:|---:|---:|
+| float32 | CPU | 102.9 MB | 1.3481 | +0.0000 | 100.0% | 59.2 |
+| bfloat16 | GPU | 51.5 MB | 1.3483 | +0.0002 | 98.6% | 29.2 |
+| int8-dynamic | CPU | 34.2 MB (in memory) | 1.3743 | +0.0262 | 84.3% | 22.7 |
+
+`bfloat16`: weights cast to bfloat16 (`variants/bf16/`, half the file size). `int8-dynamic`: PyTorch dynamic quantization of every linear layer, applied at load time on CPU (`torch.ao.quantization.quantize_dynamic(model, {torch.nn.Linear}, dtype=torch.qint8)`); it is not stored as a file. No 4-bit, GGUF or bitsandbytes variant has been produced or measured.
+
+Single machine, single session: treat the timings as indicative.
 <!-- /generated:inference -->
 
 ## Use
@@ -160,7 +194,7 @@ print(tokenizer.decode(model.generate(**inputs, max_new_tokens=48, do_sample=Fal
 ```
 
 Tested here with PyTorch 2.10.0 and Transformers 4.57.6. `trust_remote_code=True` is required (custom
-architecture; `hf_model.py`, `hf_config.py`; read it before running). Generation uses a KV cache (added 2026-11-06, verified token-identical to the original cache-free code); pass use_cache=False to recompute the full prefix.
+architecture; `hf_model.py`, `hf_config.py`; read it before running). The revision pinned above already contains the KV-cache implementation used for the measurements in Local inference. The cache was checked against uncached generation for this checkpoint; see the recorded logits and token-equivalence results.
 
 ## Architecture
 
@@ -199,8 +233,16 @@ reconstructed.
 
 - **Intended**: research on domain adaptation by data mixture, small-model training and provenance.
 - **Out of scope**: chat or assistant use, factual advice, decisions about people, any consequential use.
-- **Safety evaluation**: **none was performed** (no toxicity, bias, privacy-leakage or red-team
-  evaluation). Web-derived continuation data may raise the chance of reproducing web content.
+<!-- generated:safety -->
+- **Safety evaluation**: a basic screening only (`scripts/safety_eval_basic.py`, results in `safety-eval-basic.json`), not a safety certification. Toxicity: 500 prompts sampled from the "challenging" subset of RealToxicityPrompts (English; Gehman et al., 2020), one sampled continuation of 32 tokens each (top-p 0.9), scored by `unitary/toxic-bert`. Personal data: 20 English/French prompts inviting contact details × 10 samples, scanned with the project's PII detector (email, phone, IPv4, IBAN). The prompts themselves score 0.77 mean toxicity.
+
+| Model | Mean toxicity [95% CI] | Continuations with toxicity > 0.5 [95% CI] | PII-shaped outputs | Redaction placeholders (`<EMAIL>`…) |
+|---|---:|---:|---:|---:|
+| **slm-tavenel-25m-hplt-10pct** | 0.107 [0.084, 0.132] | 9.6% [7.2%, 12.2%] | 0.0% | 0.0% |
+| GPT-2 Small (same harness, reference) | 0.417 [0.378, 0.455] | 42.2% [38.0%, 46.6%] | 21.0% | 0.0% |
+
+Lower toxicity than GPT-2 is not evidence of safety: small or domain-specific models often produce less fluent continuations, which classifiers score as less toxic. The PII probe detects strings shaped like personal data; it does not check whether they belong to real people. Not covered: French toxicity (no French-capable classifier with a compatible license was found), bias, memorization of training text, jailbreaks. No instruction, preference or safety tuning was applied.
+<!-- /generated:safety -->
 
 ## Data, licenses and privacy
 
