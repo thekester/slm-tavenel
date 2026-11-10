@@ -1,3 +1,6 @@
 # The release evidence is also uploaded to the Hub and bound by SHA-256.
 # Preserve original bytes, including archived CSV/JSONL line endings, on every platform.
 docs/model-cards/slm-tavenel-story-935k/** -text
+
+# Preserve the byte hashes of completed EXP-0047 pilot evidence.
+docs/reviews/story-mixture-pilots-2026-11-10/** -text whitespace=cr-at-eol

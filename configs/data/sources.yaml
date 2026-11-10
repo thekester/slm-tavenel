@@ -14,6 +14,50 @@
 # open questions are a starting point for review, not conclusions.
 
 sources:
+  - id: tinystories-train-exp0047
+    name: TinyStories official train shard, local controlled story-mixture research
+    url: https://huggingface.co/datasets/roneneldan/TinyStories
+    role: pretrain
+    license: CDLA-Sharing-1.0
+    license_url: https://huggingface.co/datasets/roneneldan/TinyStories/blob/f54c09fd23315a6f9c86f9dc80f725de7d8f9c64/README.md
+    status: candidate
+    revision: f54c09fd23315a6f9c86f9dc80f725de7d8f9c64
+    subset: data/train-00000-of-00004-2d5a1467fff1081b.parquet
+    attribution: Eldan and Li (2023), TinyStories, arXiv:2305.07759
+    languages: [en]
+    domains: [stories]
+    review:
+      provenance_verified: true
+      license_verified: false
+      pii_reviewed: false
+      notes: >-
+        User authorized local story-model improvement experiments on 2026-11-10.
+        The pinned card declares CDLA-Sharing-1.0 and GPT-3.5/GPT-4 generation.
+        Official validation remains evaluation-only and is excluded by normalized text hash.
+        Local experimental use is explicitly recorded; this does not approve the core corpus
+        or authorize automatic publication of newly trained checkpoints.
+
+  - id: simple-stories-en-exp0047
+    name: SimpleStories English, two pinned training shards for controlled story-mixture pilots
+    url: https://huggingface.co/datasets/SimpleStories/SimpleStories
+    role: pretrain
+    license: MIT
+    license_url: https://huggingface.co/datasets/SimpleStories/SimpleStories/blob/e63b8adc3b1a1bdc7cac5b500d150b71346b0628/README.md
+    status: candidate
+    revision: e63b8adc3b1a1bdc7cac5b500d150b71346b0628
+    subset: data/train-00000-of-00007.parquet; data/train-00001-of-00007.parquet
+    languages: [en]
+    domains: [stories]
+    review:
+      provenance_verified: true
+      license_verified: false
+      pii_reviewed: false
+      notes: >-
+        Expanded local research pool; same declared MIT and historical generation-term
+        uncertainties as EXP-0045. Completion-group-disjoint partitions exclude the old dev.
+        Public authorization for the exact EXP-0045 weights is not reused as approval of
+        these new checkpoints. Source remains candidate; no automatic publication.
+
   - id: tinystories-validation-story935k
     name: TinyStories official validation, frozen story-model comparison
     url: https://huggingface.co/datasets/roneneldan/TinyStories

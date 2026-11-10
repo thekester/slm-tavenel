@@ -1,0 +1,95 @@
+{
+  "archive_script_sha256": "6d6d3332fd68b3334af8d5bd65cdcc753488f386953af78f67a785b9995a672d",
+  "files": {
+    "frozen-inputs.json": {
+      "sha256": "988ec2c2f16cb04727500d20504fb7ceccf42356b78c73ff425e9921274f63e1"
+    },
+    "published-story935k-simple-items.jsonl.gz": {
+      "documents": 512,
+      "reconstructed_bpb": 0.9397550730539835,
+      "sha256": "d1acc6a74752fcf737569737082b969c6f455dd2e58306c3913474a04278aa8c",
+      "uncompressed_sha256": "5f96a43dceee6307b3d3745b19ea11b3d14b1eb5eb73ff62f3d9afeb064072c1"
+    },
+    "published-story935k-tiny-items.jsonl.gz": {
+      "documents": 512,
+      "reconstructed_bpb": 1.547576405822015,
+      "sha256": "a21d5065fada59d73a4d6e952144146a0cfa4f7f0560c56b608fd501a739c94e",
+      "uncompressed_sha256": "c53193c9de61ef99813a733351df5e4d928acd3df62106cf905ae90c2c76ad8d"
+    },
+    "selection.json": {
+      "sha256": "44046d321ac266069292b57b494966f332de55353e3cba3b522023294af8dd87"
+    },
+    "tiny00-100m-s421201-eval.jsonl": {
+      "sha256": "4f7e5876caa705d34ae5e7e92c992942da7c55df5b0ba644ab45bf25cc140c2b"
+    },
+    "tiny00-100m-s421201-metrics.jsonl": {
+      "sha256": "5a2f6e946bd639279aff523c02a4b3323303b3095a93630c4fe930485e28a5cd"
+    },
+    "tiny00-100m-s421201-simple-items.jsonl.gz": {
+      "documents": 512,
+      "reconstructed_bpb": 0.9396260604516893,
+      "sha256": "418c01b7a05889e137ca5d53d4e53c0bfe3938e68eb6564b8821efbfb506092c",
+      "uncompressed_sha256": "39992b16fb73555404fecac6ab1f084deb8ad7e90fab8c59de40b749ae66eaa8"
+    },
+    "tiny00-100m-s421201-tiny-items.jsonl.gz": {
+      "documents": 512,
+      "reconstructed_bpb": 1.529222597194373,
+      "sha256": "1e860190333a10fa892a49b80a1321588249dda8cdfc8c0d9d7a8e63a1f9a1ee",
+      "uncompressed_sha256": "74abba539ccf5991e1e12b65d913f49d54729fa575c3fc8bb0b557eca5229fdf"
+    },
+    "tiny1m-simple-items.jsonl.gz": {
+      "documents": 512,
+      "reconstructed_bpb": 1.6434126687318178,
+      "sha256": "cccf6d6ee846bcf926b2a4391cb351c531dc43d612b4978dff557b4bc2869b00",
+      "uncompressed_sha256": "317f36f7c564ee86a83c9ce0e04f893edc7fe307038f2a393a127086f1d63f9b"
+    },
+    "tiny1m-tiny-items.jsonl.gz": {
+      "documents": 512,
+      "reconstructed_bpb": 1.055680481336371,
+      "sha256": "846c0ede156ba26b8952091664c09c7dfdd38b89fe886e7554d0668a93f6701f",
+      "uncompressed_sha256": "f4ca78efcc7cf8db12073f653f88af2a74e106671199159899007006fd9fd39c"
+    },
+    "tiny30-100m-s421201-eval.jsonl": {
+      "sha256": "dd755338cd4d94f9745b59979df51320cf6c0e538f7d1d17dccb6462fe2dfe4b"
+    },
+    "tiny30-100m-s421201-metrics.jsonl": {
+      "sha256": "6e5272eea3b988a05600cb731060879103be2918c4826a955156d73ffcd9c9ac"
+    },
+    "tiny30-100m-s421201-simple-items.jsonl.gz": {
+      "documents": 512,
+      "reconstructed_bpb": 0.9745305516162959,
+      "sha256": "178c0af497519a4bad342aa72fd57e002c719254455959da8cd4f762e116b4cf",
+      "uncompressed_sha256": "9d159e4bc0b7a5d60b5ed798ce9707597b07ababed062c4c9df8e213b77d8f65"
+    },
+    "tiny30-100m-s421201-tiny-items.jsonl.gz": {
+      "documents": 512,
+      "reconstructed_bpb": 0.986587790664594,
+      "sha256": "0f64615e4fed393d8f2681c1a0b678bf3d64284d47544e72867704c6a260df85",
+      "uncompressed_sha256": "e8c3b9288a939ada8d2058b606718a6d0eacf853b211f0458950416710eab968"
+    },
+    "tiny60-100m-s421201-eval.jsonl": {
+      "sha256": "38d8daef030d59fb739067b1fb67c3ff67d782cb3b7e9dac81a726a8e2029c17"
+    },
+    "tiny60-100m-s421201-metrics.jsonl": {
+      "sha256": "c5932907c21b9484c6a15d07cbc81853fe2f81c8bb359d420564fe66d899913a"
+    },
+    "tiny60-100m-s421201-simple-items.jsonl.gz": {
+      "documents": 512,
+      "reconstructed_bpb": 1.014044632711636,
+      "sha256": "0e1e39239357a7cac9581c6013dd378ad2ccaabffb263280b3f96a53b32736aa",
+      "uncompressed_sha256": "d55a3826ce52f396bc0bf2304dc959102c2e7fb472f401aea0b40966ffcb9e18"
+    },
+    "tiny60-100m-s421201-tiny-items.jsonl.gz": {
+      "documents": 512,
+      "reconstructed_bpb": 0.9071317550817206,
+      "sha256": "1012e6fcba97138e994473bc46dc1af460d1b56848c4697c9c93098960737f4c",
+      "uncompressed_sha256": "db18cd663d6700539f3bfbf03293aad9dcf5d8580e04e42b61a84c1105915b95"
+    }
+  },
+  "followup": "300M run was still in progress when this completed-pilot evidence was archived",
+  "kind": "slm.exp0047.completed_100m_pilots",
+  "new_weights_published": false,
+  "reserved_test": "unscored and not included",
+  "scope": "512 development stories per corpus; one training seed; selection on dev; reference training exposure unknown; no human coherence claim",
+  "training_code": "Original run's frozen-inputs.json retains dirty-worktree provenance; Git publication is subsequent to execution"
+}

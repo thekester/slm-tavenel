@@ -1,0 +1,94 @@
+{
+  "kind": "slm.exp0047.preflight",
+  "date": "2026-11-10",
+  "audit": {
+    "audit_script_sha256": "c7794617d0bd40843f370610b1a6b771272d713c130162029eec90a5f00695e1",
+    "blocked_text_matches": 0,
+    "counts": {
+      "simple_dev": 512,
+      "simple_test": 1000,
+      "simple_train": 150000,
+      "tiny_dev": 512,
+      "tiny_test": 1000,
+      "tiny_train": 150000
+    },
+    "group_split_leakage": 0,
+    "limits": "Hash/group audit only; no semantic privacy or rights clearance. Test read only for integrity audit, never scored or selected on.",
+    "manifest_sha256": "a05f4c2548cc0fba1342924893cf52b348b45fb9ae5a1ab4c07a82c08aeb1f7d",
+    "normalized_duplicates": 0,
+    "old_train_matches_in_new_holdouts": 0,
+    "passed": true
+  },
+  "exclusions": {
+    "simple_duplicate_excluded": 2,
+    "simple_old_dev_or_official_validation_excluded": 7830,
+    "tiny_duplicate_excluded": 20250,
+    "tiny_invalid": 56,
+    "tiny_old_dev_or_official_validation_excluded": 1550
+  },
+  "source_files": [
+    {
+      "file": "data/train-00000-of-00007.parquet",
+      "repo": "SimpleStories/SimpleStories",
+      "revision": "e63b8adc3b1a1bdc7cac5b500d150b71346b0628",
+      "sha256": "ca33531b99f3bebb4125e82f56017c223a4900331b55bcf7cde1b0f750d88fd4"
+    },
+    {
+      "file": "data/train-00001-of-00007.parquet",
+      "repo": "SimpleStories/SimpleStories",
+      "revision": "e63b8adc3b1a1bdc7cac5b500d150b71346b0628",
+      "sha256": "eac50d3053e1b68345061edbe5aebd90062b5ff4a77d7002ca4c5580360c7664"
+    },
+    {
+      "file": "data/train-00000-of-00004-2d5a1467fff1081b.parquet",
+      "repo": "roneneldan/TinyStories",
+      "revision": "f54c09fd23315a6f9c86f9dc80f725de7d8f9c64",
+      "sha256": "77cf780cebe52b6e83e3a2ac84bc56d8059363113e41d17a023f1d8b2ed0fc0b"
+    }
+  ],
+  "partitions": {
+    "simple": {
+      "dev": {
+        "documents": 512,
+        "eligible_documents": 9055,
+        "path": "data\\processed\\exp0047-story-mix\\simple-dev.jsonl",
+        "sha256": "a3e8a01a8641c87d746cd057df8eb5e039476f1368a4c515c3911b8dc8a05848"
+      },
+      "test": {
+        "documents": 1000,
+        "eligible_documents": 13393,
+        "path": "data\\processed\\exp0047-story-mix\\simple-test.jsonl",
+        "sha256": "41a49f0544018571a00d4c707ba08fa96be27f09b12447654af544803e319138"
+      },
+      "train": {
+        "documents": 150000,
+        "eligible_documents": 574206,
+        "path": "data\\processed\\exp0047-story-mix\\simple-train.jsonl",
+        "sha256": "371c9a2bef8a74d00bd8b765818666d5351e988b86ad6b97ecfbd3603c706776"
+      }
+    },
+    "tiny": {
+      "dev": {
+        "documents": 512,
+        "eligible_documents": 10298,
+        "path": "data\\processed\\exp0047-story-mix\\tiny-dev.jsonl",
+        "sha256": "4dc2613692866f4aeaabafdc46321d8c072a53805c3c8f71859b17d5949ae50e"
+      },
+      "test": {
+        "documents": 1000,
+        "eligible_documents": 15185,
+        "path": "data\\processed\\exp0047-story-mix\\tiny-test.jsonl",
+        "sha256": "d9791dc73d720e398bcc1127f65ddbe276002192f86fc79b16e45d4006595d02"
+      },
+      "train": {
+        "documents": 150000,
+        "eligible_documents": 482591,
+        "path": "data\\processed\\exp0047-story-mix\\tiny-train.jsonl",
+        "sha256": "92db2fa94fa75c0da8c2d1ce1458d77b64549d5902cc3bd7480f13ba93b1ea07"
+      }
+    }
+  },
+  "tokenizer": "existing EXP-0045 1024-token byte-level BPE; frozen across all arms",
+  "parameter_cap": 935040,
+  "scope": "Preparation evidence only; no performance improvement or human narrative result established."
+}

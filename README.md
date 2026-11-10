@@ -23,6 +23,8 @@ The **[SLM-Tavenel Story 935K research preview](docs/model-cards/slm-tavenel-sto
 
 The [cross-source follow-up](docs/reviews/story-validation-followup-2026-11-10.md) shows a domain reversal: Story 935K has lower BPB on SimpleStories dev (**0.937 vs 1.670**), while tiny1m has lower BPB on the full TinyStories validation (**1.045 vs 1.543**). Human blind ratings remain pending; neither likelihood result establishes better narrative coherence.
 
+[EXP-0047](experiments/EXP-0047-story-mixtures-935k.md) compares mixed story training at the same 935,040 parameters, with a fixed tokenizer and equal-budget pilots. On new 512-story dev sets, the selected 60% TinyStories pilot scores **1.014 / 0.907 BPB** on SimpleStories / TinyStories, versus **1.643 / 1.056** for tiny1m. Its SimpleStories BPB is worse than the published SLM-Tavenel baseline's **0.940**. These are single-seed development results with unknown reference exposure, not a confirmed benchmark or human narrative win. The 300M-token follow-up is in progress; the published checkpoint is unchanged.
+
 ## Current research result
 
 The main controlled study is [EXP-0010](experiments/EXP-0010-1m-paired-replication-2026-10-22.md). It compares ten matched training-seed pairs of the 1.18M gated model and a corresponding ungated model, holding initialization and data order fixed. On the preregistered English/French held-out bits-per-byte outcome, the gate reduced BPB by **0.0275** (95% hierarchical interval **0.0168–0.0395**) for this corpus, tokenizer, architecture, and one-pass budget.

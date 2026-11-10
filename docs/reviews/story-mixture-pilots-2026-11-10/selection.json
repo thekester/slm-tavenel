@@ -1,0 +1,153 @@
+{
+  "confirmation": "pending; one training seed, development selection, no human ratings",
+  "results": {
+    "published-story935k": {
+      "corpora": {
+        "simple": {
+          "bits_per_byte": 0.9397550730539835,
+          "bytes": 630116,
+          "documents": 512,
+          "input_sha256": "a3e8a01a8641c87d746cd057df8eb5e039476f1368a4c515c3911b8dc8a05848",
+          "items_sha256": "5f96a43dceee6307b3d3745b19ea11b3d14b1eb5eb73ff62f3d9afeb064072c1",
+          "tokens": 208587
+        },
+        "tiny": {
+          "bits_per_byte": 1.547576405822015,
+          "bytes": 468551,
+          "documents": 512,
+          "input_sha256": "4dc2613692866f4aeaabafdc46321d8c072a53805c3c8f71859b17d5949ae50e",
+          "items_sha256": "c53193c9de61ef99813a733351df5e4d928acd3df62106cf905ae90c2c76ad8d",
+          "tokens": 170751
+        }
+      },
+      "fingerprint": {
+        "frozen_inputs_sha256": "988ec2c2f16cb04727500d20504fb7ceccf42356b78c73ff425e9921274f63e1",
+        "weights_sha256": "8804d57668ac492454d9835841ff2a57f7867dbcbb36df4452ffedfa8813c9a8"
+      },
+      "model": "published-story935k",
+      "parameters": 935040,
+      "protocol": "Existing bits_per_byte, CPU float32, own BOS/EOS prefix, nonoverlapping 256-token chunks; byte-weighted corpus BPB",
+      "scope": "Development only. Reference exposure to source train is unknown. Native candidates vs rounded public weights. Not a narrative-quality verdict.",
+      "selection_mean_bpb": 1.2436657394379993
+    },
+    "tiny00-100m-s421201": {
+      "corpora": {
+        "simple": {
+          "bits_per_byte": 0.9396260604516893,
+          "bytes": 630116,
+          "documents": 512,
+          "input_sha256": "a3e8a01a8641c87d746cd057df8eb5e039476f1368a4c515c3911b8dc8a05848",
+          "items_sha256": "39992b16fb73555404fecac6ab1f084deb8ad7e90fab8c59de40b749ae66eaa8",
+          "tokens": 208587
+        },
+        "tiny": {
+          "bits_per_byte": 1.529222597194373,
+          "bytes": 468551,
+          "documents": 512,
+          "input_sha256": "4dc2613692866f4aeaabafdc46321d8c072a53805c3c8f71859b17d5949ae50e",
+          "items_sha256": "74abba539ccf5991e1e12b65d913f49d54729fa575c3fc8bb0b557eca5229fdf",
+          "tokens": 170751
+        }
+      },
+      "fingerprint": {
+        "frozen_inputs_sha256": "988ec2c2f16cb04727500d20504fb7ceccf42356b78c73ff425e9921274f63e1",
+        "weights_sha256": "e3bea2defae185b3c60b088c4d32b679278e8640dacc62bf1a37e776327539b8"
+      },
+      "model": "tiny00-100m-s421201",
+      "parameters": 935040,
+      "protocol": "Existing bits_per_byte, CPU float32, own BOS/EOS prefix, nonoverlapping 256-token chunks; byte-weighted corpus BPB",
+      "scope": "Development only. Reference exposure to source train is unknown. Native candidates vs rounded public weights. Not a narrative-quality verdict.",
+      "selection_mean_bpb": 1.2344243288230312
+    },
+    "tiny1m": {
+      "corpora": {
+        "simple": {
+          "bits_per_byte": 1.6434126687318178,
+          "bytes": 630116,
+          "documents": 512,
+          "input_sha256": "a3e8a01a8641c87d746cd057df8eb5e039476f1368a4c515c3911b8dc8a05848",
+          "items_sha256": "317f36f7c564ee86a83c9ce0e04f893edc7fe307038f2a393a127086f1d63f9b",
+          "tokens": 342231
+        },
+        "tiny": {
+          "bits_per_byte": 1.055680481336371,
+          "bytes": 468551,
+          "documents": 512,
+          "input_sha256": "4dc2613692866f4aeaabafdc46321d8c072a53805c3c8f71859b17d5949ae50e",
+          "items_sha256": "f4ca78efcc7cf8db12073f653f88af2a74e106671199159899007006fd9fd39c",
+          "tokens": 233959
+        }
+      },
+      "fingerprint": {
+        "frozen_inputs_sha256": "988ec2c2f16cb04727500d20504fb7ceccf42356b78c73ff425e9921274f63e1",
+        "weights_sha256": "f30ae85c53797b5944da7f235162756b31987233b44eac36ed449afd1b82523b"
+      },
+      "model": "tiny1m",
+      "parameters": 935040,
+      "protocol": "Existing bits_per_byte, CPU float32, own BOS/EOS prefix, nonoverlapping 256-token chunks; byte-weighted corpus BPB",
+      "scope": "Development only. Reference exposure to source train is unknown. Native candidates vs rounded public weights. Not a narrative-quality verdict.",
+      "selection_mean_bpb": 1.3495465750340943
+    },
+    "tiny30-100m-s421201": {
+      "corpora": {
+        "simple": {
+          "bits_per_byte": 0.9745305516162959,
+          "bytes": 630116,
+          "documents": 512,
+          "input_sha256": "a3e8a01a8641c87d746cd057df8eb5e039476f1368a4c515c3911b8dc8a05848",
+          "items_sha256": "9d159e4bc0b7a5d60b5ed798ce9707597b07ababed062c4c9df8e213b77d8f65",
+          "tokens": 208587
+        },
+        "tiny": {
+          "bits_per_byte": 0.986587790664594,
+          "bytes": 468551,
+          "documents": 512,
+          "input_sha256": "4dc2613692866f4aeaabafdc46321d8c072a53805c3c8f71859b17d5949ae50e",
+          "items_sha256": "e8c3b9288a939ada8d2058b606718a6d0eacf853b211f0458950416710eab968",
+          "tokens": 170751
+        }
+      },
+      "fingerprint": {
+        "frozen_inputs_sha256": "988ec2c2f16cb04727500d20504fb7ceccf42356b78c73ff425e9921274f63e1",
+        "weights_sha256": "f07f88eded998d0c657d14b2f07b3a593925336bb0a5d16d4c84f5cc2c1f986b"
+      },
+      "model": "tiny30-100m-s421201",
+      "parameters": 935040,
+      "protocol": "Existing bits_per_byte, CPU float32, own BOS/EOS prefix, nonoverlapping 256-token chunks; byte-weighted corpus BPB",
+      "scope": "Development only. Reference exposure to source train is unknown. Native candidates vs rounded public weights. Not a narrative-quality verdict.",
+      "selection_mean_bpb": 0.9805591711404449
+    },
+    "tiny60-100m-s421201": {
+      "corpora": {
+        "simple": {
+          "bits_per_byte": 1.014044632711636,
+          "bytes": 630116,
+          "documents": 512,
+          "input_sha256": "a3e8a01a8641c87d746cd057df8eb5e039476f1368a4c515c3911b8dc8a05848",
+          "items_sha256": "d55a3826ce52f396bc0bf2304dc959102c2e7fb472f401aea0b40966ffcb9e18",
+          "tokens": 208587
+        },
+        "tiny": {
+          "bits_per_byte": 0.9071317550817206,
+          "bytes": 468551,
+          "documents": 512,
+          "input_sha256": "4dc2613692866f4aeaabafdc46321d8c072a53805c3c8f71859b17d5949ae50e",
+          "items_sha256": "db18cd663d6700539f3bfbf03293aad9dcf5d8580e04e42b61a84c1105915b95",
+          "tokens": 170751
+        }
+      },
+      "fingerprint": {
+        "frozen_inputs_sha256": "988ec2c2f16cb04727500d20504fb7ceccf42356b78c73ff425e9921274f63e1",
+        "weights_sha256": "ea3926bf730e3cbd3d18d6aaaba44ef435a8b04e9d91eef049ce40882f0a32c3"
+      },
+      "model": "tiny60-100m-s421201",
+      "parameters": 935040,
+      "protocol": "Existing bits_per_byte, CPU float32, own BOS/EOS prefix, nonoverlapping 256-token chunks; byte-weighted corpus BPB",
+      "scope": "Development only. Reference exposure to source train is unknown. Native candidates vs rounded public weights. Not a narrative-quality verdict.",
+      "selection_mean_bpb": 0.9605881938966783
+    }
+  },
+  "rule": "minimum equal-corpus mean dev BPB across three 100M-token pilots; no test scores used",
+  "selected": "tiny60-100m-s421201",
+  "test": "reserved and unscored; unknown tiny1m exposure prevents claiming it is unseen by the reference"
+}
