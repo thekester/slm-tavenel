@@ -1,0 +1,151 @@
+{
+  "code": {
+    "commit": "facc3995e3bd95c32b1f699a1aacc38f5d695dcc",
+    "dirty": true
+  },
+  "data": {
+    "dir": "data/tokens/exp0045-simple-stories-pilot",
+    "manifest_sha256": "808e351ff7c652aff7692e0b0ca51fc791db233c0b976dd73d0148ac55b49ccc",
+    "provenance": null,
+    "provenance_path": null,
+    "splits": {
+      "train": {
+        "shards": [
+          "c7fe4860bc3c0a3eb4cb312aea507dc5af66bee385252d56e59bcd20ff39360d",
+          "f8f713aabb92090361d7ac70cb0cdcbf27fead6b3ab38548d8b5d61b6e413c91",
+          "9ef3084f574a63d3cc8af695910378a4f3491b0572ce141c7b2474add9b9f8a1",
+          "85051220eb3147ec47244a413087e29c0726a8cf96c748cca6e7c6f401a60fd4",
+          "9c183ae459ec5a22c06702836c8d9314adde02933d9652d15ffc9235e07f9f9d",
+          "d6a7b4ccefb469b1cfb1526b943c007e0c3e1e4bc78957f91490b72be52ccdde",
+          "129d5fe5be9b22d4c1af99fe1215c8a82241a0934fba87d36ebefb8e22066f7f",
+          "bf2b79965973ff069b5db17f6a0b8cdd5b32859e6dc7ac9baeb41319e890e1aa",
+          "d96f1ee8d1fcbc8db4b4c0a6efc29830c934469dc37d73fa1be273d4d9836c64",
+          "2104f572e9f95e738d83e70ba31c3051d0c58a37847f92770ba051ec6430dd00",
+          "f53fef08ce64dfe5b0e784ac32ce2b5c432d00017c27bc825b8802e1bfd5afa5",
+          "a93573c61b196b9e2fe45b1cacf1136c6a052992cf96c339922c52ea5ece77f5",
+          "6899b23772f5b243d63b23413edff4c1a18f72a91ff4ecd4f6135536cd761722"
+        ],
+        "tokens": 24815282
+      },
+      "val": {
+        "shards": [
+          "f3c22a1269e57c5e280c54d546e7f10384de896fd30a25015c6e0c6ff5472d6a"
+        ],
+        "tokens": 1282063
+      }
+    },
+    "tokenizer_compatibility": {
+      "dataset_tokenizer_sha256": "ab95761755cd2a0217a92a7b0c8123ddc81e16be0929c7613cbba0d46937e664",
+      "source_checkpoint_lineage": [
+        {
+          "checkpoint": "/workspace/scratch/a2435228d85d/slm-tavenel/runs/EXP-0045/story-935k-cpu-s421201/checkpoints/step_00002048.pt",
+          "tokenizer_sha256": "ab95761755cd2a0217a92a7b0c8123ddc81e16be0929c7613cbba0d46937e664"
+        }
+      ],
+      "verified": true
+    },
+    "tokenizer_sha256": "ab95761755cd2a0217a92a7b0c8123ddc81e16be0929c7613cbba0d46937e664"
+  },
+  "distillation": null,
+  "environment": {
+    "cuda": null,
+    "devices": [],
+    "numpy": "2.5.4",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "python": "3.12.14",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.22.2",
+    "torch": "2.10.0+cpu"
+  },
+  "initialized_from": {
+    "grown_from": null,
+    "path": "runs/EXP-0045/story-935k-cpu-s421201/checkpoints/step_00002048.pt",
+    "sha256": "8e993d89e67acd22459e3492455fc5b57c16a350b8d66315948e3e5b9ca67ba5"
+  },
+  "jepa": null,
+  "kind": "slm.train",
+  "model_config": {
+    "attn_gate": "none",
+    "conv_kernel": 3,
+    "conv_layers": [],
+    "d_model": 128,
+    "ffn_hidden": 416,
+    "init_std": 0.02,
+    "max_seq_len": 1024,
+    "n_heads": 4,
+    "n_kv_heads": 1,
+    "n_layers": 4,
+    "norm_eps": 1e-06,
+    "qk_norm": false,
+    "rope_theta": 10000.0,
+    "tie_embeddings": true,
+    "vocab_size": 1024,
+    "window_pattern": []
+  },
+  "model_config_hash": "06abaf2df26f746a",
+  "params": 935040,
+  "params_non_embedding": 803968,
+  "resumed_from": null,
+  "train_config": {
+    "activation_checkpointing": false,
+    "beta1": 0.9,
+    "beta2": 0.95,
+    "ckpt_interval": 2048,
+    "compile": false,
+    "data_dir": "data/tokens/exp0045-simple-stories-pilot",
+    "decay_fraction": 0.2,
+    "deterministic": true,
+    "distill_revision": "",
+    "distill_teacher": "",
+    "distill_temperature": 1.0,
+    "distill_weight": 0.5,
+    "doc_mask": false,
+    "dtype": "float32",
+    "eps": 1e-08,
+    "eval_batches": 40,
+    "eval_interval": 512,
+    "goodview_dim": 64,
+    "goodview_gamma": 1.0,
+    "goodview_variant": "vicreg",
+    "grad_accum_steps": 1,
+    "grad_clip": 1.0,
+    "init_from": "runs/EXP-0045/story-935k-cpu-s421201/checkpoints/step_00002048.pt",
+    "jepa_ema": 0.996,
+    "jepa_mode": "token",
+    "jepa_predictor_hidden": 0,
+    "jepa_state_tokens": 0,
+    "jepa_weight": 0.0,
+    "keep_checkpoints": 4,
+    "log_interval": 100,
+    "lr": 0.0002,
+    "master_weights_offload": false,
+    "max_steps": 8192,
+    "measure_energy": false,
+    "micro_batch_size": 4,
+    "min_lr": 5e-05,
+    "mir": false,
+    "mir_aux_weight": 0.4,
+    "mir_mask_ratio_max": 0.5,
+    "mir_mask_ratio_min": 0.0,
+    "mir_mask_token_id": 10,
+    "model": "configs/model/slm-story-935k.yaml",
+    "muon_momentum": 0.95,
+    "observe_interval": 512,
+    "optimizer": "adamw",
+    "optimizer_offload": false,
+    "out_dir": "runs/EXP-0045/story-935k-cpu-continue-s421201",
+    "parallel_batch": 128,
+    "parallel_data": "",
+    "parallel_mode": "",
+    "parallel_weight": 0.1,
+    "peak_tflops": 0.0,
+    "resume": true,
+    "schedule": "cosine",
+    "seed": 421201,
+    "seq_len": 256,
+    "warmup_steps": 100,
+    "weight_decay": 0.1
+  },
+  "train_config_hash": "062a071de10a4c14",
+  "world_size": 1
+}

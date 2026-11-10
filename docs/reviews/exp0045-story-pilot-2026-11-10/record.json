@@ -1,0 +1,91 @@
+{
+  "kind": "slm.exp0045.cpu_training_record",
+  "date": "2026-11-10",
+  "source_status": "candidate, exploratory use only; not cleared for release",
+  "parameter_budget_total": 935040,
+  "source_revision": "e63b8adc3b1a1bdc7cac5b500d150b71346b0628",
+  "source_parquet_sha256": "ca33531b99f3bebb4125e82f56017c223a4900331b55bcf7cde1b0f750d88fd4",
+  "tokenizer_sha256": "ab95761755cd2a0217a92a7b0c8123ddc81e16be0929c7613cbba0d46937e664",
+  "total_presented_tokens": 27262976,
+  "phases": [
+    {
+      "phase": "phase1",
+      "steps": 2048,
+      "presented_tokens": 2097152,
+      "final_training_batch_loss": 2.74721,
+      "first_validation_loss": 4.147,
+      "final_validation_loss": 2.76031,
+      "checkpoint_sha256": "8e993d89e67acd22459e3492455fc5b57c16a350b8d66315948e3e5b9ca67ba5",
+      "checkpoint_bytes": 11276487,
+      "run_manifest_code_commit": "facc3995e3bd95c32b1f699a1aacc38f5d695dcc",
+      "working_tree_was_dirty": true
+    },
+    {
+      "phase": "phase2",
+      "steps": 8192,
+      "presented_tokens": 8388608,
+      "final_training_batch_loss": 2.35521,
+      "first_validation_loss": 2.70931,
+      "final_validation_loss": 2.39103,
+      "checkpoint_sha256": "4838ed0d933633d9a84263cf4d4b0aea66fce922fade295ed867b13dad5ba598",
+      "checkpoint_bytes": 11276551,
+      "run_manifest_code_commit": "facc3995e3bd95c32b1f699a1aacc38f5d695dcc",
+      "working_tree_was_dirty": true
+    },
+    {
+      "phase": "phase3",
+      "steps": 16384,
+      "presented_tokens": 16777216,
+      "final_training_batch_loss": 2.18221,
+      "first_validation_loss": 2.38934,
+      "final_validation_loss": 2.27219,
+      "checkpoint_sha256": "4c0ac79f1f43e1126ba406cede769526d63f45d68c4557976c04cfea926d06d7",
+      "checkpoint_bytes": 11276551,
+      "run_manifest_code_commit": "facc3995e3bd95c32b1f699a1aacc38f5d695dcc",
+      "working_tree_was_dirty": true
+    }
+  ],
+  "evaluation": "Five hand-written prompts; greedy continuations; descriptive inspection only, not blind or statistically powered. Tiny1m outputs stored beside student outputs.",
+  "limits": [
+    "CPU only; wall-clock times and CPU energy are not instrumented",
+    "one seed",
+    "one of seven source shards; 60000 train and 3108 dev records",
+    "validation is from the same shard family, not an external test",
+    "student weights not included; source rights review remains open",
+    "no claim of beating TinyStories"
+  ],
+  "code_commit_before_run": "facc3995e3bd95c32b1f699a1aacc38f5d695dcc",
+  "pilot_builder_sha256": "0181ea3ab02a1b1b2be4ce3afe8554fd2cb1a92935a93a0af9d36b2c2bae17d8",
+  "train_config_sha256": {
+    "exp0045-story-cpu-pilot.yaml": "d7e8757a5d96b591d3243c76eaf203274d795c8f7d3b712211a2a741ff1fbf58",
+    "exp0045-story-cpu-continue.yaml": "6ae4e7697015bcb96ad49aa0ebf7f686d55d7aa6974d5d6fb13201a8e4cbede7",
+    "exp0045-story-cpu-continued-v2.yaml": "f5a33e9f12472ddb3fb8e1f9e6c12f455dfb7933ace732db93745aba21bed391"
+  },
+  "generation_review_sha256": "02d2171491be53b848ed21569d243deb3906bd899ffa83fbaf2d934a176d2281",
+  "artifact_hashes": {
+    "README.md": "bd2814da177ccb313ecad252e3dcad34101b74cb5195382408ff3a233cf6d262",
+    "phase1-metrics.jsonl": "023340f1dd6c235f4fe7f7ef1cb5b59795f7e6d5d7153ec19f068b8d066413ab",
+    "phase2-run_manifest.json": "059a85357899dc502522ad85c0102490822d0913969279c20d8751bb14054dbd",
+    "phase3-run_manifest.json": "b439600f78dbb6ad65b1e11eb75c2fc5d3f4f57e0095e545a62da559c6316373",
+    "phase1-run_manifest.json": "9e18931e433ee4a542f9b323e98b3cc25797ed611cb8c126ed3acffc1d173b69",
+    "phase3-eval.jsonl": "ab3b6b5341b7c0bc41f584faaacdf5ebd92fede3c8dc8258e84c34376b25a231",
+    "generation-review.jsonl": "02d2171491be53b848ed21569d243deb3906bd899ffa83fbaf2d934a176d2281",
+    "corpus-manifest.json": "8ec5d078859185803d2859d866d1f3eb2b4b488bc6c5038d3a7fcea66a2ed5e5",
+    "phase1-eval.jsonl": "798ad3887be1e11ba9ea04b7624dfa275bafd2f37457e9357199e84000b66084",
+    "tokenizer-manifest.json": "a8e857e99a111ca4beed84338ed7d3eed9caf9e48a9461168cac37eae5bec903",
+    "phase2-eval.jsonl": "f7cfb25bfff5ea9de49a50097da99e00bb7c3f80ad0ccab86ebbe1d13378f386",
+    "phase1-observability-summary.jsonl": "d632534b1b0f4167046315e80ef201eb844438a14270b2e363331a1d3014dfc2",
+    "phase2-observability-summary.jsonl": "589c6fda67b724917466d0d1748a7ba2d38ae4473a8cd04e1479814a1c97eb78",
+    "phase3-observability-summary.jsonl": "76be395e2e98d28fe4979ef9772b04cf1e25b95e62180a379b6aebe33497a617",
+    "phase2-metrics-01.jsonl": "d2b08771b04ebe5b3ac7e8ffe399c90296fd58a5856baa77da7a653830635812",
+    "phase2-metrics-02.jsonl": "b3d8343fb2e01d0180f943a797c12cdcd78fcc8a88fb6237e2019a4a1a9a008a",
+    "phase2-metrics-03.jsonl": "c5f3c599f9fb1f436ff3b1fd6595ed5af9d3837f1ab87656ee7f1b8d24fa16da",
+    "phase2-metrics-04.jsonl": "6418ad2903b6ffa8e0a16f84871c0f5a644b4c324d16a955cc03b3db83f2effb",
+    "phase2-metrics-05.jsonl": "4714e55093b076f6e17d35605e2af855806b9ad08bc2709ff4e77fd4b7246e80",
+    "phase3-metrics-01.jsonl": "eed13a02260bf82a54a14584e1ab311b1427f65e1bf025106c5b6e3480320f21",
+    "phase3-metrics-02.jsonl": "3e7deebaeaf22b7f97e645c189eca16e3784e78c779e0cd6cb763d1c71cd8ef3",
+    "phase3-metrics-03.jsonl": "cece401c0cf9cd3ac14838d8bac744ef7fffc81c754f6a90d2f97fb6bc18b286",
+    "phase3-metrics-04.jsonl": "9ca5d6c11ad871c8aee16f3a64e8354d3c1aa5650ffe502e4b47dc17a24f4ded",
+    "phase3-metrics-05.jsonl": "ca7d0a2406794aa96ebf5a756c3950c072851cec99ffabca7e075c46d0187c61"
+  }
+}

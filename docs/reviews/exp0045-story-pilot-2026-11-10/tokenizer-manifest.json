@@ -1,0 +1,66 @@
+{
+  "actual_vocab_size": 1024,
+  "code": {
+    "commit": "facc3995e3bd95c32b1f699a1aacc38f5d695dcc",
+    "dirty": true
+  },
+  "created": "2026-11-10T10:23:36Z",
+  "environment": {
+    "cuda": null,
+    "devices": [],
+    "numpy": "2.5.4",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "python": "3.12.14",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.22.2",
+    "torch": "2.10.0+cpu"
+  },
+  "inputs": [
+    {
+      "path": "data/processed/exp0045-simple-stories-pilot/train.jsonl",
+      "sha256": "ff0481c907c5347f8e12fe4db49e8e9211fb61fde4213a831822fa24e123c79a"
+    }
+  ],
+  "kind": "slm.tokenizer",
+  "params": {
+    "max_docs": 30000,
+    "min_frequency": 2,
+    "seed": 421201,
+    "vocab_size": 1024
+  },
+  "special_tokens": [
+    "<|endoftext|>",
+    "<|pad|>",
+    "<|im_start|>",
+    "<|im_end|>",
+    "<think>",
+    "</think>",
+    "<tool_call>",
+    "</tool_call>",
+    "<tool_response>",
+    "</tool_response>",
+    "<|reserved_0|>",
+    "<|reserved_1|>",
+    "<|reserved_2|>",
+    "<|reserved_3|>",
+    "<|reserved_4|>",
+    "<|reserved_5|>",
+    "<|reserved_6|>",
+    "<|reserved_7|>",
+    "<|reserved_8|>",
+    "<|reserved_9|>",
+    "<|reserved_10|>",
+    "<|reserved_11|>",
+    "<|reserved_12|>",
+    "<|reserved_13|>",
+    "<|reserved_14|>",
+    "<|reserved_15|>",
+    "<|reserved_16|>",
+    "<|reserved_17|>",
+    "<|reserved_18|>",
+    "<|reserved_19|>",
+    "<|reserved_20|>",
+    "<|reserved_21|>"
+  ],
+  "tokenizer_sha256": "ab95761755cd2a0217a92a7b0c8123ddc81e16be0929c7613cbba0d46937e664"
+}

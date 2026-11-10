@@ -1,10 +1,10 @@
 # EXP-0045 : histoires anglaises sous un plafond strict de paramètres
 
-Statut : **revue scientifique et configurations préparées, aucun entraînement effectué**.
+Statut : **pilote CPU exploratoire terminé; aucune victoire sur TinyStories établie**.
 
 Cette expérience reprend le diagnostic EXP-0044 et remplace sa cible prospective de 1,18 M et son mélange bilingue. L'objectif utilisateur est désormais la meilleure génération narrative possible avec au plus 1 M de paramètres au total. Pour égaler précisément la référence utilisée dans les benchmarks, les candidats sont plafonnés à **935 040 paramètres uniques**. Le calcul et les données d'entraînement ne sont pas des budgets imposés, mais restent mesurés.
 
-La [revue détaillée](../docs/research/stories-1m-2026-11-10.md) rassemble corpus, révisions, sources scientifiques, limites de transfert et exigences de traçabilité.
+La [revue détaillée](../docs/research/stories-1m-2026-11-10.md) rassemble corpus, révisions, sources scientifiques, limites de transfert et exigences de traçabilité. Le [dossier du pilote](../docs/reviews/exp0045-story-pilot-2026-11-10/README.md) conserve les manifests, hashes, journaux d'entraînement et sorties comparatives.
 
 ## Candidats prêts à instancier
 
@@ -36,7 +36,11 @@ Référence principale figée : `shibatch/tiny1m@fdacad8ff9dc27bd72c77d3684075a4
 
 ## Validation disponible et travail restant
 
-Le décompte exact des trois configurations est vérifié par `tests/test_fluency.py`. Les 54 tests ciblés passent; les trois architectures produisent des logits finis lors d'un passage avant sur entrée synthétique. Les sources, leur statut, leurs révisions et leur provenance sont documentées dans la revue; les nouveaux corpus et le test final restent à construire. Aucun pilote, professeur, mécanisme de récurrence ou nouveau poids n'est livré comme entraîné.
+Le décompte exact des trois configurations est vérifié par les contrôles antérieurs. Le candidat A a été entraîné en trois phases CPU et une graine, pour **27 262 976 tokens présentés**. Sa perte de validation intra-corpus est passée de 4,147 au premier contrôle à 2,272 à l'évaluation finale. Cela confirme l'apprentissage de cette partition, pas une amélioration sur des histoires inédites.
+
+L'inspection descriptive de cinq préfixes comparés à `tiny1m` montre que l'élève produit quelques séquences narratives, mais répète encore des formules et dérive du préfixe. Ces exemples ne constituent pas un test aveugle ou une preuve statistique. Le modèle n'a pas démontré qu'il bat TinyStories.
+
+Le tokenizer, le corpus filtré, les hashes, les trois manifests de run et les métriques d'observabilité sont archivés. Le corpus est un échantillon d'un seul shard : 60 000 histoires train et 3 108 dev. Il reste candidat, sous revue, et n'est pas autorisé pour publier des poids. Le checkpoint reste local; son SHA-256 est enregistré dans le record.
 
 Pour vérifier les comptes localement :
 
