@@ -19,5 +19,9 @@
     "passed": 15,
     "deselected": 10,
     "seconds": 11.4
-  }
+  },
+  "state": "CLOSED",
+  "closed_at": "2026-11-10T20:37:51Z",
+  "branch_retained": true,
+  "closure_reason": "Superseded: operational model configurations, split corrections and fluency tools already integrated into main; historical pilot archives and research notes remain on the retained PR branch"
 }

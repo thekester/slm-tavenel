@@ -5,7 +5,7 @@
 | Task | Status | Evidence |
 |---|---|---|
 | Score the frozen models on TinyStories | Completed, all 21,990 official validation stories | [Summary](../model-cards/slm-tavenel-story-935k/training_record/tinystories/summary.json) |
-| Copy the corrective overlay to PR #1 | Committed and pushed, head `4a06bbc7576ad04ffbf1ec002798ddd1da618cfb`; PR remains open, not merged | [PR](https://github.com/thekester/slm-tavenel/pull/1), [test and file record](pr1-corrections-2026-11-10.json) |
+| Copy the corrective overlay to PR #1 | Committed and pushed, head `4a06bbc7576ad04ffbf1ec002798ddd1da618cfb`; PR closed as superseded on 10 November, without merging; historical branch retained | [PR](https://github.com/thekester/slm-tavenel/pull/1), [test and file record](pr1-corrections-2026-11-10.json) |
 | Human blind test | Form and analysis tools ready; no completed human form received at this report | [Aggregate status](../model-cards/slm-tavenel-story-935k/training_record/human-review/summary.json), [reader instructions](story-blind-pilot-2026-11-10/README.md) |
 
 ## Likelihood results
