@@ -1,0 +1,386 @@
+[
+  {
+    "group": "9c26476b9f204150",
+    "id": "story-en-1",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "1"
+  },
+  {
+    "group": "9c26476b9f204150",
+    "id": "story-en-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "2"
+  },
+  {
+    "group": "7a69d148a1373e0a",
+    "id": "story-en-1",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "7a69d148a1373e0a",
+    "id": "story-en-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "9aec4217bb987d5e",
+    "id": "story-en-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "9aec4217bb987d5e",
+    "id": "story-en-1",
+    "model": "tiny1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "b1fc0543fc2f3383",
+    "id": "story-en-2",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "1"
+  },
+  {
+    "group": "b1fc0543fc2f3383",
+    "id": "story-en-2",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "2"
+  },
+  {
+    "group": "58e7f5032064fa48",
+    "id": "story-en-2",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "58e7f5032064fa48",
+    "id": "story-en-2",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "6a5d73de91d1a620",
+    "id": "story-en-2",
+    "model": "slm-tavenel-1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "6a5d73de91d1a620",
+    "id": "story-en-2",
+    "model": "tiny1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "569439db021438fd",
+    "id": "story-fr-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "1"
+  },
+  {
+    "group": "569439db021438fd",
+    "id": "story-fr-1",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "2"
+  },
+  {
+    "group": "0c8109d1a62e69d8",
+    "id": "story-fr-1",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "0c8109d1a62e69d8",
+    "id": "story-fr-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "3e2a8d9e960dfddd",
+    "id": "story-fr-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "3e2a8d9e960dfddd",
+    "id": "story-fr-1",
+    "model": "tiny1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "7d9b0f70f2e9e4ca",
+    "id": "story-fr-2",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "1"
+  },
+  {
+    "group": "7d9b0f70f2e9e4ca",
+    "id": "story-fr-2",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "2"
+  },
+  {
+    "group": "0647643a9629942e",
+    "id": "story-fr-2",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "0647643a9629942e",
+    "id": "story-fr-2",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "7da7dda0db39b31b",
+    "id": "story-fr-2",
+    "model": "tiny1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "7da7dda0db39b31b",
+    "id": "story-fr-2",
+    "model": "slm-tavenel-1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "7d5ee289db2bb7f5",
+    "id": "everyday-en-1",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "1"
+  },
+  {
+    "group": "7d5ee289db2bb7f5",
+    "id": "everyday-en-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "2"
+  },
+  {
+    "group": "cb4fcf68fda0ffb0",
+    "id": "everyday-en-1",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "cb4fcf68fda0ffb0",
+    "id": "everyday-en-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "e0c332410c38af7e",
+    "id": "everyday-en-1",
+    "model": "tiny1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "e0c332410c38af7e",
+    "id": "everyday-en-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "4027d764dd51402c",
+    "id": "everyday-fr-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "1"
+  },
+  {
+    "group": "4027d764dd51402c",
+    "id": "everyday-fr-1",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "2"
+  },
+  {
+    "group": "bb328ce4f4aaf462",
+    "id": "everyday-fr-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "bb328ce4f4aaf462",
+    "id": "everyday-fr-1",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "6450b0f4f4d24e4f",
+    "id": "everyday-fr-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "6450b0f4f4d24e4f",
+    "id": "everyday-fr-1",
+    "model": "tiny1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "2c6e6cc82eb1ea16",
+    "id": "science-en-1",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "1"
+  },
+  {
+    "group": "2c6e6cc82eb1ea16",
+    "id": "science-en-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "2"
+  },
+  {
+    "group": "20df7101a5f59fd5",
+    "id": "science-en-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "20df7101a5f59fd5",
+    "id": "science-en-1",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "50fb9ef922906fa5",
+    "id": "science-en-1",
+    "model": "tiny1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "50fb9ef922906fa5",
+    "id": "science-en-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "7f48d7d9167117cc",
+    "id": "science-fr-1",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "1"
+  },
+  {
+    "group": "7f48d7d9167117cc",
+    "id": "science-fr-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "2"
+  },
+  {
+    "group": "0b66c8232c150ddd",
+    "id": "science-fr-1",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "0b66c8232c150ddd",
+    "id": "science-fr-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "da72e262a576774f",
+    "id": "science-fr-1",
+    "model": "tiny1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "da72e262a576774f",
+    "id": "science-fr-1",
+    "model": "slm-tavenel-1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "2"
+  }
+]

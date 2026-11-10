@@ -1,0 +1,80 @@
+{
+  "code": {
+    "commit": "9c0483b5b66ed1d8d57e56f35e538a11dd6308f7",
+    "dirty": false
+  },
+  "diagnostic_code_sha256": {
+    "/workspace/scratch/a2435228d85d/slm-tavenel/scripts/compare_fluency.py": "f4056a5b231391130dc0f3bb49940d37f0fa0925bf25d7e6d5c4261efbfdcc97",
+    "/workspace/scratch/a2435228d85d/slm-tavenel/src/slm/fluency.py": "50fbea65fefe047ef95ad785db51f55490c60afbed496b66f77d76be86a77ab5"
+  },
+  "energy_j": null,
+  "environment": {
+    "cuda": null,
+    "devices": [],
+    "numpy": "2.5.4",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "python": "3.12.14",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.22.2",
+    "torch": "2.10.0+cpu",
+    "transformers": "4.57.6"
+  },
+  "generations": 48,
+  "generations_sha256": "f3062df8199672e32bfc8736f86ca2065400d71421ebf80fcd8fa4df5afe96e9",
+  "kind": "slm.fluency.diagnostic.v1",
+  "models": [
+    {
+      "files_sha256": {
+        "config.json": "bb8e7503a80f74451203abe430eda4924bc3c554a6a01a3e44487bfcabce6872",
+        "generation_config.json": "8b331bb41acc1896193f60c8c6296c1deb48c51f3d1df3166351b62e2608ce72",
+        "hf_config.py": "da7c71e8d07d432f0d7edb7a7f81a109407fd3d29f3012b7bff5862fad4700c2",
+        "hf_model.py": "659c585d3691af8193c571670c0199c97c3217680551eb0fb4fe1278b2a48125",
+        "model.safetensors": "b2ef1606aacc86808d575cc3ea85d93c689b37e9dfb933a6627ea7d8e6dbde6f",
+        "special_tokens_map.json": "e176028610c3783400e55abe260c73f32bf71bdfe2f0d176f3dbafacab2a47ea",
+        "tokenizer.json": "93c7b9364de2c42315571c851353862e63830bfbeb220dc14dde80e6ca82cfcb",
+        "tokenizer_config.json": "803c72b056ba72aa97867fa10253688cfd9f6e489349f4a071d11fa38fe64989"
+      },
+      "label": "slm-tavenel-1m",
+      "parameters": 1181920,
+      "path": "data/models/fluency/tavenel",
+      "repo_id": "athenista/slm-tavenel-1m",
+      "revision": "77d1d8b09af0ff8583844460f383f8f1c4f9bd96"
+    },
+    {
+      "files_sha256": {
+        "config.json": "f32bc3b584e2712e285432a1d0532cd2c71addfe68859b5bec053d25de6ebb7a",
+        "generation_config.json": "e598c3e56596c0ad6c67ab32ff7d0519d2d66642e2c1c0d813871549d9d3b2c3",
+        "model.safetensors": "f30ae85c53797b5944da7f235162756b31987233b44eac36ed449afd1b82523b",
+        "tokenizer.model": "dfff07d929db979913f166ec94a6f5ecad4c70cfed8eb5c9cbe7e464455e46f5"
+      },
+      "label": "tiny1m",
+      "parameters": 935040,
+      "path": "data/models/fluency/tiny1m/hf",
+      "repo_id": "shibatch/tiny1m",
+      "revision": "fdacad8ff9dc27bd72c77d3684075a494be1ba11"
+    }
+  ],
+  "prompts_sha256": "5878a7645414d011d4e06101afede44f544cec62e4e59f1215a0fe083f4f49c8",
+  "scope": "Exploratory generation diagnostics; no automated coherence score or superiority claim",
+  "settings": {
+    "device": "cpu",
+    "max_new_bytes": 320,
+    "max_new_tokens": 512,
+    "output": "runs/EXP-0044/diagnostic-v2",
+    "prompts": "configs/eval/fluency-dev-v1.jsonl",
+    "seeds": [
+      421201,
+      421202
+    ],
+    "snapshots": "configs/eval/fluency-snapshots-v1.json",
+    "temperatures": [
+      0.0,
+      0.8
+    ],
+    "threads": 2,
+    "top_p": 0.9,
+    "trust_custom_code": true
+  },
+  "snapshots_spec_sha256": "965cb483c2468f006c528553efc8e740e0dc66557b774bc9f9f4e8f640341f3e",
+  "status": "completed"
+}

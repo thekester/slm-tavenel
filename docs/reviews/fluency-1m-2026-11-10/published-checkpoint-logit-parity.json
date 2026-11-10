@@ -1,0 +1,14 @@
+{
+  "kind": "slm.exp0044.published-checkpoint-logit-parity",
+  "max_abs_logit_difference": 0.0,
+  "model_sha256": "b2ef1606aacc86808d575cc3ea85d93c689b37e9dfb933a6627ea7d8e6dbde6f",
+  "native_config": "configs/model/slm-1m-gated.yaml",
+  "samples": 3,
+  "scope": "Single unpadded prompts on CPU float32; not a padding/cache audit",
+  "prompts": [
+    "Once upon a time, a little girl",
+    "Il \u00e9tait une fois une petite fille",
+    "La recherche scientifique"
+  ],
+  "code_commit": "9c0483b5b66ed1d8d57e56f35e538a11dd6308f7"
+}
