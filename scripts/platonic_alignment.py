@@ -46,18 +46,25 @@ CHECKPOINTS = {
 }
 
 
-def passages(language: str) -> tuple[list[str], list[str]]:
-    seen, ids, texts = set(), [], []
-    for line in (ROOT / f"data/benchmarks/belebele_{language}.jsonl").read_text(encoding="utf-8").splitlines():
-        item = json.loads(line)
-        key = item["id"]
-        if key in seen:
-            continue
-        seen.add(key)
-        match = re.match(r"P: (.*?)\nQ:", item["context"], re.S)
-        ids.append(key)
-        texts.append(match.group(1).strip() if match else item["context"])
-    return ids, texts
+def passages() -> tuple[list[str], list[str]]:
+    """Unique parallel passages. Belebele has 900 questions on 488 passages and its item ids are per
+    question, so passages are deduplicated on their English text; duplicates would be each other's nearest
+    neighbours in both languages and inflate mutual k-NN (an early version of this script did that)."""
+    def rows(language: str) -> list[str]:
+        out = []
+        for line in (ROOT / f"data/benchmarks/belebele_{language}.jsonl").read_text(encoding="utf-8").splitlines():
+            context = json.loads(line)["context"]
+            match = re.match(r"P: (.*?)\nQ:", context, re.S)
+            out.append(match.group(1).strip() if match else context)
+        return out
+
+    en, fr = rows("en"), rows("fr")
+    if len(en) != len(fr):
+        raise SystemExit("English and French files are not parallel")
+    unique: dict[str, str] = {}
+    for e, f in zip(en, fr):
+        unique.setdefault(e, f)
+    return list(unique), list(unique.values())
 
 
 @torch.no_grad()
@@ -133,10 +140,8 @@ def main() -> None:
 
     torch.set_num_threads(4)  # leaves CPU for a concurrent GPU training run
     tokenizer = Tokenizer.from_file(str(TOKENIZER))
-    en_ids, en = passages("en")
-    fr_ids, fr = passages("fr")
-    if en_ids != fr_ids:
-        raise SystemExit("English and French passages are not aligned")
+    en, fr = passages()
+    print(f"{len(en)} unique parallel passages", flush=True)
     results, per_passage = {}, {}
     for name, path in checkpoints.items():
         trained = load_model(ROOT / path, "cpu").eval()

@@ -45,32 +45,33 @@ benchmark accuracy.
 | 2 | Preregister EXP-0043: 75M proxy, next-token loss + a good-view JEPA term on EN/FR parallel pairs (open-licensed parallel data, e.g. Tatoeba EN–FR CC-BY 2.0 FR, after checking terms), vs next-token alone at equal tokens; outcomes: EN↔FR alignment on held-out parallel passages (FLORES/Belebele, never trained on), held-out BPB, six benchmarks | GPU ~2 × 3 h | after decision |
 | 3 | Small reproduction of the paper's direction: ~30M text JEPA on COCO caption pairs (five captions per image = good views; annotations CC BY 4.0) vs ~30M next-token model on the same captions; mutual-kNN alignment with a frozen DINOv2 (Apache-2.0) on COCO val images | GPU + image download | optional |
 
-## Step 1 result (2026-11-08): English/French alignment of existing checkpoints
+## Step 1 result (2026-11-09): English/French alignment of existing checkpoints
 
-`runs/PLATONIC/belebele-en-fr-alignment.json` (`scripts/platonic_alignment.py`; 488 parallel Belebele
-passages; best layer by mutual 10-NN; random-init copy of each architecture as control; chance: mutual
-10-NN 0.021, R@1 0.002).
+`runs/PLATONIC/belebele-en-fr-alignment.json` (`scripts/platonic_alignment.py`; 488 unique parallel
+Belebele passages; best layer by mutual 10-NN; a random-init copy of each architecture as control; chance:
+mutual 10-NN 0.021, R@1 0.002). A first computation on 900 items with repeated passages (deduplication on
+question ids) was invalid; it is archived as `belebele-en-fr-alignment-WITH-DUPLICATES-invalid.json`.
 
 | Model | Training | Best layer | Mutual 10-NN | R@1 cosine | R@1 after rotation |
 |---|---|---:|---:|---:|---:|
-| 75M AdamW CE (EXP-0034a) | corpus v1, 98M tokens | 12 / 16 | 0.345 | 0.482 | 0.728 |
-| 75M AdamW + distillation (EXP-0034a) | same + SmolLM2-360M teacher | 13 / 16 | 0.337 | 0.458 | 0.713 |
-| 75M Muon CE (EXP-0036a) | corpus v1, 98M tokens | 13 / 16 | 0.389 | 0.507 | 0.742 |
-| 75M LFM2 hybrid, Muon (EXP-0041) | corpus v1, 98M tokens | 8 / 16 | 0.391 | 0.520 | 0.757 |
-| 124M Muon (EXP-0036) | corpus v2, 983M tokens | 23 / 27 | **0.653** | **0.542** | **0.776** |
-| Random-init controls (5 architectures) | none | — | 0.152–0.178 | 0.047–0.144 | 0.478–0.536 |
+| 75M AdamW CE (EXP-0034a) | corpus v1, 98M tokens | 12 / 16 | 0.342 | 0.889 | 0.887 |
+| 75M AdamW + distillation (EXP-0034a) | same + SmolLM2-360M teacher | 13 / 16 | 0.327 | 0.844 | 0.857 |
+| 75M Muon CE (EXP-0036a) | corpus v1, 98M tokens | 12 / 16 | 0.395 | 0.953 | 0.947 |
+| 75M LFM2 hybrid, Muon (EXP-0041) | corpus v1, 98M tokens | 9 / 16 | 0.397 | 0.957 | 0.949 |
+| 124M Muon (EXP-0036) | corpus v2, 983M tokens | 23 / 27 | **0.681** | **1.000** | **1.000** |
+| Random-init controls (best layer is 0) | none | 0 / — | 0.087–0.124 | 0.236–0.270 | 0.148–0.221 |
 
 Observations:
-- Next-token training already aligns English and French far above the random-init control (which is
-  itself well above chance: shared subwords, numbers and names), so "bad views" do produce partial
-  platonic alignment at this scale, as the paper's framing allows.
-- Alignment rises with depth and peaks two to four layers before the output, then drops slightly in the
-  last layers (as for intrinsic dimension in the latent-geometry analysis, which peaked at layers 12–13).
-- Muon (0.389) and the conv/attention hybrid (0.391) align more than AdamW (0.345) at equal data;
-  distillation from SmolLM2 does not help (0.337).
-- The 124M is much more aligned (0.653) with a sharp jump after layer 11. Its size, 10x token budget and
-  corpus (v2, ~25% French vs v1) all differ, so this is not a scale effect alone.
-These are descriptive, single-checkpoint measurements on one passage set (no bootstrap yet).
+- Next-token training aligns English and French far above the random-init controls (which are themselves
+  above chance through shared subwords, numbers and names, mostly at layer 0).
+- Alignment rises with depth and peaks a few layers before the output (2–3 layers for the 16-layer AdamW and
+  Muon models, 6 for the hybrid, 3 for the 124M), then drops in the last layers.
+- At equal data, Muon (0.395) and the conv/attention hybrid (0.397) align more than AdamW (0.342);
+  distillation from SmolLM2 does not help (0.327).
+- The 124M is much more aligned (0.681) and retrieves the right translation for all 488 passages, with a
+  sharp rise between layers 11 and 13. Its size, 10x token budget and corpus (v2, ~25% French vs v1) all
+  differ, so this is not a scale effect alone; R@1 is at its ceiling on this set.
+These are descriptive, single-checkpoint measurements on one passage set; no interval is computed here.
 
 Caveats fixed now: Belebele passages are benchmark items (used here for analysis only, so any later
 training on parallel data must exclude FLORES/Belebele text); our models are small and trained on ≤2B

@@ -65,6 +65,50 @@ and BPB evaluations, already computed, are reported but not used for any criteri
 v2, fixed now: if `gv_std_mean` stays below 0.1 after step 500, the run is declared collapsed and
 reported as such (no further retuning within EXP-0043).
 
+## Results (2026-11-09)
+
+Arms completed without instability; v2 did not collapse (`gv_std_mean` 0.77–0.97 from step 250 to the end,
+`gv_invariance` ~0.05). A first alignment computation was invalid (900 items: the 488 passages were
+repeated because deduplication was on question ids); it is archived as
+`belebele-alignment-WITH-DUPLICATES-invalid.json` and all numbers below come from the corrected script
+(488 unique passages; chance: mutual 10-NN 0.021, R@1 0.002). Files in `runs/EXP-0043-evaluations/`.
+
+| Measure | R, reference (no parallel data) | C, control (next-token on pairs) | G, good views v2 | G1, v1 collapsed (descriptive) |
+|---|---:|---:|---:|---:|
+| **Mutual 10-NN, best layer** | 0.3945 (L12) | 0.4045 (L13) | **0.4092** (L12) | 0.2822 (L0) |
+| R@1 cosine at that layer | 0.953 | 0.920 | 0.965 | 0.779 |
+| R@1 after rotation at that layer | 0.947 | 0.924 | 0.928 | 0.789 |
+| Mutual 10-NN, last layer | 0.3695 | 0.4027 | 0.3289 | 0.2633 |
+| Held-out test BPB, all (30,824 docs) | 1.2592 | 1.2653 | 1.2611 | not used |
+| BPB English / French | 1.2400 / 1.3901 | 1.2472 / 1.3886 | 1.2420 / 1.3917 | not used |
+| Six-task mean accuracy | 0.327 | 0.327 | 0.327 | not used |
+| GPU energy (training) | not measured | 231 Wh | 153 Wh | 159 Wh |
+| Throughput (token positions/s) | ~11,800 | ~4,750 at the end (GPU memory at 8.2 GB) | ~10,200 | ~8,400 |
+
+Paired comparisons, mutual 10-NN at each model's best layer (95% bootstrap over passages):
+G − C **+0.0047 [−0.0094, +0.0189]**; G − R +0.0148 [+0.0004, +0.0291]; C − R +0.0100 [−0.0035, +0.0232].
+Held-out BPB: G is 0.0042 lower than C (−0.33%, [0.0040, 0.0043]; English lower by 0.0052, French higher
+by 0.0030), G is 0.0019 higher than R, and C is 0.0061 higher than R (all intervals exclude zero). No
+benchmark differs significantly between G and C, nor between either arm and R.
+
+**Verdict against the preregistered primary criterion: not met.** G exceeds C by 0.0047, far below the
+required 0.03, with an interval that includes zero. The guard is satisfied (G's BPB is better than C's).
+Learning translation pairs as good views did not produce measurably more aligned English/French
+representations than learning the same sentences through next-token prediction, in this setting.
+
+Descriptive observations, not criteria: G's mean is only marginally above R (lower bound of the interval
+just above zero, one of several comparisons, uncorrected). G retrieves translations slightly better by
+cosine at its best layer (0.965 vs 0.920) but not after rotation (0.928 vs 0.924), and its alignment falls
+at the output layer (0.329 vs 0.403 for C). A collapsed auxiliary objective (v1) is clearly harmful to
+alignment (0.282), which shows the measure is sensitive. Retrieval is already near its ceiling (R@1 of
+0.92–0.97) in all non-collapsed arms, so these 488 passages leave little room to detect gains on it.
+
+Interpretation limits: the auxiliary term sees ~8–15-token everyday sentences at weight 0.1, while the
+main objective sees 98M tokens of web text; the evaluation uses long passages; 192,000 pairs is small
+next to the paper's budgets. This is a null result for this configuration, not a test of the paper's
+theorem nor of its 42x claim, which concern alignment across modalities at much larger scale.
+Reported energy and throughput of C are affected by GPU memory saturation.
+
 ## Limitations fixed in advance
 
 One seed per arm; 75M scale and ~100M tokens; short, everyday Tatoeba sentences versus long evaluation
