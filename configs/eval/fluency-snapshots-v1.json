@@ -1,0 +1,14 @@
+[
+  {
+    "label": "slm-tavenel-1m",
+    "repo_id": "athenista/slm-tavenel-1m",
+    "revision": "77d1d8b09af0ff8583844460f383f8f1c4f9bd96",
+    "path": "data/models/fluency/tavenel"
+  },
+  {
+    "label": "tiny1m",
+    "repo_id": "shibatch/tiny1m",
+    "revision": "fdacad8ff9dc27bd72c77d3684075a494be1ba11",
+    "path": "data/models/fluency/tiny1m/hf"
+  }
+]

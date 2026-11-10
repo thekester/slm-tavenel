@@ -1,0 +1,26 @@
+# Exploratory 100M-token candidate. Data must be curated and pinned first;
+# see experiments/EXP-0044-1m-fluency-2026-11-10.md. No published result yet.
+model: configs/model/slm-1m-v2048-reallocated.yaml
+data_dir: data/tokens/fluency-v1-v2048
+out_dir: runs/EXP-0044/1m-v2048-reallocated-s421201
+seed: 421201
+seq_len: 512
+micro_batch_size: 16
+grad_accum_steps: 2
+max_steps: 6104 # 100,007,936 presented tokens; not 100M unique tokens
+optimizer: adamw
+lr: 1.0e-3
+min_lr: 1.0e-4
+weight_decay: 0.1
+schedule: cosine
+warmup_steps: 300
+dtype: bfloat16
+deterministic: true
+measure_energy: true
+log_interval: 25
+eval_interval: 250
+eval_batches: 40
+observe_interval: 500
+ckpt_interval: 500
+keep_checkpoints: 4
+resume: true
