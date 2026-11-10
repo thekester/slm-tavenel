@@ -1,18 +1,17 @@
 {
   "date": "2026-11-10",
   "repo_id": "athenista/slm-tavenel-story-935k",
-  "revision": "acfa22e04ad083515f5de57ed7c478170bfa5d0f",
+  "revision": "aa61ea0b3240f66e6c697264281954753632bb12",
   "weights_revision": "62e64c2b677ea9fbc90cdee0fbfe66b589b78e83",
-  "private": true,
-  "public_release_approved": false,
-  "package_files_verified": 48,
-  "all_manifest_file_hashes_match_download": true,
-  "standard_llama_loading": true,
-  "parameters": 935040,
-  "first_raw_example_reproduced": true,
+  "private": false,
+  "public_release_approved": true,
+  "package_files_verified": 49,
+  "all_manifest_file_hashes_match_anonymous_download": true,
+  "anonymous_api_status": 200,
+  "anonymous_weight_download_status": 200,
   "weights_sha256": "8804d57668ac492454d9835841ff2a57f7867dbcbb36df4452ffedfa8813c9a8",
-  "notes": [
-    "Private repository accessible only to authorized accounts",
-    "Physical workspace download used after the Windows shared-cache symlink mechanism failed; the downloaded files and runtime were then verified"
-  ]
+  "parameters": 935040,
+  "standard_llama_loading_and_example_verified_on_same_weights_in_private_preview": true,
+  "source_registry_status": "candidate",
+  "legal_clearance_claimed": false
 }

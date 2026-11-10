@@ -2,7 +2,7 @@
 
 Inputs are the completed EXP-0045 run, its untouched export, and existing local evaluation files.
 All verification and inference run on CPU. Real training stories and optimizer checkpoints are excluded.
-The source's candidate status is preserved. Public release requires the outstanding publication decision.
+The source's candidate status is preserved. An explicit publication record binds public release to a weight hash.
 """
 from __future__ import annotations
 
@@ -306,11 +306,16 @@ def main() -> None:
     for path in EXPORT.iterdir():
         if path.is_file(): copy(path, args.out / path.name)
     for path in DOCS.rglob("*"):
-        if path.is_file() and path.name != "package-manifest.json": copy(path, args.out / path.relative_to(DOCS))
+        if path.is_file() and path.name not in {"package-manifest.json", "hf-publication.json"}: copy(path, args.out / path.relative_to(DOCS))
     copy(ROOT / "LICENSE", args.out / "LICENSE")
+    decision_path = DOCS / "publication-decision.json"
+    decision = load(decision_path) if decision_path.exists() else {}
+    authorized = decision.get("public_release_authorized", False)
+    if authorized and sha256_file(args.out / "model.safetensors") != decision.get("weights_sha256"):
+        raise ValueError("Publication authorization does not cover this weight file")
     write(DOCS / "package-manifest.json", {"kind": "slm.story_hf_package", "repo_id": "athenista/slm-tavenel-story-935k",
-                                         "visibility": "private_pending_publication_decision", "weights_in_git": False,
-                                         "files": {str(p.relative_to(args.out)).replace('\\', '/'): sha256_file(p) for p in sorted(args.out.rglob('*')) if p.is_file() and p.name != "package-manifest.json"}})
+                                         "visibility": "public_authorized_with_disclosures" if authorized else "private_pending_publication_decision", "weights_in_git": False,
+                                         "files": {str(p.relative_to(args.out)).replace('\\', '/'): sha256_file(p) for p in sorted(args.out.rglob('*')) if p.is_file() and p.name not in {"package-manifest.json", "hf-publication.json"}}})
     copy(DOCS / "package-manifest.json", args.out / "package-manifest.json")
     print("Prepared package:", args.out, flush=True)
 

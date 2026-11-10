@@ -1,6 +1,7 @@
 # EXP-0045 candidate A on the corrected split (train and dev separated by source completion), one continuous run.
 # 100,007,936 presented token positions (6,104 steps x 16,384), about 4 passes over 24.8M training tokens; one seed.
-# Exploratory: SimpleStories remains a candidate source, so these weights are not cleared for release.
+# Exploratory: SimpleStories remains candidate. The specific exported checkpoint is public by owner authorization
+# with upstream uncertainty documented; this is not a source-rights clearance (see its model card).
 model: configs/model/slm-story-935k.yaml
 data_dir: data/tokens/exp0045-simple-stories-v2
 out_dir: runs/EXP-0045/story-935k-100m-v2-s421201

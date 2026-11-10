@@ -14,12 +14,12 @@
     "scripts/compare_fluency.py": "f4056a5b231391130dc0f3bb49940d37f0fa0925bf25d7e6d5c4261efbfdcc97",
     "src/slm/fluency.py": "50fbea65fefe047ef95ad785db51f55490c60afbed496b66f77d76be86a77ab5",
     "configs/model/slm-story-935k.yaml": "cb2270192d3ba931e2fab91df82bd4333368c6c8bd174404b0ee1b3693fabfbf",
-    "configs/train/exp0045-story-100m-v2.yaml": "41a78f664643c8043d09ec85acfc6dc3b0384502f6192051451d1dceafc8166b",
+    "configs/train/exp0045-story-100m-v2.yaml": "fe16a77a3467b40015c156a943edaa414fac9cdd62aac5be4db4447717f9794b",
     "scripts/generate_story.py": "cee03737064318f7d9eccaa0cc9c815efeb7f119707ab8880ad57ac18d8388a2",
-    "scripts/package_story_935k.py": "86b6aacdb12ed4ff2c19f58ded8b5e35c87df32989202976b54dab41f5e98b9e"
+    "scripts/package_story_935k.py": "ddfde3d7afe935c5554f8d075fb6684469d1416bddcb73bba7d9e42ba04f3e19"
   },
   "notes": [
-    "Canonical training YAML updates only the path to the model config; original YAML is preserved",
+    "Canonical training YAML preserves settings, updating the model-config path and publication comment; original YAML is preserved",
     "No retrospective claim of a clean original training run"
   ]
 }

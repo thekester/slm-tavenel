@@ -17,7 +17,7 @@ This record distinguishes a declared permission from independently established u
 
 The MIT declaration provides a documented permission basis from the dataset producer. It does not prove what contractual terms governed the original generation. The current OpenAI Services Agreement assigns output to the customer subject to applicable law and also restricts some competitive-model uses. That current agreement is not evidence of the exact agreement used by this third-party producer in 2024/2025. No claim is made here that it necessarily prohibits downstream use of this dataset, or that it clears it.
 
-The source therefore remains `candidate`. The user supplied a prior condition that weights should not be published until the SimpleStories rights question is settled. The prepared Hub repository is private pending an explicit publication decision about this documented uncertainty. No human signature or retrospective legal clearance has been fabricated.
+The source therefore remains `candidate`. After reviewing the concrete private package and this uncertainty, the user explicitly authorized public distribution on 10 November 2026: **“Autoriser la publication publique avec les réserves documentées.”** This lifts the earlier private-only condition for this specific checkpoint; it does not settle the producer's original contract terms, approve this source for the core corpus, sign a privacy review or establish legal clearance. The [publication decision](publication-decision.json) binds this authorization to the exact weight-file hash.
 
 ## Sources
 

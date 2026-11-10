@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-10",
+  "scope": "Public distribution of the prepared SLM-Tavenel Story 935K checkpoint with documented upstream uncertainty",
+  "repo_id": "athenista/slm-tavenel-story-935k",
+  "weights_sha256": "8804d57668ac492454d9835841ff2a57f7867dbcbb36df4452ffedfa8813c9a8",
+  "public_release_authorized": true,
+  "authorization_source": "Explicit user reply in the current publication session",
+  "user_reply_verbatim": "Autoriser la publication publique avec les réserves documentées",
+  "model_and_code_license": "MIT",
+  "source_declared_license": "MIT at SimpleStories/SimpleStories@e63b8adc3b1a1bdc7cac5b500d150b71346b0628",
+  "source_registry_status": "candidate",
+  "original_generator_service_terms_verified": false,
+  "human_source_and_privacy_reviews_signed": false,
+  "legal_clearance_claimed": false,
+  "osi_certification_claimed": false,
+  "note": "This owner authorization lifts the earlier private-only publication condition for this exact artifact. It does not retrospectively change source-review flags or approve new models, new data, or new weight files."
+}
