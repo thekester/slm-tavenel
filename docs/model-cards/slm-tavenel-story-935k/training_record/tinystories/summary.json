@@ -1,0 +1,61 @@
+{
+  "kind": "slm.story_cross_source_bpb",
+  "data": {
+    "dataset": "roneneldan/TinyStories",
+    "revision": "f54c09fd23315a6f9c86f9dc80f725de7d8f9c64",
+    "split": "validation",
+    "source_file": "data/validation-00000-of-00001-869c898b519ad725.parquet",
+    "declared_license": "CDLA-Sharing-1.0",
+    "source_sha256": "33406a6206554cfc279c29c11f4df51528af487aa1a602b075566fc83c49dcab",
+    "documents": 21990,
+    "bytes": 19218350,
+    "empty_texts": 0,
+    "unique_exact_texts": 21990,
+    "unique_case_whitespace_normalized_texts": 21990,
+    "exact_overlaps_with_story_training": 0,
+    "normalized_overlaps_with_story_training": 0,
+    "train_sha256": "ecfb4a590d18123b2d6688cf1739790b96c36ce7c8ac5dde6b6ccd23e402c480",
+    "limits": "Exact/case/whitespace checks only; reference training exposure and semantic overlap are not established"
+  },
+  "context": 256,
+  "results": {
+    "story935k": {
+      "label": "SLM-Tavenel Story 935K",
+      "parameters": 935040,
+      "documents": 21990,
+      "bytes": 19218350,
+      "tokens": 6982821,
+      "bits_per_byte": 1.5430903852185665,
+      "items_sha256": "7ec88b607d759568cccac5726b3ebd42f4ecfc373b2a3a35dc3afd84baa21a0f"
+    },
+    "tiny1m": {
+      "label": "TinyStories tiny1m",
+      "parameters": 935040,
+      "documents": 21990,
+      "bytes": 19218350,
+      "tokens": 9567918,
+      "bits_per_byte": 1.045243770567831,
+      "items_sha256": "253107b10d6afede98607922314f34d8cc6c1e62b6b6bb8740d6cf62de564552"
+    }
+  },
+  "story_minus_tiny_bpb": 0.49784661465073543,
+  "paired_bootstrap": {
+    "draws": 10000,
+    "seed": 421204,
+    "unit": "paired document",
+    "story935k_ci95": [
+      1.5369708991798203,
+      1.549251156847863
+    ],
+    "tiny1m_ci95": [
+      1.0429351955523218,
+      1.0475389790492207
+    ],
+    "story_minus_tiny_ci95": [
+      0.4919810115082382,
+      0.5037265814886772
+    ],
+    "limits": "Fixed checkpoints; does not include seed variation, corpus-family dependence or unknown reference training exposure"
+  },
+  "scope": "Frozen-model descriptive cross-source likelihood; not a human coherence or overall model ranking"
+}

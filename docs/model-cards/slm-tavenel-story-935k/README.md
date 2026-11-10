@@ -14,6 +14,25 @@ tags:
 - story-generation
 - trained-from-scratch
 - open-weights
+model-index:
+- name: SLM-Tavenel Story 935K
+  results:
+  - task:
+      type: text-generation
+      name: Next-token likelihood, 256-token nonoverlapping chunks
+    dataset:
+      type: roneneldan/TinyStories
+      name: TinyStories official validation
+      config: default
+      split: validation
+      revision: f54c09fd23315a6f9c86f9dc80f725de7d8f9c64
+    metrics:
+    - type: bits_per_byte
+      name: BPB (SLM-Tavenel evaluator; 256-token chunks)
+      value: 1.5430903852185665
+    source:
+      name: SLM-Tavenel frozen-model cross-source evaluation
+      url: https://github.com/thekester/slm-tavenel/blob/v0.1.0-dev.39/docs/model-cards/slm-tavenel-story-935k/training_record/tinystories/summary.json
 ---
 
 # SLM-Tavenel Story 935K
@@ -119,13 +138,13 @@ The tokenizer was trained on a seeded sample of 30,000 local training documents.
 
 ## Evaluation
 
-The comparison uses the project's existing likelihood evaluator, [source code](https://github.com/thekester/slm-tavenel/blob/v0.1.0-dev.38/src/slm/evaluation.py), on exactly the same **3,185 local dev stories**, totaling **3,944,858 UTF-8 bytes**. Each document is prefixed with the model's document-start/end token. Next-token log probabilities are accumulated in non-overlapping 256-token chunks and divided by the byte count. Lower bits per byte is better. Per-token perplexities are not compared across different tokenizers.
+The comparison uses the project's existing likelihood evaluator, [source code](https://github.com/thekester/slm-tavenel/blob/v0.1.0-dev.39/src/slm/evaluation.py), on exactly the same **3,185 local dev stories**, totaling **3,944,858 UTF-8 bytes**. Each document is prefixed with the model's document-start/end token. Next-token log probabilities are accumulated in non-overlapping 256-token chunks and divided by the byte count. Lower bits per byte is better. Per-token perplexities are not compared across different tokenizers.
 
 <!-- generated:benchmark-table -->
 | Model | Unique parameters | Scoring context | Dev BPB |
 |---|---:|---:|---:|
 | **SLM-Tavenel Story 935K, exported weights** | 935,040 | 256 | **0.9370** |
-| [TinyStories tiny1m](https://huggingface.co/shibatch/tiny1m/tree/fdacad8ff9dc27bd72c77d3684075a494be1ba11) | 935,040 | 256 | 1.6703 |
+| [TinyStories tiny1m](https://huggingface.co/shibatch/tiny1m/tree/fdacad8ff9dc27bd72c77d3684075a494be1ba11) | 935,040 | 256 | 1.6701 |
 <!-- /generated:benchmark-table -->
 
 The native float32 checkpoint measured 0.9370 BPB at chunk length 256, 1.1453 at 512 and 1.2914 at 1,024. The table's Story 935K result is recomputed on the exact exported bfloat16-rounded weights loaded in CPU float32; its [raw results](training_record/exported-dev-bpb.json) bind the scored data and weights by SHA-256.
@@ -134,9 +153,30 @@ The native float32 checkpoint measured 0.9370 BPB at chunk length 256, 1.1453 at
 
 *Figure 3. Both models are scored on the same local SimpleStories dev texts. The right panel varies chunk length for the native Story 935K checkpoint.*
 
-**This does not establish a narrative-quality win over tiny1m.** The local dev stories share the source and domain of Story 935K's training material. tiny1m has different training data, tokenizer and budget. There is one training seed, no neutral or sealed test set, no uncertainty interval, and no completed blind human preference study. General multiple-choice accuracy has not been evaluated for this export.
+<!-- generated:cross-source -->
+**Full TinyStories validation:** 21,990 stories, 19,218,350 UTF-8 bytes, scored on both frozen exported models with the same 256-token policy. The official source revision and exact/case-whitespace overlap checks are in [dataset audit](training_record/tinystories/dataset-audit.json).
+
+| Evaluation texts | SLM-Tavenel Story 935K BPB | TinyStories tiny1m BPB |
+|---|---:|---:|
+| SimpleStories local dev (3,185) | 0.937012 | 1.670079 |
+| TinyStories official validation (21,990) | 1.543090 | 1.045244 |
+
+On TinyStories, Story 935K minus tiny1m = **+0.497847 BPB**, 95% paired document-bootstrap interval **[+0.491981, +0.503727]**. A negative difference favors Story 935K. The interval describes these fixed checkpoints and documents; it excludes training-seed variation, unknown reference exposure and dependencies between synthetic story families. See [full results](training_record/tinystories/summary.json) and hashed per-item scores.
+
+**The SimpleStories advantage reverses on TinyStories:** tiny1m has lower BPB on the official TinyStories validation texts, while Story 935K has lower BPB on its own source's dev texts. Neither result is a human narrative-coherence score or a comparison at equal training budget.
+
+The tiny1m tokenizer is explicitly loaded as `LlamaTokenizer(legacy=True)` in the cross-corpus comparison. Its SimpleStories line was recomputed with that same loader. The previous automatically converted fast tokenizer differed by 44 tokens across 3,185 dev stories; both results and the unchanged weights are documented in [tokenizer reconciliation](training_record/tinystories/simple-dev-reference-reconciliation.json). This is a loading correction, not a trained-model improvement.
+
+![Same-policy BPB on SimpleStories and TinyStories](figures/cross-source-bpb.png)
+
+*Figure 4. Corpus-specific likelihood, not narrative preference. Only the TinyStories panel has document-bootstrap intervals; SimpleStories intervals were not computed.*
+<!-- /generated:cross-source -->
+
+**This does not establish a narrative-quality win over tiny1m.** The local dev stories share the source and domain of Story 935K's training material. tiny1m has different training data, tokenizer and budget. There is one training seed and no neutral or sealed final test. The initial SimpleStories dev comparison has no uncertainty interval; the TinyStories intervals above cover fixed checkpoints only. No completed blind human preference study is claimed. General multiple-choice accuracy has not been evaluated for this export.
 
 Five public story prefixes also produced 15 continuations per model: one greedy continuation and two sampled seeds per prefix, under a 320-byte generation budget with visible final-token overshoot and stop reasons. [All 30 raw records](training_record/generation-comparison/generations.jsonl), [decoding settings](training_record/generation-comparison/manifest.json), the blank [human-review form](training_record/generation-comparison/blind_review.csv) and model key are included. Repetition is a mechanical diagnostic and is not presented as a coherence or preference score. Those prefixes are development probes, not an unseen test.
+
+An [interactive local human-review form](https://github.com/thekester/slm-tavenel/blob/v0.1.0-dev.39/docs/reviews/story-blind-pilot-2026-11-10/README.md) now hides fresh randomized A/B assignments and collects grammar, coherence, relevance and preference from human readers. [The aggregate status](training_record/human-review/summary.json) currently reports no completed human form. These are the same five previously public prefixes; prior exposure must be disclosed, and 15 pairs are not 15 independent prompts. Missing ratings are never replaced with model-generated judgments.
 
 ## Raw examples
 
@@ -164,13 +204,13 @@ The output can be grammatical and story-like while changing characters, losing o
 
 ![Per-layer activation and attention diagnostics on the logged probe](figures/observability.png)
 
-*Figure 4. Last logged observability probe at update 6,000, before the final checkpoint at update 6,104. The probe was sampled from validation data using a fixed RNG seed. Attention entropy, mass on the first token and residual RMS describe computation; they do not independently explain narrative meaning.*
+*Figure 5. Last logged observability probe at update 6,000, before the final checkpoint at update 6,104. The probe was sampled from validation data using a fixed RNG seed. Attention entropy, mass on the first token and residual RMS describe computation; they do not independently explain narrative meaning.*
 
 The [original observability log](training_record/observability.jsonl) also records weight norms, gradient norms and update ratios. The architecture does not have attention gates, so gate-closure rates would be inapplicable here. Logged probes are not blinded outcome measurements.
 
 ![Changes in one next-token log probability after zeroing individual attention heads](figures/head-ablations.png)
 
-*Figure 5. Each intervention zeroes one head before its output projection. Values are changes in the log probability of the unmodified model's top next token, on the same two fixed prompts. Negative values mean that removing the head reduced that token's probability. The [raw ablation records](training_record/head-ablations.json) describe a causal effect on that narrowly specified token score, not a validated semantic role for a head or an explanation of a whole story.*
+*Figure 6. Each intervention zeroes one head before its output projection. Values are changes in the log probability of the unmodified model's top next token, on the same two fixed prompts. Negative values mean that removing the head reduced that token's probability. The [raw ablation records](training_record/head-ablations.json) describe a causal effect on that narrowly specified token score, not a validated semantic role for a head or an explanation of a whole story.*
 
 ## Data, licensing and privacy
 
@@ -201,7 +241,7 @@ The native training-code base is commit `34a92771b3d9a95356d81a9296c6bec0844b690
 
 The native float32 weights are rounded to bfloat16 in the exported file. The tensor mapping is checked exactly; logits are compared against a native model with the same rounding and against the original checkpoint. The two differences are reported separately, so export rounding is not hidden. Cached and uncached greedy sequences are checked on the two fixed prompts. These checks validate packaging on these inputs; they do not establish model quality.
 
-The GitHub repository contains the scripts needed to rebuild the subset, train the tokenizer, encode fixed splits, train the model, export it and reproduce these figures. See [the experiment report](https://github.com/thekester/slm-tavenel/blob/v0.1.0-dev.38/experiments/EXP-0045-story-935k-2026-11-10.md). Training data, optimizer checkpoints and weight files are not committed to Git.
+The GitHub repository contains the scripts needed to rebuild the subset, train the tokenizer, encode fixed splits, train the model, export it and reproduce these figures. See [the experiment report](https://github.com/thekester/slm-tavenel/blob/v0.1.0-dev.39/experiments/EXP-0045-story-935k-2026-11-10.md). Training data, optimizer checkpoints and weight files are not committed to Git.
 
 ## Citation
 

@@ -21,6 +21,8 @@ See each model card for architecture, tokenizer, training details, benchmark pro
 
 The **[SLM-Tavenel Story 935K research preview](docs/model-cards/slm-tavenel-story-935k/README.md)** studies English story continuation with fewer than one million parameters. Its evidence includes training curves, same-text BPB comparisons, raw continuations and head-ablation probes. The public weight release is authorized with the documented source uncertainty; this specialized English model is evaluated separately from the bilingual 1M study. See [EXP-0045](experiments/EXP-0045-story-935k-2026-11-10.md).
 
+The [cross-source follow-up](docs/reviews/story-validation-followup-2026-11-10.md) shows a domain reversal: Story 935K has lower BPB on SimpleStories dev (**0.937 vs 1.670**), while tiny1m has lower BPB on the full TinyStories validation (**1.045 vs 1.543**). Human blind ratings remain pending; neither likelihood result establishes better narrative coherence.
+
 ## Current research result
 
 The main controlled study is [EXP-0010](experiments/EXP-0010-1m-paired-replication-2026-10-22.md). It compares ten matched training-seed pairs of the 1.18M gated model and a corresponding ungated model, holding initialization and data order fixed. On the preregistered English/French held-out bits-per-byte outcome, the gate reduced BPB by **0.0275** (95% hierarchical interval **0.0168–0.0395**) for this corpus, tokenizer, architecture, and one-pass budget.

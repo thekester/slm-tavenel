@@ -1,0 +1,15 @@
+{
+  "kind": "slm.human_blind_pilot",
+  "status": "awaiting_human_ratings",
+  "pairs_per_form": 15,
+  "unique_prefixes": 5,
+  "forms_started": 0,
+  "complete_blind_human_forms": 0,
+  "notes": [
+    "Human identity and independence are self-declared, not independently verified",
+    "Five previously public development prefixes; not the proposed 500-prefix final study",
+    "No generated scores or unfinished forms count as completed human evidence"
+  ],
+  "preference": null,
+  "trait_means": null
+}

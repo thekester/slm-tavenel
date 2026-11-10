@@ -1,0 +1,12 @@
+{
+  "paired_items_aligned": true,
+  "aggregate_nll_reconstructed": true,
+  "full_validation_documents": 21990,
+  "targeted_tests_passed": 20,
+  "deselected": 10,
+  "test_seconds": 13.0,
+  "test_command": "python -m pytest tests/test_story_bpb_protocol.py tests/test_story_human_review.py tests/test_story_split.py tests/test_fluency.py tests/test_end_to_end.py -k \"story_bpb_protocol or story_human_review or story_split or fluency or export\" -q",
+  "human_ui_javascript_syntax": "passed",
+  "human_ui_live_key_route": "404, key not served",
+  "private_human_ratings_or_keys_copied": false
+}

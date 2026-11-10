@@ -14,6 +14,27 @@
 # open questions are a starting point for review, not conclusions.
 
 sources:
+  - id: tinystories-validation-story935k
+    name: TinyStories official validation, frozen story-model comparison
+    url: https://huggingface.co/datasets/roneneldan/TinyStories
+    role: eval
+    license: CDLA-Sharing-1.0
+    license_url: https://huggingface.co/datasets/roneneldan/TinyStories/blob/f54c09fd23315a6f9c86f9dc80f725de7d8f9c64/README.md
+    status: comparison-only
+    revision: f54c09fd23315a6f9c86f9dc80f725de7d8f9c64
+    subset: data/validation-00000-of-00001-869c898b519ad725.parquet
+    attribution: Eldan and Li (2023), TinyStories, arXiv:2305.07759
+    languages: [en]
+    domains: [stories]
+    review:
+      provenance_verified: true
+      license_verified: false
+      pii_reviewed: false
+      notes: >-
+        Evaluation only, on frozen checkpoints. Declared source terms are recorded; this entry does not
+        approve the source for training. Real validation text stays under data/ and is not bundled in
+        the model release. Published artifacts contain hashes, counts and likelihood results only.
+
   - id: simple-stories-en-exp0045
     name: SimpleStories English, EXP-0045 completion-disjoint local subset
     url: https://huggingface.co/datasets/SimpleStories/SimpleStories

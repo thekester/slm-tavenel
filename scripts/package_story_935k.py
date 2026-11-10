@@ -54,6 +54,11 @@ def copy(source: Path, target: Path) -> None:
     shutil.copy2(source, target)
 
 
+def reference_dev_score(record: Path) -> dict:
+    matched = record / "tinystories/simple-dev-reference-reconciliation.json"
+    return load(matched)["matched_slow_tokenizer_score"] if matched.exists() else load(record / "tiny1m-dev-bpb.json")
+
+
 def source_audit(record: Path) -> dict:
     """Check source-group / text overlap and count structured-identifier flags; do not copy story text."""
     groups = {"train": set(), "dev": set()}
@@ -207,7 +212,7 @@ def figures(record: Path, out: Path) -> None:
     ax.legend(frameon=False); save(fig, "training")
 
     bpb = load(record / "exported-dev-bpb.json")["bits_per_byte"]
-    tiny = load(record / "tiny1m-dev-bpb.json")["bits_per_byte"]
+    tiny = reference_dev_score(record)["bits_per_byte"]
     fig, axes = plt.subplots(1, 2, figsize=(10, 3.5))
     axes[0].barh(["SLM-Tavenel Story 935K\n(exported weights)", "TinyStories tiny1m"], [bpb, tiny], color=["#2563eb", "#94a3b8"])
     for i, n in enumerate([bpb, tiny]): axes[0].text(n+.02, i, f"{n:.3f}", va="center")
@@ -218,6 +223,27 @@ def figures(record: Path, out: Path) -> None:
     axes[1].set(xlabel="Scoring chunk length", ylabel="Bits per byte", title="Context diagnostic\nNative Story 935K checkpoint")
     fig.text(.5, -.06, "Exploratory domain comparison. Training corpora differ; no confidence interval or narrative-quality ranking.", ha="center", fontsize=9)
     fig.tight_layout(); save(fig, "benchmarks")
+
+    tiny_path = record / "tinystories/summary.json"
+    if tiny_path.exists():
+        cross = load(tiny_path)
+        values = [[bpb, tiny], [cross["results"][key]["bits_per_byte"] for key in ("story935k", "tiny1m")]]
+        fig, axes = plt.subplots(1, 2, figsize=(10, 4))
+        high = max(max(v) for v in values)*1.2
+        names = ["SLM-Tavenel\nStory 935K", "TinyStories\ntiny1m"]
+        for i, (ax, numbers) in enumerate(zip(axes, values)):
+            errors = None
+            if i:
+                intervals = [cross["paired_bootstrap"][key+"_ci95"] for key in ("story935k", "tiny1m")]
+                errors = np.array([[n-ci[0] for n, ci in zip(numbers, intervals)],
+                                   [ci[1]-n for n, ci in zip(numbers, intervals)]])
+            ax.bar(names, numbers, color=["#2563eb", "#94a3b8"], yerr=errors, capsize=4)
+            for j, n in enumerate(numbers): ax.text(j, n+high*.035, f"{n:.3f}", ha="center")
+            ax.set(ylim=(0, high), ylabel="Bits per byte, lower is better",
+                   title=("SimpleStories local dev\n3,185 stories" if not i else
+                          f"TinyStories official validation\n{cross['data']['documents']:,} stories"))
+        fig.text(.5, -.08, "Same texts within each panel; 256-token chunks. Different training corpora and budgets.\nTinyStories intervals resample documents for fixed models; no training-seed uncertainty or story-quality ranking.", ha="center", fontsize=9)
+        fig.tight_layout(); save(fig, "cross-source-bpb")
 
     obs = [json.loads(s) for s in (record / "observability.jsonl").read_text().splitlines()][-1]
     fig, axes = plt.subplots(1, 3, figsize=(10, 3))
@@ -255,7 +281,7 @@ def render_card(record: Path) -> None:
     path = DOCS / "README.md"
     text = path.read_text(encoding="utf-8")
     exported = load(record / "exported-dev-bpb.json")
-    tiny = load(record / "tiny1m-dev-bpb.json")
+    tiny = reference_dev_score(record)
     table = ("| Model | Unique parameters | Scoring context | Dev BPB |\n"
              "|---|---:|---:|---:|\n"
              f"| **SLM-Tavenel Story 935K, exported weights** | 935,040 | 256 | **{exported['bits_per_byte']:.4f}** |\n"
@@ -275,6 +301,38 @@ def render_card(record: Path) -> None:
         text, count = re.subn(pattern, lambda _: f"<!-- generated:{marker} -->\n{content}\n<!-- /generated:{marker} -->", text, flags=re.S)
         if count != 1:
             raise ValueError(f"Expected one {marker} block in the model card")
+    tiny_path = record / "tinystories/summary.json"
+    if tiny_path.exists():
+        cross = load(tiny_path); ci = cross["paired_bootstrap"]["story_minus_tiny_ci95"]
+        n = cross["data"]["documents"]
+        content = (f"**Full TinyStories validation:** {n:,} stories, {cross['data']['bytes']:,} UTF-8 bytes, "
+                   "scored on both frozen exported models with the same 256-token policy. "
+                   "The official source revision and exact/case-whitespace overlap checks are in "
+                   "[dataset audit](training_record/tinystories/dataset-audit.json).\n\n"
+                   "| Evaluation texts | SLM-Tavenel Story 935K BPB | TinyStories tiny1m BPB |\n"
+                   "|---|---:|---:|\n"
+                   f"| SimpleStories local dev (3,185) | {exported['bits_per_byte']:.6f} | {tiny['bits_per_byte']:.6f} |\n"
+                   f"| TinyStories official validation ({n:,}) | {cross['results']['story935k']['bits_per_byte']:.6f} | {cross['results']['tiny1m']['bits_per_byte']:.6f} |\n\n"
+                   f"On TinyStories, Story 935K minus tiny1m = **{cross['story_minus_tiny_bpb']:+.6f} BPB**, "
+                   f"95% paired document-bootstrap interval **[{ci[0]:+.6f}, {ci[1]:+.6f}]**. "
+                   "A negative difference favors Story 935K. The interval describes these fixed checkpoints and documents; "
+                   "it excludes training-seed variation, unknown reference exposure and dependencies between synthetic story families. "
+                   "See [full results](training_record/tinystories/summary.json) and hashed per-item scores.\n\n"
+                   "**The SimpleStories advantage reverses on TinyStories:** tiny1m has lower BPB on the official TinyStories "
+                   "validation texts, while Story 935K has lower BPB on its own source's dev texts. Neither result is a human "
+                   "narrative-coherence score or a comparison at equal training budget.\n\n"
+                   "The tiny1m tokenizer is explicitly loaded as `LlamaTokenizer(legacy=True)` in the cross-corpus comparison. "
+                   "Its SimpleStories line was recomputed with that same loader. The previous automatically converted fast tokenizer "
+                   "differed by 44 tokens across 3,185 dev stories; both results and the unchanged weights are documented in "
+                   "[tokenizer reconciliation](training_record/tinystories/simple-dev-reference-reconciliation.json). "
+                   "This is a loading correction, not a trained-model improvement.\n\n"
+                   "![Same-policy BPB on SimpleStories and TinyStories](figures/cross-source-bpb.png)\n\n"
+                   "*Figure 4. Corpus-specific likelihood, not narrative preference. Only the TinyStories panel has "
+                   "document-bootstrap intervals; SimpleStories intervals were not computed.*")
+        text, count = re.subn(r"<!-- generated:cross-source -->.*?<!-- /generated:cross-source -->",
+                              lambda _: "<!-- generated:cross-source -->\n"+content+"\n<!-- /generated:cross-source -->", text, flags=re.S)
+        if count != 1:
+            raise ValueError("Expected one cross-source block in the updated model card")
     path.write_text(text, encoding="utf-8", newline="\n")
 
 

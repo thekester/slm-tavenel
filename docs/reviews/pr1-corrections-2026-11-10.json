@@ -1,0 +1,23 @@
+{
+  "date": "2026-11-10",
+  "pull_request": "https://github.com/thekester/slm-tavenel/pull/1",
+  "branch": "improve/1m-fluency-diagnostics",
+  "previous_head": "14bb331503df1537f6efb1f8d00a907a06b5269e",
+  "new_head": "4a06bbc7576ad04ffbf1ec002798ddd1da618cfb",
+  "pushed": true,
+  "merged": false,
+  "historical_pilot_archives_changed": false,
+  "files": [
+    "scripts/build_exp0045_simple_stories_v2.py",
+    "configs/eval/fluency-stories-en-v1.jsonl",
+    "configs/train/exp0045-story-100m-v2.yaml",
+    "experiments/EXP-0045-stories-strict-1m-2026-11-10.md",
+    "tests/test_story_split.py"
+  ],
+  "validation": {
+    "command": "python -m pytest tests/test_story_split.py tests/test_fluency.py tests/test_end_to_end.py -k \"story_split or fluency or export\" -q",
+    "passed": 15,
+    "deselected": 10,
+    "seconds": 11.4
+  }
+}

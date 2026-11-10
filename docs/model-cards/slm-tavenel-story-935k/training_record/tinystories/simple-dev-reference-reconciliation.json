@@ -1,0 +1,29 @@
+{
+  "kind": "slm.story_reference_tokenizer_reconciliation",
+  "reference_repo": "shibatch/tiny1m",
+  "revision": "fdacad8ff9dc27bd72c77d3684075a494be1ba11",
+  "weights_sha256": "f30ae85c53797b5944da7f235162756b31987233b44eac36ed449afd1b82523b",
+  "data_sha256": "2c6ae6ac43cfbcb9c200a9dbd8e8354fee09fc63a38faeab936f23b79dbf2e77",
+  "documents": 3185,
+  "context": 256,
+  "automatic_class": "LlamaTokenizerFast",
+  "automatic_tokens": 2145328,
+  "matched_class": "LlamaTokenizer",
+  "matched_legacy": true,
+  "matched_tokens": 2145284,
+  "documents_with_different_token_ids": 9,
+  "previous_automatic_score": {
+    "bits_per_byte": 1.6702891806971407,
+    "nll_per_token": 2.1288977493869745,
+    "tokens": 2145328,
+    "bytes": 3944858
+  },
+  "matched_slow_tokenizer_score": {
+    "bits_per_byte": 1.6700789795451032,
+    "nll_per_token": 2.128673492069693,
+    "tokens": 2145284,
+    "bytes": 3944858
+  },
+  "script_sha256": "b935b1db45f5d6e323469a185aa8958756935d59f241a5488625c95f5ae48b63",
+  "scope": "Same frozen weights and dev texts; loading difference disclosed rather than presented as model improvement"
+}

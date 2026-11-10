@@ -1,0 +1,9 @@
+{
+  "kind": "slm.human_blind_pilot",
+  "source_sha256": "428c53d5c6c6789c33697e6707e14b77a7f23a58ae71db6e9b922ae384060f89",
+  "pairs": 15,
+  "unique_prefixes": 5,
+  "human_ratings_generated": false,
+  "scope": "Previously public development outputs, not a sealed test; disclose prior exposure",
+  "key_canonical_json_sha256": "0fdb386071b017f32ccef52ebf0434dc4d277b4918b26588f67efdfb872e250b"
+}

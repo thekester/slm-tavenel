@@ -16,7 +16,12 @@
     "configs/model/slm-story-935k.yaml": "cb2270192d3ba931e2fab91df82bd4333368c6c8bd174404b0ee1b3693fabfbf",
     "configs/train/exp0045-story-100m-v2.yaml": "fe16a77a3467b40015c156a943edaa414fac9cdd62aac5be4db4447717f9794b",
     "scripts/generate_story.py": "cee03737064318f7d9eccaa0cc9c815efeb7f119707ab8880ad57ac18d8388a2",
-    "scripts/package_story_935k.py": "ddfde3d7afe935c5554f8d075fb6684469d1416bddcb73bba7d9e42ba04f3e19"
+    "scripts/package_story_935k.py": "84dfddac11286cab948f467b37d7486ac7bcfb70781425209c4ab159d9a7b878",
+    "scripts/evaluate_story_tinystories.py": "f9b9c451b4a51fa3f3cf7a938db814b41ede2931b0ca28736eef4a2130e91eb2",
+    "scripts/check_story_reference_tokenizer.py": "b935b1db45f5d6e323469a185aa8958756935d59f241a5488625c95f5ae48b63",
+    "scripts/archive_story_validation.py": "f96e014aa19b156e7abb55dc29c49291e8473320f3d6539d8d0389501bec6530",
+    "scripts/serve_story_review.py": "94e20014a5a681bfa8b84135d4084b88303ac8d2b2a92dc0c59bd8ec62e849ed",
+    "scripts/analyze_story_human_review.py": "e44b3a5e739cbb12fc21f64cacab2833d8e49c2ddd5270a0c2acbdd81754f22d"
   },
   "notes": [
     "Canonical training YAML preserves settings, updating the model-config path and publication comment; original YAML is preserved",

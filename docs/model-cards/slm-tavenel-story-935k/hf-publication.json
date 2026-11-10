@@ -1,17 +1,19 @@
 {
   "date": "2026-11-10",
   "repo_id": "athenista/slm-tavenel-story-935k",
-  "revision": "aa61ea0b3240f66e6c697264281954753632bb12",
+  "revision": "9e9ba49e998ac1e536731798d337d1c2f7c21858",
   "weights_revision": "62e64c2b677ea9fbc90cdee0fbfe66b589b78e83",
   "private": false,
   "public_release_approved": true,
-  "package_files_verified": 49,
+  "package_files_verified": 63,
   "all_manifest_file_hashes_match_anonymous_download": true,
   "anonymous_api_status": 200,
-  "anonymous_weight_download_status": 200,
   "weights_sha256": "8804d57668ac492454d9835841ff2a57f7867dbcbb36df4452ffedfa8813c9a8",
   "parameters": 935040,
-  "standard_llama_loading_and_example_verified_on_same_weights_in_private_preview": true,
+  "tiny_stories_validation_bpb": 1.5430903852185665,
+  "evaluation_reference_bpb": 1.045243770567831,
+  "completed_human_forms": 0,
+  "human_preference_score": null,
   "source_registry_status": "candidate",
   "legal_clearance_claimed": false
 }

@@ -1,0 +1,17 @@
+{
+  "dataset": "roneneldan/TinyStories",
+  "revision": "f54c09fd23315a6f9c86f9dc80f725de7d8f9c64",
+  "split": "validation",
+  "source_file": "data/validation-00000-of-00001-869c898b519ad725.parquet",
+  "declared_license": "CDLA-Sharing-1.0",
+  "source_sha256": "33406a6206554cfc279c29c11f4df51528af487aa1a602b075566fc83c49dcab",
+  "documents": 21990,
+  "bytes": 19218350,
+  "empty_texts": 0,
+  "unique_exact_texts": 21990,
+  "unique_case_whitespace_normalized_texts": 21990,
+  "exact_overlaps_with_story_training": 0,
+  "normalized_overlaps_with_story_training": 0,
+  "train_sha256": "ecfb4a590d18123b2d6688cf1739790b96c36ce7c8ac5dde6b6ccd23e402c480",
+  "limits": "Exact/case/whitespace checks only; reference training exposure and semantic overlap are not established"
+}

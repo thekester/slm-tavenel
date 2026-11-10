@@ -1,0 +1,67 @@
+{
+  "kind": "slm.story_cross_source_bpb",
+  "status": "completed",
+  "fingerprint": {
+    "source_sha256": "33406a6206554cfc279c29c11f4df51528af487aa1a602b075566fc83c49dcab",
+    "script_sha256": "f9b9c451b4a51fa3f3cf7a938db814b41ede2931b0ca28736eef4a2130e91eb2",
+    "context": 256,
+    "model_weight_hashes": {
+      "story935k": "8804d57668ac492454d9835841ff2a57f7867dbcbb36df4452ffedfa8813c9a8",
+      "tiny1m": "f30ae85c53797b5944da7f235162756b31987233b44eac36ed449afd1b82523b"
+    }
+  },
+  "code": {
+    "commit": "455bd23e1ba74c6496c65e90375b3cacbc5d6272",
+    "dirty": true
+  },
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "torch": "2.10.0+cu130",
+    "cuda": "13.0",
+    "devices": [],
+    "numpy": "2.4.4",
+    "tokenizers": "0.22.2",
+    "safetensors": "0.8.0",
+    "transformers": "4.57.6"
+  },
+  "models": [
+    {
+      "label": "SLM-Tavenel Story 935K",
+      "key": "story935k",
+      "repo": "athenista/slm-tavenel-story-935k",
+      "revision": "62e64c2b677ea9fbc90cdee0fbfe66b589b78e83",
+      "path": "data/models/fluency/story-935k-100m-v2",
+      "weights_sha256": "8804d57668ac492454d9835841ff2a57f7867dbcbb36df4452ffedfa8813c9a8"
+    },
+    {
+      "label": "TinyStories tiny1m",
+      "key": "tiny1m",
+      "repo": "shibatch/tiny1m",
+      "revision": "fdacad8ff9dc27bd72c77d3684075a494be1ba11",
+      "path": "data/models/fluency/tiny1m/hf",
+      "weights_sha256": "f30ae85c53797b5944da7f235162756b31987233b44eac36ed449afd1b82523b"
+    }
+  ],
+  "data": {
+    "dataset": "roneneldan/TinyStories",
+    "revision": "f54c09fd23315a6f9c86f9dc80f725de7d8f9c64",
+    "split": "validation",
+    "source_file": "data/validation-00000-of-00001-869c898b519ad725.parquet",
+    "declared_license": "CDLA-Sharing-1.0",
+    "source_sha256": "33406a6206554cfc279c29c11f4df51528af487aa1a602b075566fc83c49dcab",
+    "documents": 21990,
+    "bytes": 19218350,
+    "empty_texts": 0,
+    "unique_exact_texts": 21990,
+    "unique_case_whitespace_normalized_texts": 21990,
+    "exact_overlaps_with_story_training": 0,
+    "normalized_overlaps_with_story_training": 0,
+    "train_sha256": "ecfb4a590d18123b2d6688cf1739790b96c36ce7c8ac5dde6b6ccd23e402c480",
+    "limits": "Exact/case/whitespace checks only; reference training exposure and semantic overlap are not established"
+  },
+  "threads": 2,
+  "device": "cpu",
+  "loaded_dtype": "float32",
+  "protocol": "Existing bits_per_byte; model-specific start token; nonoverlapping 256-token chunks; identical full validation texts"
+}
