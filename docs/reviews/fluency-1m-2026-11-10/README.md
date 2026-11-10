@@ -5,6 +5,13 @@ evaluation tool and candidates to train; it does not improve or replace any
 published weights. The 48 completions below are baseline observations, not a
 48-item proof of a new model's superiority.
 
+**Prospective scope update:** the user subsequently specified a strict total
+parameter budget and English storytelling as the primary target. See
+[EXP-0045](../../../experiments/EXP-0045-stories-strict-1m-2026-11-10.md) and the
+[research review](../../research/stories-1m-2026-11-10.md). Its candidates have
+at most 935,040 parameters. The bilingual/1.18M proposal below is historical;
+the baseline observations and archived generation artifacts are unchanged.
+
 ## What was verified
 
 The audit downloaded the public HF model at commit

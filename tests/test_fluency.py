@@ -63,3 +63,15 @@ def test_candidate_parameter_budget(name, expected):
     model = SLM(load_model_config(f"configs/model/slm-1m-v2048-{name}.yaml"))
     assert model.num_params() == expected
     assert model.num_params() <= 1181920
+
+
+@pytest.mark.parametrize("name,expected", [
+    ("935k", 935040), ("913k-deep", 912672), ("921k-v2048", 920960),
+])
+def test_story_candidates_respect_reference_total_budget(name, expected):
+    # Count unique tensors, including the tied embedding/output table once.
+    # Changing a YAML must not silently invalidate the central comparison claim.
+    with torch.device("meta"):
+        model = SLM(load_model_config(f"configs/model/slm-story-{name}.yaml"))
+    assert sum(p.numel() for p in model.parameters()) == expected
+    assert model.num_params() <= 935040

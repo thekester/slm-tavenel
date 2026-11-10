@@ -1,0 +1,15 @@
+# EXP-0045 candidate B, UNTRAINED: 912,672 total unique parameters.
+# Six narrower blocks; architecture bundle, not an isolated depth ablation.
+# Requires a new train-only 1024-token tokenizer and training from scratch.
+vocab_size: 1024
+d_model: 96
+n_layers: 6
+n_heads: 3
+n_kv_heads: 1
+ffn_hidden: 384
+max_seq_len: 1024
+rope_theta: 10000.0
+tie_embeddings: true
+qk_norm: true
+attn_gate: headwise
+window_pattern: []

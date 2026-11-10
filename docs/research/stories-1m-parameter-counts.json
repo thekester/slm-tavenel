@@ -1,0 +1,94 @@
+{
+  "date": "2026-11-10",
+  "python": "3.12.14",
+  "torch": "2.10.0+cpu",
+  "transformers": "4.57.6",
+  "budget_total_unique": 935040,
+  "candidates": [
+    {
+      "config": "configs/model/slm-story-935k.yaml",
+      "sha256": "17016a48d485d2fa3639715883189a0c7d38a6ff0d8d69c355a2497bc62b18ca",
+      "total_unique_parameters": 935040,
+      "shared_embedding_parameters": 131072,
+      "other_parameters": 803968,
+      "forward_smoke_finite": true,
+      "trained": false
+    },
+    {
+      "config": "configs/model/slm-story-913k-deep.yaml",
+      "sha256": "b4f3bf4f15c15a0529ac4a770f78e3a0dc62bf173042ac64bae736607288a76a",
+      "total_unique_parameters": 912672,
+      "shared_embedding_parameters": 98304,
+      "other_parameters": 814368,
+      "forward_smoke_finite": true,
+      "trained": false
+    },
+    {
+      "config": "configs/model/slm-story-921k-v2048.yaml",
+      "sha256": "b2a2a2eec5422b2be62a2d32e3812f350ac405df88fc05f41af3f9d935ada894",
+      "total_unique_parameters": 920960,
+      "shared_embedding_parameters": 262144,
+      "other_parameters": 658816,
+      "forward_smoke_finite": true,
+      "trained": false
+    }
+  ],
+  "original_reference": {
+    "model": "roneneldan/TinyStories-1M",
+    "revision": "77f1b168e219585646439073245fe87e56b3023e",
+    "method": "sum unique parameters of GPTNeoForCausalLM instantiated on meta from pinned config; not a downloaded-weight audit",
+    "total_unique_parameters": 3745984,
+    "config": {
+      "_name_or_path": "EleutherAI/gpt-neo-125M",
+      "activation_function": "gelu_new",
+      "architectures": [
+        "GPTNeoForCausalLM"
+      ],
+      "attention_dropout": 0,
+      "attention_layers": [
+        "global",
+        "local",
+        "global",
+        "local",
+        "global",
+        "local",
+        "global",
+        "local"
+      ],
+      "attention_types": [
+        [
+          [
+            "global",
+            "local"
+          ],
+          4
+        ]
+      ],
+      "bos_token_id": 50256,
+      "embed_dropout": 0,
+      "eos_token_id": 50256,
+      "gradient_checkpointing": false,
+      "hidden_size": 64,
+      "initializer_range": 0.02,
+      "intermediate_size": null,
+      "layer_norm_epsilon": 1e-05,
+      "max_position_embeddings": 2048,
+      "model_type": "gpt_neo",
+      "num_heads": 16,
+      "num_layers": 8,
+      "resid_dropout": 0,
+      "summary_activation": null,
+      "summary_first_dropout": 0.1,
+      "summary_proj_to_labels": true,
+      "summary_type": "cls_index",
+      "summary_use_proj": true,
+      "torch_dtype": "float32",
+      "transformers_version": "4.28.0",
+      "use_cache": true,
+      "vocab_size": 50257,
+      "window_size": 256,
+      "attn_implementation": null
+    }
+  },
+  "note": "No new training or generation-quality evaluation performed."
+}

@@ -1,0 +1,15 @@
+# EXP-0045 candidate C, UNTRAINED: 920,960 total unique parameters.
+# Larger vocabulary, smaller FFN; compare equal raw-text exposure as well as tokens.
+# Requires a new train-only 2048-token tokenizer and training from scratch.
+vocab_size: 2048
+d_model: 128
+n_layers: 4
+n_heads: 4
+n_kv_heads: 1
+ffn_hidden: 320
+max_seq_len: 1024
+rope_theta: 10000.0
+tie_embeddings: true
+qk_norm: true
+attn_gate: headwise
+window_pattern: []
