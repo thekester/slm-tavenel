@@ -1,0 +1,66 @@
+{
+  "actual_vocab_size": 1024,
+  "code": {
+    "commit": "34a92771b3d9a95356d81a9296c6bec0844b6904",
+    "dirty": true
+  },
+  "created": "2026-11-10T16:04:19Z",
+  "environment": {
+    "cuda": "13.0",
+    "devices": [],
+    "numpy": "2.4.4",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "python": "3.11.9",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.22.2",
+    "torch": "2.10.0+cu130"
+  },
+  "inputs": [
+    {
+      "path": "D:\\slm-tavenel\\data\\processed\\exp0045-simple-stories-v2\\train.jsonl",
+      "sha256": "ecfb4a590d18123b2d6688cf1739790b96c36ce7c8ac5dde6b6ccd23e402c480"
+    }
+  ],
+  "kind": "slm.tokenizer",
+  "params": {
+    "max_docs": 30000,
+    "min_frequency": 2,
+    "seed": 421201,
+    "vocab_size": 1024
+  },
+  "special_tokens": [
+    "<|endoftext|>",
+    "<|pad|>",
+    "<|im_start|>",
+    "<|im_end|>",
+    "<think>",
+    "</think>",
+    "<tool_call>",
+    "</tool_call>",
+    "<tool_response>",
+    "</tool_response>",
+    "<|reserved_0|>",
+    "<|reserved_1|>",
+    "<|reserved_2|>",
+    "<|reserved_3|>",
+    "<|reserved_4|>",
+    "<|reserved_5|>",
+    "<|reserved_6|>",
+    "<|reserved_7|>",
+    "<|reserved_8|>",
+    "<|reserved_9|>",
+    "<|reserved_10|>",
+    "<|reserved_11|>",
+    "<|reserved_12|>",
+    "<|reserved_13|>",
+    "<|reserved_14|>",
+    "<|reserved_15|>",
+    "<|reserved_16|>",
+    "<|reserved_17|>",
+    "<|reserved_18|>",
+    "<|reserved_19|>",
+    "<|reserved_20|>",
+    "<|reserved_21|>"
+  ],
+  "tokenizer_sha256": "93343ad08c657b22bfd55c652c1256cb1342724f1acf35601ecb98e45bc53794"
+}

@@ -1,0 +1,133 @@
+{
+  "code": {
+    "commit": "34a92771b3d9a95356d81a9296c6bec0844b6904",
+    "dirty": true
+  },
+  "data": {
+    "dir": "data/tokens/exp0045-simple-stories-v2",
+    "manifest_sha256": "9551c76c71a36043b35bbda7afa79f7741af92c0dee578af6d42019835cbc60f",
+    "provenance": null,
+    "provenance_path": null,
+    "splits": {
+      "train": {
+        "shards": [
+          "1c1a52c46bc4e3ea4b474b95bd2a43cb43726ffa08935719d56e11e54409c946"
+        ],
+        "tokens": 24806504
+      },
+      "val": {
+        "shards": [
+          "7382f93ac95af508db6e01e9311fa0cc79c77b910fb3240c7aa1855c6fdeaf7d"
+        ],
+        "tokens": 1312747
+      }
+    },
+    "tokenizer_compatibility": {
+      "dataset_tokenizer_sha256": "93343ad08c657b22bfd55c652c1256cb1342724f1acf35601ecb98e45bc53794",
+      "source_checkpoint_lineage": [],
+      "verified": true
+    },
+    "tokenizer_sha256": "93343ad08c657b22bfd55c652c1256cb1342724f1acf35601ecb98e45bc53794"
+  },
+  "distillation": null,
+  "environment": {
+    "cuda": "13.0",
+    "cudnn": 91200,
+    "devices": [
+      "NVIDIA GeForce RTX 4060 Laptop GPU"
+    ],
+    "numpy": "2.4.4",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "python": "3.11.9",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.22.2",
+    "torch": "2.10.0+cu130"
+  },
+  "initialized_from": null,
+  "jepa": null,
+  "kind": "slm.train",
+  "model_config": {
+    "attn_gate": "none",
+    "conv_kernel": 3,
+    "conv_layers": [],
+    "d_model": 128,
+    "ffn_hidden": 416,
+    "init_std": 0.02,
+    "max_seq_len": 1024,
+    "n_heads": 4,
+    "n_kv_heads": 1,
+    "n_layers": 4,
+    "norm_eps": 1e-06,
+    "qk_norm": false,
+    "rope_theta": 10000.0,
+    "tie_embeddings": true,
+    "vocab_size": 1024,
+    "window_pattern": []
+  },
+  "model_config_hash": "06abaf2df26f746a",
+  "params": 935040,
+  "params_non_embedding": 803968,
+  "resumed_from": null,
+  "train_config": {
+    "activation_checkpointing": false,
+    "beta1": 0.9,
+    "beta2": 0.95,
+    "ckpt_interval": 500,
+    "compile": false,
+    "data_dir": "data/tokens/exp0045-simple-stories-v2",
+    "decay_fraction": 0.2,
+    "deterministic": true,
+    "distill_revision": "",
+    "distill_teacher": "",
+    "distill_temperature": 1.0,
+    "distill_weight": 0.5,
+    "doc_mask": false,
+    "dtype": "bfloat16",
+    "eps": 1e-08,
+    "eval_batches": 40,
+    "eval_interval": 250,
+    "goodview_dim": 64,
+    "goodview_gamma": 1.0,
+    "goodview_variant": "vicreg",
+    "grad_accum_steps": 2,
+    "grad_clip": 1.0,
+    "init_from": "",
+    "jepa_ema": 0.996,
+    "jepa_mode": "token",
+    "jepa_predictor_hidden": 0,
+    "jepa_state_tokens": 0,
+    "jepa_weight": 0.0,
+    "keep_checkpoints": 4,
+    "log_interval": 25,
+    "lr": 0.001,
+    "master_weights_offload": false,
+    "max_steps": 6104,
+    "measure_energy": true,
+    "micro_batch_size": 32,
+    "min_lr": 0.0001,
+    "mir": false,
+    "mir_aux_weight": 0.4,
+    "mir_mask_ratio_max": 0.5,
+    "mir_mask_ratio_min": 0.0,
+    "mir_mask_token_id": 10,
+    "model": "runs/PR1-fixes-2026-11-10/pr-tree/configs/model/slm-story-935k.yaml",
+    "muon_momentum": 0.95,
+    "observe_interval": 500,
+    "optimizer": "adamw",
+    "optimizer_offload": false,
+    "out_dir": "runs/EXP-0045/story-935k-100m-v2-s421201",
+    "parallel_batch": 128,
+    "parallel_data": "",
+    "parallel_mode": "",
+    "parallel_weight": 0.1,
+    "peak_tflops": 0.0,
+    "resume": true,
+    "schedule": "cosine",
+    "seed": 421201,
+    "seq_len": 256,
+    "warmup_steps": 300,
+    "weight_decay": 0.1
+  },
+  "train_config_hash": "a7f9b05d5f23e901",
+  "world_size": 1
+}

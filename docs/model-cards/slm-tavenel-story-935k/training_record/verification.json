@@ -1,0 +1,47 @@
+{
+  "kind": "slm.story_release_verification",
+  "parameters": 935040,
+  "tensor_mapping_exact": true,
+  "max_abs_logit_diff_original_fp32_vs_export": [
+    0.08828926086425781,
+    0.10169553756713867
+  ],
+  "max_abs_logit_diff_bfloat16_rounded_native_vs_export": [
+    2.09808349609375e-05,
+    1.71661376953125e-05
+  ],
+  "cached_uncached_greedy_identical": [
+    true,
+    true
+  ],
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "torch": "2.10.0+cu130",
+    "cuda": "13.0",
+    "devices": [
+      "NVIDIA GeForce RTX 4060 Laptop GPU"
+    ],
+    "cudnn": 91200,
+    "numpy": "2.4.4",
+    "tokenizers": "0.22.2",
+    "safetensors": "0.8.0",
+    "transformers": "4.57.6"
+  },
+  "inference": {
+    "device": "cpu",
+    "threads": 2,
+    "loaded_dtype": "float32",
+    "batch": 1,
+    "prompt_tokens": 128,
+    "new_tokens": 64,
+    "warmup": 1,
+    "timed_runs": 3,
+    "prefill_ms_median": 7.387500023469329,
+    "generate_seconds_median": 0.21043049998115748,
+    "generated_tokens_per_second": 304.1384210260905,
+    "process_rss_bytes_after_checks": 802037760,
+    "rss_note": "Includes Python, both model copies and benchmark allocations; not isolated model memory or peak RAM",
+    "limits": "One CPU machine/session; cached greedy generation; excludes model loading"
+  }
+}

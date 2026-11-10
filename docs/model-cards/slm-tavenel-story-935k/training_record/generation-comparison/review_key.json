@@ -1,0 +1,242 @@
+[
+  {
+    "group": "da20fcb56519fb6b",
+    "id": "pilot-story-en-0",
+    "model": "story-935k-100m-v2",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "1"
+  },
+  {
+    "group": "da20fcb56519fb6b",
+    "id": "pilot-story-en-0",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "2"
+  },
+  {
+    "group": "6442e31678697bb8",
+    "id": "pilot-story-en-0",
+    "model": "story-935k-100m-v2",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "6442e31678697bb8",
+    "id": "pilot-story-en-0",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "0d27f54e9f3dc855",
+    "id": "pilot-story-en-0",
+    "model": "story-935k-100m-v2",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "0d27f54e9f3dc855",
+    "id": "pilot-story-en-0",
+    "model": "tiny1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "853bd85d01b67180",
+    "id": "pilot-story-en-1",
+    "model": "story-935k-100m-v2",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "1"
+  },
+  {
+    "group": "853bd85d01b67180",
+    "id": "pilot-story-en-1",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "2"
+  },
+  {
+    "group": "de6e657791d0ba1e",
+    "id": "pilot-story-en-1",
+    "model": "story-935k-100m-v2",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "de6e657791d0ba1e",
+    "id": "pilot-story-en-1",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "22d0f74fd01c458a",
+    "id": "pilot-story-en-1",
+    "model": "tiny1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "22d0f74fd01c458a",
+    "id": "pilot-story-en-1",
+    "model": "story-935k-100m-v2",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "56c2e285bbabd446",
+    "id": "pilot-story-en-2",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "1"
+  },
+  {
+    "group": "56c2e285bbabd446",
+    "id": "pilot-story-en-2",
+    "model": "story-935k-100m-v2",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "2"
+  },
+  {
+    "group": "8447bd4aed06cd8a",
+    "id": "pilot-story-en-2",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "8447bd4aed06cd8a",
+    "id": "pilot-story-en-2",
+    "model": "story-935k-100m-v2",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "a3476204c64b1cf2",
+    "id": "pilot-story-en-2",
+    "model": "tiny1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "a3476204c64b1cf2",
+    "id": "pilot-story-en-2",
+    "model": "story-935k-100m-v2",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "62fa459be32e5355",
+    "id": "pilot-story-en-3",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "1"
+  },
+  {
+    "group": "62fa459be32e5355",
+    "id": "pilot-story-en-3",
+    "model": "story-935k-100m-v2",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "2"
+  },
+  {
+    "group": "68e049d3320bfde1",
+    "id": "pilot-story-en-3",
+    "model": "story-935k-100m-v2",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "68e049d3320bfde1",
+    "id": "pilot-story-en-3",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "5373794eca61b7ee",
+    "id": "pilot-story-en-3",
+    "model": "tiny1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "5373794eca61b7ee",
+    "id": "pilot-story-en-3",
+    "model": "story-935k-100m-v2",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "8ce7b117a6d83438",
+    "id": "pilot-story-en-4",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "1"
+  },
+  {
+    "group": "8ce7b117a6d83438",
+    "id": "pilot-story-en-4",
+    "model": "story-935k-100m-v2",
+    "seed": 421201,
+    "temperature": 0.0,
+    "variant": "2"
+  },
+  {
+    "group": "e06493c7c0e520f1",
+    "id": "pilot-story-en-4",
+    "model": "story-935k-100m-v2",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "e06493c7c0e520f1",
+    "id": "pilot-story-en-4",
+    "model": "tiny1m",
+    "seed": 421201,
+    "temperature": 0.8,
+    "variant": "2"
+  },
+  {
+    "group": "983706eeada58f9a",
+    "id": "pilot-story-en-4",
+    "model": "story-935k-100m-v2",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "1"
+  },
+  {
+    "group": "983706eeada58f9a",
+    "id": "pilot-story-en-4",
+    "model": "tiny1m",
+    "seed": 421202,
+    "temperature": 0.8,
+    "variant": "2"
+  }
+]

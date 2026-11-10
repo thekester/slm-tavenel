@@ -1,0 +1,3 @@
+# The release evidence is also uploaded to the Hub and bound by SHA-256.
+# Preserve original bytes, including archived CSV/JSONL line endings, on every platform.
+docs/model-cards/slm-tavenel-story-935k/** -text

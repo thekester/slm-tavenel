@@ -1,0 +1,56 @@
+{
+  "code": {
+    "commit": "34a92771b3d9a95356d81a9296c6bec0844b6904",
+    "dirty": true
+  },
+  "created": "2026-11-10T16:04:48Z",
+  "dtype": "uint16",
+  "eos_id": 0,
+  "inputs": {
+    "dev": [
+      {
+        "path": "D:\\slm-tavenel\\data\\processed\\exp0045-simple-stories-v2\\dev.jsonl",
+        "sha256": "2c6ae6ac43cfbcb9c200a9dbd8e8354fee09fc63a38faeab936f23b79dbf2e77"
+      }
+    ],
+    "train": [
+      {
+        "path": "D:\\slm-tavenel\\data\\processed\\exp0045-simple-stories-v2\\train.jsonl",
+        "sha256": "ecfb4a590d18123b2d6688cf1739790b96c36ce7c8ac5dde6b6ccd23e402c480"
+      }
+    ]
+  },
+  "kind": "slm.tokens.fixed_splits",
+  "shard_tokens_target": 100000000,
+  "split_mapping": {
+    "dev": "val",
+    "test": "test",
+    "train": "train"
+  },
+  "splits": {
+    "train": {
+      "docs": 60000,
+      "shards": [
+        {
+          "file": "train_00000.bin",
+          "sha256": "1c1a52c46bc4e3ea4b474b95bd2a43cb43726ffa08935719d56e11e54409c946",
+          "tokens": 24806504
+        }
+      ],
+      "tokens": 24806504
+    },
+    "val": {
+      "docs": 3185,
+      "shards": [
+        {
+          "file": "val_00000.bin",
+          "sha256": "7382f93ac95af508db6e01e9311fa0cc79c77b910fb3240c7aa1855c6fdeaf7d",
+          "tokens": 1312747
+        }
+      ],
+      "tokens": 1312747
+    }
+  },
+  "tokenizer_sha256": "93343ad08c657b22bfd55c652c1256cb1342724f1acf35601ecb98e45bc53794",
+  "vocab_size": 1024
+}

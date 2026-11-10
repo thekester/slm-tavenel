@@ -1,0 +1,70 @@
+{
+  "kind": "slm.head_zero_ablation",
+  "model": "native checkpoint rounded to exported bfloat16 weights, then CPU float32",
+  "metric": "change in log probability of the baseline top next token",
+  "limits": "Two fixed prompts; causal effect on one next-token score, not a semantic explanation of a story",
+  "probes": [
+    {
+      "prompt": "Once upon a time, a fox found a key.",
+      "target_token_id": 451,
+      "target_piece": " It",
+      "delta_log_probability_by_layer_head": [
+        [
+          0.21810007095336914,
+          -0.5651547312736511,
+          -0.01265937089920044,
+          0.0020446181297302246
+        ],
+        [
+          -0.6007785201072693,
+          0.02687889337539673,
+          -0.3359902501106262,
+          0.06776398420333862
+        ],
+        [
+          0.3192662000656128,
+          -0.29605478048324585,
+          0.07204645872116089,
+          0.317607581615448
+        ],
+        [
+          0.06843280792236328,
+          -0.648461639881134,
+          -0.11679142713546753,
+          -0.011436164379119873
+        ]
+      ]
+    },
+    {
+      "prompt": "Lily was afraid of the dark, so her brother gave her a small lamp.",
+      "target_token_id": 337,
+      "target_piece": " \"",
+      "delta_log_probability_by_layer_head": [
+        [
+          0.07249832153320312,
+          -0.3914794921875,
+          -0.2983052730560303,
+          -0.10058355331420898
+        ],
+        [
+          0.060433387756347656,
+          0.04348349571228027,
+          -0.775794267654419,
+          -0.28711533546447754
+        ],
+        [
+          -0.18363642692565918,
+          -0.07038438320159912,
+          -0.2024620771408081,
+          -0.17738282680511475
+        ],
+        [
+          0.04509866237640381,
+          -0.19863176345825195,
+          0.37328213453292847,
+          -0.3709731101989746
+        ]
+      ]
+    }
+  ]
+}

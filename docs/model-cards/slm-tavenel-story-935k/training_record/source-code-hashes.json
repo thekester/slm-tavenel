@@ -1,0 +1,25 @@
+{
+  "original_run_base": "34a92771b3d9a95356d81a9296c6bec0844b6904",
+  "original_run_dirty": true,
+  "pr1_source": "14bb331503df1537f6efb1f8d00a907a06b5269e",
+  "publication_code_files_sha256": {
+    "src/slm/model.py": "ac4e6147f67e5a09d7a6e9b2210343dfb5897d0f4248ac97a9e932bbb4ebc3f1",
+    "src/slm/train.py": "64ee91cbc10258188e5c539bf54ad59f69d877ba9a3f98793e78411c84c61d5c",
+    "src/slm/config.py": "b72620742a1f5eff2d770928a0318f74046899bfd6553bddd0f879c72d8cc43a",
+    "src/slm/export.py": "794f7a5d8feb6c18c76465f0693e8133475ed2666871735479f177fbbcb9db4f",
+    "src/slm/evaluation.py": "ab93a6a1bcc41158a25d7b040494eb3307922d0e94a29547101e04004370c4c5",
+    "src/slm/tokenizer.py": "f2321c431bee1f3e829459f1ed47360b4e4b29998a9dada1179ae093b89bbbd9",
+    "src/slm/data/shards.py": "2298b082eeb8ce79be6c29252363967f96358241105caed226a989b0c9f07f27",
+    "scripts/build_exp0045_simple_stories_v2.py": "899084ab3fbd09870cffb9ae709dc69635501246f7c14205eeef764d657cdc59",
+    "scripts/compare_fluency.py": "f4056a5b231391130dc0f3bb49940d37f0fa0925bf25d7e6d5c4261efbfdcc97",
+    "src/slm/fluency.py": "50fbea65fefe047ef95ad785db51f55490c60afbed496b66f77d76be86a77ab5",
+    "configs/model/slm-story-935k.yaml": "cb2270192d3ba931e2fab91df82bd4333368c6c8bd174404b0ee1b3693fabfbf",
+    "configs/train/exp0045-story-100m-v2.yaml": "41a78f664643c8043d09ec85acfc6dc3b0384502f6192051451d1dceafc8166b",
+    "scripts/generate_story.py": "cee03737064318f7d9eccaa0cc9c815efeb7f119707ab8880ad57ac18d8388a2",
+    "scripts/package_story_935k.py": "86b6aacdb12ed4ff2c19f58ded8b5e35c87df32989202976b54dab41f5e98b9e"
+  },
+  "notes": [
+    "Canonical training YAML updates only the path to the model config; original YAML is preserved",
+    "No retrospective claim of a clean original training run"
+  ]
+}

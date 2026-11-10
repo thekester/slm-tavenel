@@ -1,0 +1,11 @@
+{
+  "kind": "slm.story_export_bpb",
+  "context": 256,
+  "documents": 3185,
+  "model_sha256": "8804d57668ac492454d9835841ff2a57f7867dbcbb36df4452ffedfa8813c9a8",
+  "data_sha256": "2c6ae6ac43cfbcb9c200a9dbd8e8354fee09fc63a38faeab936f23b79dbf2e77",
+  "bits_per_byte": 0.9370124485445691,
+  "nll_per_token": 1.9564832407137032,
+  "tokens": 1309562,
+  "bytes": 3944858
+}

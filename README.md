@@ -18,6 +18,8 @@ The canonical Hugging Face repositories use names without experiment suffixes. O
 
 See each model card for architecture, tokenizer, training details, benchmark protocol, inference measurements, data provenance, and limits. The cards document declared dataset terms and provenance; they do not independently establish rights to every source document.
 
+An additional **[SLM-Tavenel Story 935K research preview](docs/model-cards/slm-tavenel-story-935k/README.md)** studies English story continuation with fewer than one million parameters. It is a separate specialized model, trained on a corrected SimpleStories subset. Its evidence includes training curves, same-text BPB comparisons, raw continuations and head-ablation probes. The prepared Hugging Face package is private pending the documented source/publication decision; it is not a replacement for the bilingual 1M study. See [EXP-0045](experiments/EXP-0045-story-935k-2026-11-10.md).
+
 ## Current research result
 
 The main controlled study is [EXP-0010](experiments/EXP-0010-1m-paired-replication-2026-10-22.md). It compares ten matched training-seed pairs of the 1.18M gated model and a corresponding ungated model, holding initialization and data order fixed. On the preregistered English/French held-out bits-per-byte outcome, the gate reduced BPB by **0.0275** (95% hierarchical interval **0.0168–0.0395**) for this corpus, tokenizer, architecture, and one-pass budget.

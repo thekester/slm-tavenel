@@ -1,0 +1,36 @@
+{
+  "kind": "slm.story_source_audit",
+  "documents": 63185,
+  "splits": {
+    "train": {
+      "documents": 60000,
+      "unique_exact_texts": 60000,
+      "unique_normalized_texts": 60000,
+      "structured_identifier_hits": {
+        "email": 0,
+        "ip": 0,
+        "phone": 0,
+        "iban": 0
+      }
+    },
+    "dev": {
+      "documents": 3185,
+      "unique_exact_texts": 3185,
+      "unique_normalized_texts": 3185,
+      "structured_identifier_hits": {
+        "email": 0,
+        "ip": 0,
+        "phone": 0,
+        "iban": 0
+      }
+    }
+  },
+  "shared_completion_groups": 0,
+  "shared_exact_texts": 0,
+  "shared_case_whitespace_normalized_texts": 0,
+  "limits": [
+    "No semantic or near-duplicate independence claim",
+    "Regex flags are not a privacy clearance",
+    "Source remains candidate; producer terms are documented separately"
+  ]
+}

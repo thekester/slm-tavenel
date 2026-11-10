@@ -1,0 +1,15 @@
+# Architecture used by SLM-Tavenel Story 935K: exactly 935,040 total unique parameters.
+# Same total as the pinned shibatch/tiny1m reference, including embeddings.
+# Requires a new train-only 1024-token tokenizer and training from scratch.
+vocab_size: 1024
+d_model: 128
+n_layers: 4
+n_heads: 4
+n_kv_heads: 1
+ffn_hidden: 416
+max_seq_len: 1024
+rope_theta: 10000.0
+tie_embeddings: true
+qk_norm: false
+attn_gate: none
+window_pattern: []

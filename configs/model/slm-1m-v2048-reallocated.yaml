@@ -1,0 +1,14 @@
+# Capacity reallocation candidate, NOT trained or validated: 1,166,720 parameters.
+# Compare against v2048-control on the identical 2048-token corpus first.
+# Never attach the released 8192-token tokenizer/weights to this configuration.
+vocab_size: 2048
+d_model: 128
+n_layers: 4
+n_heads: 4
+n_kv_heads: 1
+ffn_hidden: 480
+max_seq_len: 1024
+rope_theta: 10000.0
+qk_norm: true
+attn_gate: headwise
+window_pattern: []
