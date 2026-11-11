@@ -1,0 +1,85 @@
+{
+  "archive_script_sha256": "8388f6ea20ed2d886a79df92739818402f7df87f5c2f0f0531c365b4698e99de",
+  "files": {
+    "J-feature-metadata.json": {
+      "bytes": 4200,
+      "sha256": "bb8315390dda31b6c59fa5c839b491ba68c61ef129168ea316c367d71014a7dd"
+    },
+    "J-primary-items.npy": {
+      "bytes": 20128,
+      "sha256": "a0ff9253e1bbe9511447feb45b86aa737f0033362c3b9070c3efd7dbd774e204"
+    },
+    "J-training-metrics.jsonl": {
+      "bytes": 41131,
+      "sha256": "264bda09a90c7f7e41d48a8c8328d643c446b62a3b9256d7ea920c944fb56e91"
+    },
+    "N-feature-metadata.json": {
+      "bytes": 4199,
+      "sha256": "0a1b2fbe5bc85dd0c165348b6593f12337a335fd2420155d4cd319abbe0b21ef"
+    },
+    "N-first-layer-check.json": {
+      "bytes": 550,
+      "sha256": "560c4cfcff77ae7b77bb8cef68667bb71ae5cc126095b6972d5721352b8c3862"
+    },
+    "N-primary-items.npy": {
+      "bytes": 20128,
+      "sha256": "229f647bc91bb4dae503d04c62871d2453f43f1326abe9f02f7e6769d77c2e40"
+    },
+    "N-training-metrics.jsonl": {
+      "bytes": 27836,
+      "sha256": "fecb6e2541df7e9d7f5fd572f7628776999570d46fa48e6c07e668e37bb958c8"
+    },
+    "data-audit.json": {
+      "bytes": 465825,
+      "sha256": "eee3a47049df34bdbb217d5001f6fc5c4a60b6d3ff5c5dce01f4dde88d568025"
+    },
+    "dino-anchor-audit.json": {
+      "bytes": 231,
+      "sha256": "fdaa5807e822d50c55f9079444e5ab51b0ade88eb28c310833564d2d69241305"
+    },
+    "executed-audit.py": {
+      "bytes": 22101,
+      "sha256": "bad7fcab2a5808f77cd6a2cab75cbab1a810d2bf19d50d3b4ab169026145f771"
+    },
+    "observed-original-build_coco_caption_pairs.py": {
+      "bytes": 3823,
+      "sha256": "0923470a408fa88181bc80b81f929212c4dc2713f10da1cc9857c5b8d9d273d7"
+    },
+    "observed-original-evaluate_text_image_alignment.py": {
+      "bytes": 9578,
+      "sha256": "126f7001a0b6909f3ebca572004d42d1ed95192a03bff3ddec844769847bde6a"
+    },
+    "observed-original-run_exp0046_queue.ps1": {
+      "bytes": 3189,
+      "sha256": "1b544175fc24135ff3a445739e695d56fb4aa15b5987c802be9dc9de8f755e6e"
+    },
+    "observed-original-text-image-alignment.json": {
+      "bytes": 10588,
+      "sha256": "4a63c65c226fb5fae6144158750f1b212f72c9bff18ce7749c59176ad74f438e"
+    },
+    "observed-original-train_text_jepa.py": {
+      "bytes": 7088,
+      "sha256": "819f08e2c00c1eea64f35bdd1a63e2ea50bf260e38520ea0f81f1fbd486664f3"
+    },
+    "original-feature-extraction-audit.py": {
+      "bytes": 20093,
+      "sha256": "d2b69cadfe4b2ab2a79aebeea44d84820deb0dd9d3ad418e7720f7adc0b58a2f"
+    },
+    "report.json": {
+      "bytes": 15343,
+      "sha256": "be7be715d6b572b9ec2257781ab5c5259fcd0c30ce36bb34564b3960377da03e"
+    },
+    "training-and-log-audit.json": {
+      "bytes": 1397,
+      "sha256": "6bd089b4b3fa03a0f41e6d9aa05253146893dbee6191a4c40922579d1748ac73"
+    },
+    "unbatched-first-layer-check.py": {
+      "bytes": 2416,
+      "sha256": "7b9c65b910a92cab9d7be2dd440c1ba26f715de2afdd925582d625ad10097f59"
+    }
+  },
+  "kind": "slm.exp0046.audit_evidence",
+  "large_local_artifacts": "Checkpoint weights and all-layer text features remain in runs/. Image files and caption text are not copied.",
+  "original_code": "Observed at audit start. No original immutable execution manifest exists; these copies do not retroactively establish original runtime bytes.",
+  "scope": "Observed original artifacts, fresh J/N CPU re-extraction and post-hoc diagnostics; not independent training replication"
+}

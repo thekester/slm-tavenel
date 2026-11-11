@@ -1,0 +1,10 @@
+{
+  "checkpoint_sha256": "f31534b3f8908662bc8a2b88e2d82a295a221f253d2c73a2afd2f7bf66b4cde5",
+  "features_sha256": "10519e5e6480e54378c133c8c150c2cdf1686c3761a43737e1679d5a6d836b71",
+  "original_rounded_primary": 0.1238,
+  "primary_mean_unbatched": 0.12372000000000001,
+  "script_sha256": "7b9c65b910a92cab9d7be2dd440c1ba26f715de2afdd925582d625ad10097f59",
+  "selected_layer_fixed_from_original": 0,
+  "six_legacy_anchor_vectors_bitwise_equal": true,
+  "val_rows_sha256": "6d2ccadd19eb831afa2cd30759e1b95d83b891c8bd1c52e03c4955278291b1bf"
+}

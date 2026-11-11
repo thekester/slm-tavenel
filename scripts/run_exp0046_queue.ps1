@@ -53,7 +53,7 @@ if (-not (Test-Path -LiteralPath 'runs/EXP-0046-evaluations/text-image-alignment
         $hf += @('--hf', "$name=$($peer.repo)@$($peer.revision)")
     }
     $env:CUDA_VISIBLE_DEVICES = '-1'
-    Invoke-Python 'exp0046-alignment' (@('-u', 'scripts/evaluate_text_image_alignment.py',
+    Invoke-Python 'exp0046-alignment' (@('-u', 'scripts/evaluate_text_image_alignment_audited.py',
         '--native', 'J=runs/EXP-0046-124m-jepa/checkpoints/step_00009000.pt',
         '--native', 'N=runs/EXP-0046-124m-ntp/checkpoints/step_00009000.pt',
         '--native', 'web-124M=runs/EXP-0036-124m-gpt2match-muon/checkpoints/step_00015000.pt',

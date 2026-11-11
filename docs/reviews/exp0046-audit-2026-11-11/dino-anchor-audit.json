@@ -1,0 +1,12 @@
+{
+  "indices": [
+    0,
+    999,
+    2499,
+    2500,
+    3999,
+    4999
+  ],
+  "max_abs_difference": 7.063150405883789e-06,
+  "scope": "Six fixed cache anchors re-embedded, not a full 5,000-image cache recomputation"
+}

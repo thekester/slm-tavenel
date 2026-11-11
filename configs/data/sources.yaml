@@ -14,6 +14,30 @@
 # open questions are a starting point for review, not conclusions.
 
 sources:
+  - id: coco2017-captions-exp0046
+    name: COCO 2017 human captions, local text representation experiment
+    url: https://cocodataset.org/#download
+    role: pretrain
+    license: CC-BY-4.0
+    license_url: https://cocodataset.org/#termsofuse
+    status: candidate
+    revision: sha256:4b62086319480e0739ef390d04084515defb9c213ff13605a036061e33314317
+    subset: captions_train2017.json; evaluation captions_val2017.json SHA256 afe3b30e403dd7f228e2373023abbd60042a6e10ec6874d3652df034d289ebb9
+    attribution: Lin et al., Microsoft COCO; Chen et al., Microsoft COCO Captions
+    languages: [en]
+    domains: [image-captions]
+    review:
+      provenance_verified: true
+      license_verified: false
+      pii_reviewed: false
+      notes: >-
+        Added retrospectively during the 11 November 2026 EXP-0046 audit; not a claim of prior registration.
+        Official annotation files are bound by SHA256; derived token arrays and caption-image groups are audited.
+        Train/validation image IDs are disjoint, but 440 of the 5000 selected validation captions match train
+        after case/whitespace normalization. Image pixels are used only by the evaluation vision encoder;
+        they retain their individual Flickr licenses and are not redistributed.
+        Declared annotation terms are recorded; candidate status does not sign a rights or privacy review.
+
   - id: tinystories-train-exp0047
     name: TinyStories official train shard, local controlled story-mixture research
     url: https://huggingface.co/datasets/roneneldan/TinyStories

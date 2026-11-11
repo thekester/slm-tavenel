@@ -4,3 +4,6 @@ docs/model-cards/slm-tavenel-story-935k/** -text
 
 # Preserve the byte hashes of completed EXP-0047 pilot evidence.
 docs/reviews/story-mixture-pilots-2026-11-10/** -text whitespace=cr-at-eol
+
+# Preserve original and freshly reconstructed EXP-0046 audit evidence.
+docs/reviews/exp0046-audit-2026-11-11/** -text whitespace=cr-at-eol

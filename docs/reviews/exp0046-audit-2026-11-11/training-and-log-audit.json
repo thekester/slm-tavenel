@@ -1,0 +1,45 @@
+{
+  "models_matching_original_logs": [
+    "J",
+    "N",
+    "web-124M",
+    "random-124M",
+    "GPT-2",
+    "Pythia-160M",
+    "SmolLM2-360M",
+    "Qwen2.5-0.5B",
+    "Qwen3-0.6B",
+    "OLMo-2-1B",
+    "SmolLM2-1.7B"
+  ],
+  "energy": {
+    "jepa": {
+      "last_counter_wh": 266.745,
+      "discarded_segments": [],
+      "at_least_known_logged_wh": 266.745,
+      "limits": "Partial unlogged work and startup are not fully metered; not whole-system energy"
+    },
+    "ntp": {
+      "last_counter_wh": 295.089,
+      "discarded_segments": [
+        {
+          "checkpoint_step": 2000,
+          "last_logged_step": 2050,
+          "recorded_discarded_wh": 1.591000000000001
+        },
+        {
+          "checkpoint_step": 2500,
+          "last_logged_step": 2700,
+          "recorded_discarded_wh": 9.487000000000009
+        }
+      ],
+      "at_least_known_logged_wh": 306.16700000000003,
+      "limits": "Partial unlogged work and startup are not fully metered; not whole-system energy"
+    }
+  },
+  "protocol_commit": "34a92771b3d9a95356d81a9296c6bec0844b6904",
+  "protocol_commit_paris": "2026-11-10T16:45:58+01:00",
+  "first_alignment_start_paris": "2026-11-10T21:25:34+01:00",
+  "original_j_training_end_paris": "2026-11-10T15:25:24+01:00",
+  "verdict": "Pre-alignment specification evidenced; pretraining preregistration not established"
+}

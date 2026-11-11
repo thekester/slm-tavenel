@@ -25,6 +25,7 @@ from slm.energy import GpuEnergyMeter  # noqa: E402
 from slm.goodview import GoodViewHead, goodview_loss, masked_mean, parallel_ntp_loss  # noqa: E402
 from slm.model import SLM  # noqa: E402
 from slm.optim import build_optimizer  # noqa: E402
+from slm.runlog import code_revision, environment_info, sha256_file, write_json  # noqa: E402
 from slm.train import attention_backend, autocast_context, batch_rng, latest_checkpoint, lr_at, save_checkpoint  # noqa: E402
 
 
@@ -54,6 +55,38 @@ def chunked_ntp_loss(model: SLM, ids: torch.Tensor, lengths: torch.Tensor) -> to
     targets = ids[:, 1:].clone()
     targets[torch.arange(targets.size(1), device=ids.device)[None, :] >= (lengths[:, None] - 1)] = -100
     return model(ids[:, :-1], targets, return_logits=False)[1]
+
+
+def capture_run_manifest(args, model: SLM, resumed_from: Path | None) -> dict:
+    """Record the custom loop's actual CLI, rather than generic trainer defaults."""
+    sources = [Path(__file__)] + sorted((ROOT / "src/slm").rglob("*.py"))
+    fingerprint = {"mode": args.mode, "steps": args.steps, "batch_images": args.batch,
+                   "projection_dim": args.dim, "seed": args.seed,
+                   "model_config_sha256": sha256_file(args.model),
+                   "train_npz_sha256": sha256_file(args.data / "train.npz"),
+                   "source_sha256": {str(p.relative_to(ROOT)): sha256_file(p) for p in sources}}
+    data_manifest = args.data / "manifest.json"
+    if data_manifest.exists():
+        fingerprint["data_manifest_sha256"] = sha256_file(data_manifest)
+        expected = json.loads(data_manifest.read_text(encoding="utf-8")).get("train_npz_sha256")
+        if expected and expected != fingerprint["train_npz_sha256"]:
+            raise ValueError("Training NPZ differs from its corpus manifest")
+    target = args.out / "run_manifest.json"
+    if target.exists():
+        prior = json.loads(target.read_text(encoding="utf-8"))
+        if prior["fingerprint"] != fingerprint:
+            raise ValueError("Custom-loop configuration/data/code changed; use a new run directory")
+    else:
+        write_json(target, {"kind": "slm.exp0046.custom_caption_training", "fingerprint": fingerprint,
+                           "actual_arguments": {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()},
+                           "backbone_params": model.num_params(),
+                           "auxiliary_training_params": sum(p.numel() for name, p in model.named_parameters() if name.startswith("jepa_predictor.")),
+                           "code": code_revision(), "environment": environment_info(),
+                           "capture_scope": "before first update" if resumed_from is None else "first captured during legacy resume; not proof of original runtime provenance"})
+    with (args.out / "resume-lineage.jsonl").open("a", encoding="utf-8") as stream:
+        stream.write(json.dumps({"time": time.time(), "checkpoint": str(resumed_from) if resumed_from else None,
+                                 "checkpoint_sha256": sha256_file(resumed_from) if resumed_from else None})+"\n")
+    return fingerprint
 
 
 def main() -> None:
@@ -88,6 +121,7 @@ def main() -> None:
         model.load_state_dict(state["model"])
         opt.load_state_dict(state["optimizer"])
         start, energy_before = state["step"], float(state.get("gpu_energy_wh") or 0.0)
+    loop_fingerprint = capture_run_manifest(args, model, resume)
     pairs = CaptionPairs(args.data)
     meter = GpuEnergyMeter(device.index or 0) if device.type == "cuda" else None
     metrics = (args.out / "metrics.jsonl").open("a", encoding="utf-8")
@@ -124,7 +158,8 @@ def main() -> None:
             metrics.flush()
             t0, last = time.perf_counter(), done
         if done % 500 == 0 or done == args.steps:
-            save_checkpoint(args.out, done, model, opt, cfg, 2, extra={"gpu_energy_wh": energy} if energy is not None else None)
+            save_checkpoint(args.out, done, model, opt, cfg, 2,
+                            extra={"gpu_energy_wh": energy, "custom_loop_fingerprint": loop_fingerprint})
     if meter is not None:
         meter.close()
 

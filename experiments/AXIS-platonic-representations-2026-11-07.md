@@ -1,7 +1,8 @@
 # Axis: platonic representations, good views and JEPA (2026-11-07)
 
 Source: Randall Balestriero & Yann LeCun, "Proving and Improving the Platonic Representation Hypothesis
-with JEPAs", arXiv:2610.39302 (v1, 29 Oct 2026, CC BY 4.0; no code link found). Builds on the Platonic
+with JEPAs", arXiv:2610.39302 (v1, 29 Oct 2026, CC BY 4.0). The 11 November audit located the
+[authors' code](https://github.com/galilai-group/prh-proof), linked from the paper. Builds on the Platonic
 Representation Hypothesis (Huh, Cheung, Wang & Isola, ICML 2024: models of different modalities converge
 toward a shared representation, measured by mutual nearest-neighbour alignment).
 
