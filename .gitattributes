@@ -7,3 +7,14 @@ docs/reviews/story-mixture-pilots-2026-11-10/** -text whitespace=cr-at-eol
 
 # Preserve original and freshly reconstructed EXP-0046 audit evidence.
 docs/reviews/exp0046-audit-2026-11-11/** -text whitespace=cr-at-eol
+
+# Preserve package verification and publication record byte hashes.
+docs/model-cards/slm-tavenel-jepa-124m/** -text whitespace=cr-at-eol
+
+# Preserve byte hashes of the 362M research-preview publication evidence.
+docs/model-cards/slm-tavenel-362m/** -text whitespace=cr-at-eol
+
+# Keep Matplotlib SVG path spacing and upstream attribution cards verbatim.
+docs/model-cards/slm-tavenel-362m/figures/*.svg -whitespace
+docs/model-cards/slm-tavenel-jepa-124m/figures/*.svg -whitespace
+docs/model-cards/slm-tavenel-362m/third_party/** -whitespace

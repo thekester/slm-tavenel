@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="856.8pt" height="324pt" viewBox="0 0 856.8 324" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-15T18:17:49.949316</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.7, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 324 
+L 856.8 324 
+L 856.8 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 21.24 207.766957 
+L 168.66 207.766957 
+Q 174.276 207.766957 174.276 202.382609 
+L 174.276 94.695652 
+Q 174.276 89.311304 168.66 89.311304 
+L 21.24 89.311304 
+Q 15.624 89.311304 15.624 94.695652 
+L 15.624 202.382609 
+Q 15.624 207.766957 21.24 207.766957 
+z
+" clip-path="url(#pf6518ad335)" style="fill: #e3efff; stroke: #a7b7c6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 217.8 241.41913 
+L 568.8 241.41913 
+Q 574.416 241.41913 574.416 236.034783 
+L 574.416 128.347826 
+Q 574.416 122.963478 568.8 122.963478 
+L 217.8 122.963478 
+Q 212.184 122.963478 212.184 128.347826 
+L 212.184 236.034783 
+Q 212.184 241.41913 217.8 241.41913 
+z
+" clip-path="url(#pf6518ad335)" style="fill: #e5f4ed; stroke: #a7b7c6; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 624.96 207.766957 
+L 828.54 207.766957 
+Q 834.156 207.766957 834.156 202.382609 
+L 834.156 94.695652 
+Q 834.156 89.311304 828.54 89.311304 
+L 624.96 89.311304 
+Q 619.344 89.311304 619.344 94.695652 
+L 619.344 202.382609 
+Q 619.344 207.766957 624.96 207.766957 
+z
+" clip-path="url(#pf6518ad335)" style="fill: #fff0d5; stroke: #a7b7c6; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(72.84375 140.944537)">Text input</text>
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(54.925312 151.022568)">49,152-token BPE</text>
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(58.585781 161.100599)">Tied embedding</text>
+   </g>
+   <g id="text_2">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(310.950703 169.557695)">32 causal decoder blocks, width 960</text>
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(272.265469 179.635726)">RMSNorm -&gt; GQA (15 Q / 5 KV) -&gt; sigmoid head gate</text>
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(265.662422 189.713757)">+ residual -&gt; RMSNorm -&gt; SwiGLU (2,560) -&gt; + residual</text>
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(320.485781 199.791789)">QK normalization, RoPE 100,000</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(692.807344 140.944537)">Final RMSNorm</text>
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(666.582891 151.022568)">Tied language-model head</text>
+    <text style="font-size: 9px; font-family: 'DejaVu Sans'" transform="translate(688.412109 161.100599)">Next-token logits</text>
+   </g>
+   <g id="patch_5">
+    <path d="M 177.683082 148.53913 
+Q 194.987805 148.53913 210.05646 148.53913 
+" style="fill: none; stroke: #476582; stroke-width: 2; stroke-linecap: round"/>
+    <path d="M 206.05646 146.53913 
+L 210.05646 148.53913 
+L 206.05646 150.53913 
+" style="fill: none; stroke: #476582; stroke-width: 2; stroke-linecap: round"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 577.82244 148.53913 
+Q 598.636333 148.53913 617.214158 148.53913 
+" style="fill: none; stroke: #476582; stroke-width: 2; stroke-linecap: round"/>
+    <path d="M 613.214158 146.53913 
+L 617.214158 148.53913 
+L 613.214158 150.53913 
+" style="fill: none; stroke: #476582; stroke-width: 2; stroke-linecap: round"/>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 19px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #183a56" x="21.24" y="47.582609" transform="rotate(-0 21.24 47.582609)">SLM-Tavenel 362M architecture</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start" x="21.24" y="296.608696" transform="rotate(-0 21.24 296.608696)">362,286,016 parameters | 2,048-token context | base model, no instruction tuning</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pf6518ad335">
+   <rect x="7.2" y="7.2" width="842.4" height="309.6"/>
+  </clipPath>
+ </defs>
+</svg>

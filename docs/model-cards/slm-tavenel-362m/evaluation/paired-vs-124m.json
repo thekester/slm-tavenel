@@ -1,0 +1,162 @@
+{
+  "kind": "slm.exp0034b.paired_bpb",
+  "seed": 20261115,
+  "draws": 2000,
+  "inputs": {
+    "bpb_362m": {
+      "path": "runs\\FAMILY-evaluations\\360m-muon\\edu-test-bpb.json",
+      "sha256": "837771f515d7aff0bdd94126f346770e5c69596f103381ea2f81fae30561edba"
+    },
+    "bpb_124m": {
+      "path": "runs\\EXP-0036-evaluations\\124m-gpt2match-muon\\edu-test-bpb.json",
+      "sha256": "03b4901ba5f72f5c56960cf1bebfb8e93c9d6ff42ed6597063349385576bcb20"
+    },
+    "benchmark_comparison": {
+      "path": "runs\\FAMILY-evaluations\\360m-muon\\vs-124m-paired.json",
+      "sha256": "4d33f09afdf263a7868509eb5f57b6727fdeea6b4b93a8b4397684d3bd279f41"
+    }
+  },
+  "bpb": {
+    "all": {
+      "docs": 10156,
+      "bpb_362m": 1.057207328058821,
+      "bpb_124m": 1.0685681987313114,
+      "diff": -0.011360870672490364,
+      "ci95": [
+        -0.01162233557244639,
+        -0.01110278556162334
+      ]
+    },
+    "en": {
+      "docs": 5079,
+      "bpb_362m": 1.0787468516178913,
+      "bpb_124m": 1.0894076609937176,
+      "diff": -0.010660809375826252,
+      "ci95": [
+        -0.011020699607262763,
+        -0.010279950223669383
+      ]
+    },
+    "fr": {
+      "docs": 5077,
+      "bpb_362m": 1.025824120948913,
+      "bpb_124m": 1.038204984872535,
+      "diff": -0.012380863923622032,
+      "ci95": [
+        -0.012721931037188472,
+        -0.012043667919834461
+      ]
+    }
+  },
+  "benchmark_comparison": {
+    "kind": "slm.mc_paired_comparison",
+    "control": "runs\\EXP-0036-evaluations\\124m-gpt2match-muon\\benchmarks.json",
+    "treatment": "runs\\FAMILY-evaluations\\360m-muon\\benchmarks.json",
+    "labels": [
+      "slm-124m",
+      "slm-362m"
+    ],
+    "key": "correct",
+    "draws": 10000,
+    "seed": 0,
+    "tasks": {
+      "arc_challenge": {
+        "items": 1172,
+        "slm-124m": 0.20648464163822525,
+        "slm-362m": 0.21245733788395904,
+        "difference": 0.005972696245733789,
+        "ci95": [
+          -0.015358361774744027,
+          0.027303754266211604
+        ],
+        "treatment_only_correct": 84,
+        "control_only_correct": 77,
+        "mcnemar_p": 0.6364457777116773
+      },
+      "arc_easy": {
+        "items": 2376,
+        "slm-124m": 0.48358585858585856,
+        "slm-362m": 0.48358585858585856,
+        "difference": 0.0,
+        "ci95": [
+          -0.01893939393939394,
+          0.018518518518518517
+        ],
+        "treatment_only_correct": 254,
+        "control_only_correct": 254,
+        "mcnemar_p": 1.0
+      },
+      "belebele_en": {
+        "items": 900,
+        "slm-124m": 0.31555555555555553,
+        "slm-362m": 0.29777777777777775,
+        "difference": -0.017777777777777778,
+        "ci95": [
+          -0.04111111111111111,
+          0.006666666666666667
+        ],
+        "treatment_only_correct": 52,
+        "control_only_correct": 68,
+        "mcnemar_p": 0.17064521313035166
+      },
+      "belebele_fr": {
+        "items": 900,
+        "slm-124m": 0.3111111111111111,
+        "slm-362m": 0.3022222222222222,
+        "difference": -0.008888888888888889,
+        "ci95": [
+          -0.03222222222222222,
+          0.013333333333333334
+        ],
+        "treatment_only_correct": 51,
+        "control_only_correct": 59,
+        "mcnemar_p": 0.5046848075879912
+      },
+      "hellaswag": {
+        "items": 10042,
+        "slm-124m": 0.27673770165305717,
+        "slm-362m": 0.27853017327225654,
+        "difference": 0.0017924716191993627,
+        "ci95": [
+          -0.002688707428799044,
+          0.006373232423819956
+        ],
+        "treatment_only_correct": 273,
+        "control_only_correct": 255,
+        "mcnemar_p": 0.45943539980864395
+      },
+      "winogrande": {
+        "items": 1267,
+        "slm-124m": 0.5193370165745856,
+        "slm-362m": 0.5122336227308603,
+        "difference": -0.007103393843725336,
+        "ci95": [
+          -0.03157063930544594,
+          0.016574585635359115
+        ],
+        "treatment_only_correct": 122,
+        "control_only_correct": 131,
+        "mcnemar_p": 0.6150831119049539
+      }
+    },
+    "task_mean": {
+      "slm-124m": 0.35213531418639893,
+      "slm-362m": 0.3478011654121557,
+      "difference": -0.004334148774243142,
+      "ci95": [
+        -0.012867154365799821,
+        0.004091909906110169
+      ]
+    }
+  },
+  "document_coverage": {
+    "362m": 10156,
+    "124m": 50780,
+    "paired": 10156,
+    "scope": "all 362M documents; subset of full 124M report"
+  },
+  "limitations": [
+    "Document bootstrap ignores domain clusters and training-seed variance.",
+    "Benchmark results reuse positional pairing in compare_mc_paired.py; repeated IDs are retained."
+  ]
+}

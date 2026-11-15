@@ -1,0 +1,30 @@
+# EXP-0034b (revised 2026-10-31, before training): classic 362M from scratch on edu corpus v2 with Muon
+# (EXP-0036a: -5.3% BPB vs AdamW at 75M), bf16 device weights and fp32 masters / Muon momentum / AdamW
+# moments on the host (master_weights_offload; Muon orthogonalisation still runs on the GPU).
+# Replaces exp0034b-360m-ce.yaml (AdamW), which never ran. 8,000 x 65,536 = 524M token positions.
+model: configs/model/slm-360m-classic.yaml
+data_dir: data/tokens/slm-tavenel-edu-corpus-v2-smollm2
+out_dir: runs/EXP-0034b-360m-muon
+seed: 20261030
+seq_len: 2048
+micro_batch_size: 2
+grad_accum_steps: 16
+max_steps: 8000
+optimizer: muon
+lr: 2.0e-3
+min_lr: 2.0e-4
+weight_decay: 0.1
+schedule: wsd
+warmup_steps: 300
+decay_fraction: 0.2
+dtype: bfloat16
+activation_checkpointing: true
+master_weights_offload: true
+deterministic: false
+log_interval: 25
+eval_interval: 250
+eval_batches: 20
+observe_interval: 2000
+ckpt_interval: 200
+keep_checkpoints: 2
+resume: true

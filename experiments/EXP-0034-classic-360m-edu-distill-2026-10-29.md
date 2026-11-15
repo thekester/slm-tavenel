@@ -1,6 +1,6 @@
 # EXP-0034: classic 362M from scratch on educational web, with a distillation ablation
 
-**Status (2026-10-30): EXP-0034a complete (results below); corpus v2 built and encoded; EXP-0034b recipe pending a clean 362M throughput measurement.**
+**Status (2026-11-15): EXP-0034a and EXP-0034b complete (results below).**
 Corpus v2 (`data/processed/slm-tavenel-edu-corpus-v2`, same builder with five FineWeb2-HQ French
 shards) has 1,996,506 train documents (587,744 French) and 2.140B train tokens with the SmolLM2
 tokenizer (`data/tokens/slm-tavenel-edu-corpus-v2-smollm2`); French is estimated at about 30% of
@@ -90,11 +90,70 @@ not a measured comparison. Corpus v1 was also French-light (6.4% of bytes).
 
 ## EXP-0034b: classic 362M main run
 
-Recipe from EXP-0034a, same corpus and tokenizer, WSD schedule. The token budget and schedule are set
+Recipe derived from EXP-0034a, using expanded corpus v2, the same tokenizer and a WSD schedule. The token budget and schedule are set
 after EXP-0034a from its measured throughput; the target is on the order of 0.5–1B token positions
 (several days of the single GPU). Evaluation: held-out BPB, the six benchmarks with the same
 evaluator, and the same benchmarks for SmolLM2-360M and Qwen3-0.6B (already scored) as descriptive
 references.
+
+### EXP-0034b result (2026-11-15)
+
+Run `runs/EXP-0034b-360m-muon` (`configs/train/exp0034b-360m-muon.yaml`): 362.3M parameters, Muon,
+WSD, corpus v2, SmolLM2 tokenizer, 8,000 updates x 65,536 = **524.3M token positions** (about half of
+the 983M seen by the EXP-0036 124M). Final checkpoint `step_00008000.pt` (sha256 `281c53a7…`),
+final validation loss 2.901 (training loss 2.80; late logged gradient norms around 0.13 to 0.17;
+the full logged range is 0.13346 to 3.33809, not a formal stability guarantee).
+Trained 11–15 November 2026 with four resumes after PC shutdowns or standby; the resume at step 7,400
+reproduced the logged loss at step 7,450 to 4 decimals. **Final logged GPU-board energy counter: 2,885.6 Wh**
+(evaluation, whole-system electricity and possibly recomputed/unmetered work are excluded).
+Logged PyTorch allocation peak 3.46 GB (AdamW moments on host).
+
+Benchmarks: `runs/FAMILY-evaluations/360m-muon/benchmarks.json` (same evaluator and items as the peers).
+Paired comparisons by `scripts/compare_mc_paired.py` (items paired by position, 10,000 bootstrap
+draws, exact McNemar): `vs-124m-paired.json`, `vs-gpt2-medium-paired.json`, `vs-pythia-410m-paired.json`,
+`vs-smollm2-360m-paired.json` in the same folder.
+
+| Task (items) | SLM 362M | SLM 124M (EXP-0036, 983M tok.) | GPT-2 Medium 355M | Pythia-410M | SmolLM2-360M |
+|---|---:|---:|---:|---:|---:|
+| ARC-Easy (2,376) | 0.484 | 0.484 | 0.486 | 0.520 | 0.699 |
+| ARC-Challenge (1,172) | 0.212 | 0.206 | 0.214 | 0.213 | 0.350 |
+| HellaSwag (10,042) | 0.279 | 0.277 | 0.333 | 0.339 | 0.432 |
+| Belebele EN (900) | 0.298 | 0.316 | 0.333 | 0.340 | 0.416 |
+| Belebele FR (900) | 0.302 | 0.311 | 0.316 | 0.344 | 0.351 |
+| WinoGrande (1,267) | 0.512 | 0.519 | 0.513 | 0.530 | 0.554 |
+| **Six-task mean** | **0.348** | 0.352 | 0.366 | 0.381 | 0.467 |
+
+Paired differences, SLM 362M minus reference (six-task mean; HellaSwag). External references used
+a 1,024-token context cap versus 2,048 for both SLM-Tavenel models; longer-item truncation can differ:
+
+| Reference | Six-task mean [95% CI] | HellaSwag [95% CI], McNemar p |
+|---|---|---|
+| SLM 124M (EXP-0036) | −0.004 [−0.013, +0.004] | +0.002 [−0.003, +0.006], p = 0.46 |
+| GPT-2 Medium | −0.018 [−0.028, −0.008] | −0.054 [−0.060, −0.048], p < 1e-70 |
+| Pythia-410M | −0.033 [−0.044, −0.023] | −0.061 [−0.067, −0.055], p < 1e-85 |
+| SmolLM2-360M | −0.119 [−0.130, −0.108] | −0.154 [−0.162, −0.146] |
+
+Against GPT-2 Medium, only Belebele EN is also significantly lower (−0.036 [−0.063, −0.008],
+p = 0.013); ARC-E, ARC-C, Belebele FR and WinoGrande are level (all |diff| ≤ 0.013, intervals
+include 0).
+
+Held-out test BPB, corpus v2, systematic 1-in-5 subsample (10,156 documents;
+`edu-test-bpb.json`): **1.057** overall (EN 1.079, FR 1.026). On exactly the same documents the
+EXP-0036 124M gives 1.069 (EN 1.089, FR 1.038): 362M − 124M = −0.011 [−0.012, −0.011] bits/byte
+(document bootstrap, 2,000 draws; `scripts/compare_exp0034b_vs_124m_bpb.py` -> `paired-vs-124m.json`), both languages. Peers were not scored on
+this split; BPB is in-domain for our models and is not a peer criterion.
+
+**Reading.** As expected (§ caveats), the 362M is far from SmolLM2-360M (~4T tokens) and is
+significantly behind GPT-2 Medium and Pythia-410M, almost entirely through HellaSwag (−5 to −6
+points), the same everyday/web-narrative gap already seen at 124M (EXP-0036: edu data trades
+HellaSwag for ARC). The striking result is internal: tripling parameters at about half the tokens buys
+a small, significant BPB gain (−1.1%) but **no benchmark gain** over the 124M (mean −0.004, interval
+includes zero). At 524M token positions (1.4 tokens per parameter, against ~20 for compute-optimal
+training per Hoffmann et al., 2022), insufficient training is a plausible explanation, not an isolated causal result.
+Interpretation limits: single seed; the 124M and 362M differ in both size and token count, so this is
+not a clean size ablation; benchmark intervals cover items, not training variance.
+Compute: final logged counter of 2,886 Wh for the 362M; the 124M's training energy was not metered (EXP-0036 predates
+the meter), so an energy-per-point comparison is not available.
 
 ## Caveats fixed in advance
 
@@ -104,3 +163,13 @@ references.
 - Single training seed per arm; bootstrap intervals cover items/documents, not training variance.
 - Web sources: page-level rights not verified; ODC-By covers the compilation. Weights stay local
   exploratory artifacts until reviewed.
+
+## Public research package
+
+[SLM-Tavenel 362M on Hugging Face](https://huggingface.co/athenista/slm-tavenel-362m) includes the exact native-evaluation float32 values, tokenizer attribution, architecture/data/training/benchmark figures, compressed item/document evidence and fixed-probe export/cache checks. See the [model card](../docs/model-cards/slm-tavenel-362m/README.md) for the recipe and limitations. Source-rights and manual privacy reviews remain unsigned; publication is an owner-authorized research preview, not legal clearance or OSI certification.
+
+The historical local-only publication condition above is superseded for this exact final checkpoint
+by the owner's 15 November publication request, recorded with both native and export hashes in the
+model package. This authorization does not sign the source-rights or privacy reviews.
+
+The original convenience comparison script used dictionaries keyed by benchmark ID, which dropped repeated HellaSwag IDs. That secondary calculation is superseded: benchmark pairing now reuses the full 10,042-item positional comparison in `vs-124m-paired.json`; the BPB comparison explicitly matches all 10,156 treatment documents against the larger 124M report. The main benchmark table above already used the full positional results.

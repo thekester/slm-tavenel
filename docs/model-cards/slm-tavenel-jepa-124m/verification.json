@@ -1,0 +1,38 @@
+{
+  "backbone_parameters": 124038144,
+  "dtype": "float32",
+  "embedding_shape": [
+    4,
+    576
+  ],
+  "environment": {
+    "cuda": "13.0",
+    "cudnn": 91200,
+    "devices": [
+      "NVIDIA GeForce RTX 4060 Laptop GPU"
+    ],
+    "numpy": "2.4.4",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "python": "3.11.9",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.22.2",
+    "torch": "2.10.0+cu130"
+  },
+  "kind": "slm.jepa124m.export_verification",
+  "max_abs_representation_difference": 0.0001220703125,
+  "mean_cosine_native_export": 1.0,
+  "probe_captions": [
+    "A dog runs across a grassy field.",
+    "A train is waiting at a station.",
+    "Two people sit at a table with food.",
+    "A small boat floats near the shore."
+  ],
+  "runtime_generation_supported": false,
+  "scope": "Packaging parity on four fixed probes, not renewed performance validation or training replication",
+  "selected_layer_zero_based": 23,
+  "source_checkpoint_sha256": "6c86f18d5fcaab3aebdc5d79e75d074a365e4edd1dd816d8689f827b773e9d43",
+  "standalone_AutoModel_load": true,
+  "tensors_bitwise_identical": 326,
+  "tokenizer_ids_match": true,
+  "weights_sha256": "cb1184e2985c92f5e5a0f091ec4128840b05fbd0bbb8d6569acca92a24f1b136"
+}

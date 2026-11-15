@@ -1,0 +1,101 @@
+{
+  "kind": "slm.mc_paired_comparison",
+  "control": "runs\\reference\\peer-models-2026-10\\pythia-410m\\mc.json",
+  "treatment": "runs\\FAMILY-evaluations\\360m-muon\\benchmarks.json",
+  "labels": [
+    "pythia-410m",
+    "slm-362m"
+  ],
+  "key": "correct",
+  "draws": 10000,
+  "seed": 0,
+  "tasks": {
+    "arc_challenge": {
+      "items": 1172,
+      "pythia-410m": 0.21331058020477817,
+      "slm-362m": 0.21245733788395904,
+      "difference": -0.0008532423208191126,
+      "ci95": [
+        -0.024744027303754267,
+        0.02303754266211604
+      ],
+      "treatment_only_correct": 99,
+      "control_only_correct": 100,
+      "mcnemar_p": 1.0
+    },
+    "arc_easy": {
+      "items": 2376,
+      "pythia-410m": 0.5197811447811448,
+      "slm-362m": 0.48358585858585856,
+      "difference": -0.0361952861952862,
+      "ci95": [
+        -0.05555555555555555,
+        -0.016835016835016835
+      ],
+      "treatment_only_correct": 243,
+      "control_only_correct": 329,
+      "mcnemar_p": 0.00037071471142479507
+    },
+    "belebele_en": {
+      "items": 900,
+      "pythia-410m": 0.34,
+      "slm-362m": 0.29777777777777775,
+      "difference": -0.042222222222222223,
+      "ci95": [
+        -0.07111111111111111,
+        -0.013333333333333334
+      ],
+      "treatment_only_correct": 69,
+      "control_only_correct": 107,
+      "mcnemar_p": 0.005140858089237976
+    },
+    "belebele_fr": {
+      "items": 900,
+      "pythia-410m": 0.34444444444444444,
+      "slm-362m": 0.3022222222222222,
+      "difference": -0.042222222222222223,
+      "ci95": [
+        -0.06888888888888889,
+        -0.014444444444444444
+      ],
+      "treatment_only_correct": 60,
+      "control_only_correct": 98,
+      "mcnemar_p": 0.003119623289981868
+    },
+    "hellaswag": {
+      "items": 10042,
+      "pythia-410m": 0.33937462656841266,
+      "slm-362m": 0.27853017327225654,
+      "difference": -0.06084445329615614,
+      "ci95": [
+        -0.06691894045010954,
+        -0.054869547898824936
+      ],
+      "treatment_only_correct": 207,
+      "control_only_correct": 818,
+      "mcnemar_p": 2.0755972438962663e-86
+    },
+    "winogrande": {
+      "items": 1267,
+      "pythia-410m": 0.5295974743488555,
+      "slm-362m": 0.5122336227308603,
+      "difference": -0.017363851617995266,
+      "ci95": [
+        -0.05130228887134965,
+        0.017363851617995266
+      ],
+      "treatment_only_correct": 230,
+      "control_only_correct": 252,
+      "mcnemar_p": 0.33881500709211315
+    }
+  },
+  "task_mean": {
+    "pythia-410m": 0.38108471172460595,
+    "slm-362m": 0.3478011654121557,
+    "difference": -0.033283546312450195,
+    "ci95": [
+      -0.04351588566745097,
+      -0.02313518733592723
+    ]
+  }
+}

@@ -1,0 +1,178 @@
+{
+  "schema": "slm-tavenel.edu_corpus_candidate.v2",
+  "status": "candidate_not_legal_clearance",
+  "created": "2026-10-30",
+  "purpose": "EXP-0034 classic 362M from-scratch pretraining (EN/FR educational web)",
+  "builder_arguments": {
+    "fr_files": 5,
+    "out": "data/processed/slm-tavenel-edu-corpus-v2"
+  },
+  "sources": {
+    "en": {
+      "dataset": "HuggingFaceFW/fineweb-edu",
+      "revision": "87f09149ef4734204d70ed1d046ddc9ca3f2b8f9",
+      "files": [
+        "sample/10BT/000_00000.parquet",
+        "sample/10BT/001_00000.parquet"
+      ],
+      "declared_license": "ODC-By 1.0 (dataset card); also subject to Common Crawl terms of use",
+      "selection": "FineWeb-Edu: FineWeb pages with Llama-3-70B-annotated educational classifier score >= 3",
+      "dataset_card_sha256": "a0cc8998a20499432b28b6575f3046b714938eb8e11b8d59a1d25ddf3716061e",
+      "file_sha256": {
+        "sample/10BT/000_00000.parquet": "b1ba7b2ce4cb5ea6ef42dca40263eabb85f37700d01693a68e9b30a31d78e871",
+        "sample/10BT/001_00000.parquet": "3fcf2dc69cd52503986276d3d2d26a8c356d0f2ea28a0de4fdbda8cf87755693"
+      }
+    },
+    "fr": {
+      "dataset": "epfml/FineWeb2-HQ",
+      "revision": "c0c06e94fd3a44ae9e802b2b0fc533817601eb5e",
+      "files": [
+        "fra_Latn/000_00000.parquet",
+        "fra_Latn/000_00001.parquet",
+        "fra_Latn/000_00002.parquet",
+        "fra_Latn/000_00003.parquet",
+        "fra_Latn/000_00004.parquet"
+      ],
+      "declared_license": "ODC-By 1.0 (dataset card), inherited from FineWeb-2; Common Crawl terms of use",
+      "selection": "FineWeb2-HQ: top-quality FineWeb-2 French pages selected by an embedding-based classifier",
+      "dataset_card_sha256": "3382e62ff31050348de8a1cd5f1f09a643419aa8d8d70334e9d6fa80ff59b157",
+      "file_sha256": {
+        "fra_Latn/000_00000.parquet": "8f872334c3040ba734d476fa94966bc9b79bd5eb10b7fd507a772085160e4625",
+        "fra_Latn/000_00001.parquet": "fac2769ae5ff075ea911662742a9fb8d466b43a3c3f7f65dbb21a417b00e0ee6",
+        "fra_Latn/000_00002.parquet": "a27e0ba83aae2c63626d6707670bf127cf603975ed81ac0311f02a53095f8a65",
+        "fra_Latn/000_00003.parquet": "e2359d2485f568daeebec650387ab44e72c9435a88038d1535865929145d4d12",
+        "fra_Latn/000_00004.parquet": "398bb0e15327bda1ed47accb6beb0a48224306894e2138b0855d1692171ff72c"
+      }
+    }
+  },
+  "filters": {
+    "characters": [
+      200,
+      100000
+    ],
+    "minimum_alphanumeric_or_space_ratio": 0.6,
+    "pii": "slm.data.pii.redact placeholders (email, phone, public IPv4, IBAN); documents kept",
+    "deduplication": "exact normalized-text SHA-256 across all selected shards; upstream MinHash dedup per dataset card",
+    "benchmark_decontamination": {
+      "exact_normalized_13_token_overlap": true,
+      "inputs": [
+        {
+          "path": "data/benchmarks/arc_easy.jsonl",
+          "sha256": "f306f752bfd65be4a4df619bae155905bf2896cc72cbb8f544dda92e3585f740",
+          "dataset": "allenai/ai2_arc",
+          "revision": "210d026faf9955653af8916fad021475a3f00453",
+          "items": 2376,
+          "role": "decontamination_only_not_training_data"
+        },
+        {
+          "path": "data/benchmarks/arc_challenge.jsonl",
+          "sha256": "813b6ace2566b3a60b1b4631255b7c9a834db4d68842874d9ac213745beaac38",
+          "dataset": "allenai/ai2_arc",
+          "revision": "210d026faf9955653af8916fad021475a3f00453",
+          "items": 1172,
+          "role": "decontamination_only_not_training_data"
+        },
+        {
+          "path": "data/benchmarks/hellaswag.jsonl",
+          "sha256": "b400c1a7d3c7f1a620409fe84ddd98335a3cb72be32dbb10ec79719e0658b447",
+          "dataset": "Rowan/hellaswag",
+          "revision": "218ec52e09a7e7462a5400043bb9a69a41d06b76",
+          "items": 10042,
+          "role": "decontamination_only_not_training_data"
+        },
+        {
+          "path": "data/benchmarks/belebele_en.jsonl",
+          "sha256": "d7337aa3ce395579d66deee2dd69e5abbd701dac012591c1de2b790e3e3377c2",
+          "dataset": "facebook/belebele",
+          "revision": "7899cdfa4e1e0d733fd77c848e2c273cb1d32be2",
+          "items": 900,
+          "role": "decontamination_only_not_training_data"
+        },
+        {
+          "path": "data/benchmarks/belebele_fr.jsonl",
+          "sha256": "0d63805711db69417749c8bbb9890893c15e0ea6e0b7e4bcc11be4f38d6279f8",
+          "dataset": "facebook/belebele",
+          "revision": "7899cdfa4e1e0d733fd77c848e2c273cb1d32be2",
+          "items": 900,
+          "role": "decontamination_only_not_training_data"
+        },
+        {
+          "path": "data/benchmarks/winogrande.jsonl",
+          "sha256": "3bf695c7d0aa78e2a0d1a62cb963c61d04de137113816a94aa64aeccae2cace1",
+          "dataset": "allenai/winogrande",
+          "revision": "546d5aa0e42fc0fa9ad2c13260322ec969e083ee",
+          "items": 1267,
+          "role": "decontamination_only_not_training_data"
+        }
+      ]
+    },
+    "split": "registrable-domain hash: 98% train, 1% dev, 1% held-out test"
+  },
+  "counts": {
+    "en": {
+      "input": 1455000,
+      "redacted_email": 42205,
+      "redacted_ip": 745,
+      "redacted_phone": 43391,
+      "redacted_iban": 28,
+      "documents_with_redactions": 53359,
+      "excluded_replacement_character": 887,
+      "excluded_length": 1302,
+      "retained_train": 1408762,
+      "retained_dev": 10697,
+      "retained_test": 25395,
+      "excluded_exact_duplicate": 7869,
+      "excluded_benchmark_13gram_overlap": 88
+    },
+    "fr": {
+      "input": 619883,
+      "redacted_email": 11918,
+      "redacted_ip": 109,
+      "redacted_phone": 8393,
+      "redacted_iban": 36,
+      "documents_with_redactions": 10221,
+      "excluded_length": 869,
+      "retained_train": 587744,
+      "retained_dev": 5532,
+      "retained_test": 25385,
+      "excluded_replacement_character": 342,
+      "excluded_benchmark_13gram_overlap": 6,
+      "excluded_exact_duplicate": 5
+    }
+  },
+  "records_by_split_language": {
+    "train_en": 1408762,
+    "dev_en": 10697,
+    "test_en": 25395,
+    "train_fr": 587744,
+    "dev_fr": 5532,
+    "test_fr": 25385
+  },
+  "files": {
+    "train": {
+      "path": "data/processed/slm-tavenel-edu-corpus-v2/train.jsonl.gz",
+      "records": 1996506,
+      "bytes": 3548140702,
+      "sha256": "3b25a88ca583a22f26332e83872d9db229348c3557454e92cb156597f7cb1dfc"
+    },
+    "dev": {
+      "path": "data/processed/slm-tavenel-edu-corpus-v2/dev.jsonl.gz",
+      "records": 16229,
+      "bytes": 27380762,
+      "sha256": "d9db5db6954271f917403aa3c4793169356ec10a139b21a39302cf36d339b510"
+    },
+    "test": {
+      "path": "data/processed/slm-tavenel-edu-corpus-v2/test.jsonl.gz",
+      "records": 50780,
+      "bytes": 120361900,
+      "sha256": "34f189843c1027d21f39df3421d14f1b78bc3a789644660d57d7471ff65ba8b6"
+    }
+  },
+  "limitations": [
+    "Web-crawl text; source-page rights are not verified record by record. ODC-By applies to the dataset compilation.",
+    "Educational/quality classifiers were trained with LLM annotations (FineWeb-Edu: Llama-3-70B); their biases carry over.",
+    "Regex PII redaction is not a complete privacy review.",
+    "Exact 13-gram decontamination does not detect paraphrased or translated benchmark items.",
+    "Candidate corpus for exploratory training; not a legal clearance or release authorization."
+  ]
+}

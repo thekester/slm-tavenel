@@ -1,0 +1,56 @@
+{
+  "repo": "athenista/slm-tavenel-jepa-124m",
+  "url": "https://huggingface.co/athenista/slm-tavenel-jepa-124m",
+  "revision": "ef09fef218b8fea55702bb06ecdcaa5cf2e12bf4",
+  "public": true,
+  "published_utc": "2026-11-11T14:01:05Z",
+  "weights_sha256": "cb1184e2985c92f5e5a0f091ec4128840b05fbd0bbb8d6569acca92a24f1b136",
+  "private_standalone_verification": {
+    "repo": "athenista/slm-tavenel-jepa-124m",
+    "revision": "ef09fef218b8fea55702bb06ecdcaa5cf2e12bf4",
+    "anonymous": false,
+    "standalone_without_slm_import": true,
+    "shape": [
+      2,
+      576
+    ],
+    "parameters": 124038144,
+    "weights_sha256": "cb1184e2985c92f5e5a0f091ec4128840b05fbd0bbb8d6569acca92a24f1b136",
+    "runtime_files_verified": 9,
+    "finite_outputs": true,
+    "generation_supported": false
+  },
+  "scientific_status": "single-seed exploratory research preview with audit limitations disclosed",
+  "public_standalone_verification": {
+    "repo": "athenista/slm-tavenel-jepa-124m",
+    "revision": "ef09fef218b8fea55702bb06ecdcaa5cf2e12bf4",
+    "anonymous": true,
+    "standalone_without_slm_import": true,
+    "shape": [
+      2,
+      576
+    ],
+    "parameters": 124038144,
+    "weights_sha256": "cb1184e2985c92f5e5a0f091ec4128840b05fbd0bbb8d6569acca92a24f1b136",
+    "runtime_files_verified": 9,
+    "finite_outputs": true,
+    "generation_supported": false
+  },
+  "public_figures_verified": [
+    {
+      "file": "figures/architecture.svg",
+      "public_http_status": 200,
+      "content_type": "image/svg+xml"
+    },
+    {
+      "file": "figures/neighbour-overlap.svg",
+      "public_http_status": 200,
+      "content_type": "image/svg+xml"
+    },
+    {
+      "file": "figures/training.svg",
+      "public_http_status": 200,
+      "content_type": "image/svg+xml"
+    }
+  ]
+}

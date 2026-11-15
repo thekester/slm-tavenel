@@ -1,0 +1,130 @@
+{
+  "kind": "slm.tokens.fixed_splits",
+  "created": "2026-10-30T15:31:05Z",
+  "dtype": "uint16",
+  "eos_id": 0,
+  "vocab_size": 49152,
+  "tokenizer_sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+  "split_mapping": {
+    "train": "train",
+    "dev": "val",
+    "test": "test"
+  },
+  "shard_tokens_target": 200000000,
+  "inputs": {
+    "train": [
+      {
+        "path": "data\\processed\\slm-tavenel-edu-corpus-v2\\train.jsonl.gz",
+        "sha256": "3b25a88ca583a22f26332e83872d9db229348c3557454e92cb156597f7cb1dfc"
+      }
+    ],
+    "dev": [
+      {
+        "path": "data\\processed\\slm-tavenel-edu-corpus-v2\\dev.jsonl.gz",
+        "sha256": "d9db5db6954271f917403aa3c4793169356ec10a139b21a39302cf36d339b510"
+      }
+    ],
+    "test": [
+      {
+        "path": "data\\processed\\slm-tavenel-edu-corpus-v2\\test.jsonl.gz",
+        "sha256": "34f189843c1027d21f39df3421d14f1b78bc3a789644660d57d7471ff65ba8b6"
+      }
+    ]
+  },
+  "splits": {
+    "train": {
+      "tokens": 2139672344,
+      "docs": 1996506,
+      "shards": [
+        {
+          "file": "train_00000.bin",
+          "tokens": 200000148,
+          "sha256": "b723337b00dab46be2fd096198f032a5c944e8ca0411b34b1faffa432ce47807"
+        },
+        {
+          "file": "train_00001.bin",
+          "tokens": 200008657,
+          "sha256": "d2609be89cf48a36d04df246f05a60c0a1bc1bab2adc1d453dffe56231786868"
+        },
+        {
+          "file": "train_00002.bin",
+          "tokens": 200000372,
+          "sha256": "4c0d74f0706be8d3fdd5d4fe72d217b594d6c93ab97c388a8a9c35e4dfe01079"
+        },
+        {
+          "file": "train_00003.bin",
+          "tokens": 200000127,
+          "sha256": "fb2ff812b08d540be4cd37a8496c7e03bb487761e71f995f38a02c24af54631c"
+        },
+        {
+          "file": "train_00004.bin",
+          "tokens": 200001751,
+          "sha256": "15f71c38c4ee85146060d689804b6d95f11e94cdbe854928986041fb9c936f5e"
+        },
+        {
+          "file": "train_00005.bin",
+          "tokens": 200000177,
+          "sha256": "731b0d9a54bc5d4f1309b391f93558180ac7c6c24af80c8dc3348bd6ed0d2a17"
+        },
+        {
+          "file": "train_00006.bin",
+          "tokens": 200004040,
+          "sha256": "700d335a4b7ca38151bd3168bd2b4140c262f28023796522c7a72caeecc4c91c"
+        },
+        {
+          "file": "train_00007.bin",
+          "tokens": 200001396,
+          "sha256": "8b473d72ac1760736e70173478b54514e64f0ba9afa29230956fb34e5de5fa4b"
+        },
+        {
+          "file": "train_00008.bin",
+          "tokens": 200000089,
+          "sha256": "c5cf31e58116649e798fe6c7a48f85239b424573af0975c57f1779ede7581f64"
+        },
+        {
+          "file": "train_00009.bin",
+          "tokens": 200001249,
+          "sha256": "c8e96a354bc7b8bd6f221983730f0b0260640144bf57939951dbb3cd80a43692"
+        },
+        {
+          "file": "train_00010.bin",
+          "tokens": 139654338,
+          "sha256": "8824ce271e957b6191a657402ab821548f8bf464836577a7b3539dd3ea9a3c5d"
+        }
+      ]
+    },
+    "val": {
+      "tokens": 16420644,
+      "docs": 16229,
+      "shards": [
+        {
+          "file": "val_00000.bin",
+          "tokens": 16420644,
+          "sha256": "5dffe3ced94e4e70c7a37aeda36145224bdd9f1f4253856fc0a6b749b750e64f"
+        }
+      ]
+    },
+    "test": {
+      "tokens": 85306487,
+      "docs": 50780,
+      "shards": [
+        {
+          "file": "test_00000.bin",
+          "tokens": 85306487,
+          "sha256": "9b21af793bd1c61fccd508fe22f8a8120b2dbb0a2e1222b33d2aa4bff4058265"
+        }
+      ]
+    }
+  },
+  "code": {
+    "commit": "51e58c80becab972d417a5f62d39384ddb94ec7e",
+    "dirty": true
+  },
+  "corpus_candidate_manifest_sha256": "e24d88a648f13eb0b7216fee34c407855e38389a5cb0790404d584a2f7f24f75",
+  "tokenizer_manifest_sha256": "e4c9ecc6cb2c4b9e11ed1ddba2d2f57d06841728eabc95f1710dd90b4338a4ad",
+  "tokenizer_source": {
+    "source": "HuggingFaceTB/SmolLM2-360M",
+    "revision": "f8027fd0eaeea54caa13c31d31b9fdc459c38b49",
+    "license": "apache-2.0"
+  }
+}

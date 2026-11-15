@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-15",
+  "decision": "Owner requested publication of the newly completed model on Hugging Face with documented research limitations",
+  "repo": "athenista/slm-tavenel-362m",
+  "request": "je te laisse commit an dpush and releas et y a un ouveua modèlke à mettre sur hugging afce",
+  "scope": "Public research preview; not a signature of source-rights/privacy reviews or a claim of OSI certification",
+  "source_checkpoint_sha256": "281c53a7dac5bb92d1c6e49a957bbb996123f523b88fa0f81178e8cbd08d8fed",
+  "weights_sha256": "8d43547f7d507d9b58eb380b46c755bb3bbb3764e5ff610ff433c9c3dc6aa50f"
+}

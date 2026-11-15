@@ -1,0 +1,9 @@
+{
+  "date": "2026-11-11",
+  "decision": "owner explicitly requested public Hugging Face publication",
+  "model_safetensors_sha256": "cb1184e2985c92f5e5a0f091ec4128840b05fbd0bbb8d6569acca92a24f1b136",
+  "repo": "athenista/slm-tavenel-jepa-124m",
+  "request": "mais le sur hugging face",
+  "scope": "Public research preview with limitations in the model card; not a signature of source rights/privacy review or OSI certification",
+  "source_checkpoint_sha256": "6c86f18d5fcaab3aebdc5d79e75d074a365e4edd1dd816d8689f827b773e9d43"
+}

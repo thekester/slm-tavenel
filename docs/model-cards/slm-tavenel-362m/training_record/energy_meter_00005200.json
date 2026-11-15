@@ -1,0 +1,6 @@
+{
+  "gpu_energy_wh_before": 1905.3885474999997,
+  "method": "nvml_total_energy_counter",
+  "scope": "GPU board only (NVML); CPU, RAM and power-supply losses not measured; includes every process using this GPU during the run",
+  "start_step": 5200
+}

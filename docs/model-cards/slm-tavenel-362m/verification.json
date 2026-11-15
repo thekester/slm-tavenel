@@ -1,0 +1,50 @@
+{
+  "all_exported_tensors_match_native": true,
+  "cached_uncached_greedy_tokens_identical": [
+    true,
+    true,
+    true
+  ],
+  "checkpoint_sha256": "281c53a7dac5bb92d1c6e49a957bbb996123f523b88fa0f81178e8cbd08d8fed",
+  "cpu_inference": {
+    "batch_size": 1,
+    "dtype": "float32",
+    "kv_cache": true,
+    "median_tokens_per_second": 6.103275353237027,
+    "new_tokens": [
+      32,
+      32,
+      32
+    ],
+    "prompt_tokens": 128,
+    "seconds": [
+      5.243086399997992,
+      5.158991900003457,
+      7.275055999998585
+    ],
+    "threads": 6,
+    "timed_repeats": 3,
+    "warmups": 1
+  },
+  "environment": {
+    "cuda": "13.0",
+    "cudnn": 91200,
+    "devices": [
+      "NVIDIA GeForce RTX 4060 Laptop GPU"
+    ],
+    "numpy": "2.4.4",
+    "platform": "Windows-10-10.0.26300-SP0",
+    "python": "3.11.9",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.22.2",
+    "torch": "2.10.0+cu130"
+  },
+  "export_dtype": "float32",
+  "exported_tensor_count": 386,
+  "lm_head_tied_to_embedding": true,
+  "max_abs_logit_error_fixed_probes": 0.0,
+  "parameters": 362286016,
+  "scope": "Fixed-probe export parity and short CPU timing; not a fresh six-task evaluation or complete safety review",
+  "tokenizer_json_unchanged": true,
+  "weights_sha256": "8d43547f7d507d9b58eb380b46c755bb3bbb3764e5ff610ff433c9c3dc6aa50f"
+}

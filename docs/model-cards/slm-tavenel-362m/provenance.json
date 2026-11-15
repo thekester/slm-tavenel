@@ -1,0 +1,16 @@
+{
+  "checkpoint_conversion": "Checkpoint model tensors widened to float32, as native load_model does; separate optimizer master weights not exported.",
+  "packager_sha256": "b6e3631af4d2ece0daa032fd9f38e8e283d9565ae311d90c462cb9593cefb123",
+  "packaging_code": {
+    "commit": "8176a44c5b44821bb3284d492779ce684a5fa08d",
+    "dirty": true
+  },
+  "parameters": 362286016,
+  "source_and_privacy_review": "unsigned; declared dataset terms and limitations disclosed",
+  "source_checkpoint": "runs\\EXP-0034b-360m-muon\\checkpoints\\step_00008000.pt",
+  "source_checkpoint_sha256": "281c53a7dac5bb92d1c6e49a957bbb996123f523b88fa0f81178e8cbd08d8fed",
+  "source_snapshot_scope": "Current packaging-time source snapshot; training was resumed in dirty worktrees. Exact historical executed source for every segment is not available.",
+  "source_step": 8000,
+  "tokenizer_json_sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+  "weights_sha256": "8d43547f7d507d9b58eb380b46c755bb3bbb3764e5ff610ff433c9c3dc6aa50f"
+}

@@ -1,0 +1,36 @@
+{
+  "backbone_parameters": 124038144,
+  "model_config": {
+    "attn_gate": "headwise",
+    "conv_kernel": 3,
+    "conv_layers": [],
+    "d_model": 576,
+    "ffn_hidden": 1536,
+    "init_std": 0.02,
+    "max_seq_len": 2048,
+    "n_heads": 9,
+    "n_kv_heads": 3,
+    "n_layers": 27,
+    "norm_eps": 1e-06,
+    "qk_norm": true,
+    "rope_theta": 100000.0,
+    "tie_embeddings": true,
+    "vocab_size": 49152,
+    "window_pattern": []
+  },
+  "original_execution_provenance": "Incomplete original custom-loop manifest; original metadata retained in training_record/",
+  "packager_sha256": "4eb6034d6e16d41926a4f602252e76b589406e57f452d7c5ddd1f2e9290a4eb9",
+  "packaging_code": {
+    "commit": "8176a44c5b44821bb3284d492779ce684a5fa08d",
+    "dirty": true
+  },
+  "source_and_privacy_reviews": "unsigned; disclosed research preview",
+  "source_checkpoint": "runs\\EXP-0046-124m-jepa\\checkpoints\\step_00009000.pt",
+  "source_checkpoint_sha256": "6c86f18d5fcaab3aebdc5d79e75d074a365e4edd1dd816d8689f827b773e9d43",
+  "source_step": 9000,
+  "tokenizer_json_sha256": "9ca9acddb6525a194ec8ac7a87f24fbba7232a9a15ffa1af0c1224fcd888e47c",
+  "tokenizer_repo": "HuggingFaceTB/SmolLM2-360M",
+  "tokenizer_revision": "f8027fd0eaeea54caa13c31d31b9fdc459c38b49",
+  "training_projection_parameters": 147456,
+  "weights_sha256": "cb1184e2985c92f5e5a0f091ec4128840b05fbd0bbb8d6569acca92a24f1b136"
+}

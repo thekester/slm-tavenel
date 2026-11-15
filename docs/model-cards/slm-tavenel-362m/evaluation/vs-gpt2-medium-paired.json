@@ -1,0 +1,101 @@
+{
+  "kind": "slm.mc_paired_comparison",
+  "control": "runs\\reference\\peer-models-2026-10\\gpt-2-medium\\mc.json",
+  "treatment": "runs\\FAMILY-evaluations\\360m-muon\\benchmarks.json",
+  "labels": [
+    "gpt2-medium",
+    "slm-362m"
+  ],
+  "key": "correct",
+  "draws": 10000,
+  "seed": 0,
+  "tasks": {
+    "arc_challenge": {
+      "items": 1172,
+      "gpt2-medium": 0.21416382252559726,
+      "slm-362m": 0.21245733788395904,
+      "difference": -0.0017064846416382253,
+      "ci95": [
+        -0.025597269624573378,
+        0.02303754266211604
+      ],
+      "treatment_only_correct": 102,
+      "control_only_correct": 104,
+      "mcnemar_p": 0.9444761724149129
+    },
+    "arc_easy": {
+      "items": 2376,
+      "gpt2-medium": 0.48569023569023567,
+      "slm-362m": 0.48358585858585856,
+      "difference": -0.0021043771043771043,
+      "ci95": [
+        -0.022306397306397305,
+        0.018518518518518517
+      ],
+      "treatment_only_correct": 302,
+      "control_only_correct": 307,
+      "mcnemar_p": 0.8712534622852104
+    },
+    "belebele_en": {
+      "items": 900,
+      "gpt2-medium": 0.3333333333333333,
+      "slm-362m": 0.29777777777777775,
+      "difference": -0.035555555555555556,
+      "ci95": [
+        -0.06333333333333334,
+        -0.0077777777777777776
+      ],
+      "treatment_only_correct": 63,
+      "control_only_correct": 95,
+      "mcnemar_p": 0.013401204087274658
+    },
+    "belebele_fr": {
+      "items": 900,
+      "gpt2-medium": 0.31555555555555553,
+      "slm-362m": 0.3022222222222222,
+      "difference": -0.013333333333333334,
+      "ci95": [
+        -0.043333333333333335,
+        0.016666666666666666
+      ],
+      "treatment_only_correct": 90,
+      "control_only_correct": 102,
+      "mcnemar_p": 0.4273545893965867
+    },
+    "hellaswag": {
+      "items": 10042,
+      "gpt2-medium": 0.3325034853614818,
+      "slm-362m": 0.27853017327225654,
+      "difference": -0.053973312089225255,
+      "ci95": [
+        -0.06004779924317865,
+        -0.04799840669189404
+      ],
+      "treatment_only_correct": 218,
+      "control_only_correct": 760,
+      "mcnemar_p": 7.51089863105997e-71
+    },
+    "winogrande": {
+      "items": 1267,
+      "gpt2-medium": 0.5130228887134964,
+      "slm-362m": 0.5122336227308603,
+      "difference": -0.0007892659826361484,
+      "ci95": [
+        -0.03472770323599053,
+        0.03235990528808208
+      ],
+      "treatment_only_correct": 231,
+      "control_only_correct": 232,
+      "mcnemar_p": 1.0
+    }
+  },
+  "task_mean": {
+    "gpt2-medium": 0.36571155352995,
+    "slm-362m": 0.3478011654121557,
+    "difference": -0.01791038811779427,
+    "ci95": [
+      -0.028325177033985086,
+      -0.007631438745797307
+    ]
+  }
+}

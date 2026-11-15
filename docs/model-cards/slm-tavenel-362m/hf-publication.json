@@ -1,0 +1,59 @@
+{
+  "repo": "athenista/slm-tavenel-362m",
+  "url": "https://huggingface.co/athenista/slm-tavenel-362m",
+  "revision": "77e8b4fd134fa40b6d6974a14078f17e5680c7e1",
+  "public": true,
+  "verified_utc": "2026-11-15T17:23:28.986200+00:00",
+  "weights_sha256": "8d43547f7d507d9b58eb380b46c755bb3bbb3764e5ff610ff433c9c3dc6aa50f",
+  "private_standalone_verification": {
+    "repo": "athenista/slm-tavenel-362m",
+    "revision": "77e8b4fd134fa40b6d6974a14078f17e5680c7e1",
+    "anonymous": false,
+    "package_files_verified": 61,
+    "weights_sha256": "8d43547f7d507d9b58eb380b46c755bb3bbb3764e5ff610ff433c9c3dc6aa50f",
+    "parameters": 362286016,
+    "standalone_without_slm_import": true,
+    "fixed_probe_generation_matches": 3,
+    "finite_logits": true,
+    "generation_supported": true
+  },
+  "public_standalone_verification": {
+    "repo": "athenista/slm-tavenel-362m",
+    "revision": "77e8b4fd134fa40b6d6974a14078f17e5680c7e1",
+    "anonymous": true,
+    "package_files_verified": 61,
+    "weights_sha256": "8d43547f7d507d9b58eb380b46c755bb3bbb3764e5ff610ff433c9c3dc6aa50f",
+    "parameters": 362286016,
+    "standalone_without_slm_import": true,
+    "fixed_probe_generation_matches": 3,
+    "finite_logits": true,
+    "generation_supported": true
+  },
+  "public_figures_verified": [
+    {
+      "file": "figures/architecture.svg",
+      "public_http_status": 200,
+      "content_type": "image/svg+xml",
+      "sha256": "ed01fcc35cd0921293a3e7db12b2f5a5daaa2c01d56c6cfd87644f3389531eda"
+    },
+    {
+      "file": "figures/benchmarks.svg",
+      "public_http_status": 200,
+      "content_type": "image/svg+xml",
+      "sha256": "ce9b4f5fb5f73dcead92661d87567e3d91a4e930f67ded0e4538893c66e6be76"
+    },
+    {
+      "file": "figures/data-split.svg",
+      "public_http_status": 200,
+      "content_type": "image/svg+xml",
+      "sha256": "ce3a2ec03407966628112535e91e97f4bde33d0dba2797e64fdfc5b6fa15ed4f"
+    },
+    {
+      "file": "figures/training.svg",
+      "public_http_status": 200,
+      "content_type": "image/svg+xml",
+      "sha256": "08fcb5acbe25fc91d1604c00da135be118b29d1f639f57826dff8c32474fd6d2"
+    }
+  ],
+  "scientific_status": "Single-seed exploratory base-model preview. Internal BPB improves slightly; no demonstrated six-task accuracy gain over 124M. Source-rights and manual privacy reviews unsigned; no OSI certification claim."
+}

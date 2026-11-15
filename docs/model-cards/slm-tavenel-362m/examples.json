@@ -1,0 +1,62 @@
+[
+  {
+    "do_sample": false,
+    "max_new_tokens": 12,
+    "new_text": " the idea that the body is composed of a series of cells",
+    "new_token_ids": [
+      260,
+      2359,
+      338,
+      260,
+      1248,
+      314,
+      8168,
+      282,
+      253,
+      3086,
+      282,
+      1960
+    ],
+    "prompt": "The scientific method is based on"
+  },
+  {
+    "do_sample": false,
+    "max_new_tokens": 12,
+    "new_text": " déterminer les caractéristiques de la v",
+    "new_token_ids": [
+      32564,
+      25785,
+      259,
+      8897,
+      1076,
+      471,
+      2756,
+      1640,
+      2246,
+      367,
+      2618,
+      386
+    ],
+    "prompt": "La recherche scientifique permet de"
+  },
+  {
+    "do_sample": false,
+    "max_new_tokens": 12,
+    "new_text": " He had a long, long, and long, and long",
+    "new_token_ids": [
+      909,
+      761,
+      253,
+      986,
+      28,
+      986,
+      28,
+      284,
+      986,
+      28,
+      284,
+      986
+    ],
+    "prompt": "Once upon a time, a fox found a key."
+  }
+]

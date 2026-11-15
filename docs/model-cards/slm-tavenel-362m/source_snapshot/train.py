@@ -1,0 +1,583 @@
+"""Pretraining loop: deterministic, resumable, and instrumented.
+
+Reproducibility: batches are drawn from a generator seeded by (seed, step, rank,
+micro-step), so a resumed run sees exactly the batches an uninterrupted run would.
+Checkpoints include optimiser and RNG state.
+
+Observability: ``metrics.jsonl`` (loss, learning rate, gradient norm, throughput,
+memory), ``eval.jsonl`` (validation loss on fixed batches) and
+``observability.jsonl`` (per-layer residual norms, attention sink mass and entropy,
+weight norms, update-to-weight ratios on a fixed probe batch).
+
+Multi-GPU: launch with ``torchrun``; data parallelism via DDP. FSDP for larger
+scale is on the roadmap.
+"""
+
+from __future__ import annotations
+
+import contextlib
+import math
+import os
+import time
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+import torch
+import torch.distributed as dist
+from torch.nn.parallel import DistributedDataParallel as DDP
+
+from slm import interp
+from slm.config import ModelConfig, TrainConfig, config_hash, load_model_config
+from slm.energy import GpuEnergyMeter
+from slm.goodview import GoodViewHead, ParallelPairs, goodview_loss, masked_mean, parallel_ntp_loss
+from slm.data.shards import TokenShards
+from slm.model import SLM, document_ids
+from slm.hnet import HNet, HNetConfig
+from slm.jepa import JEPAPredictor, jepa_loss, make_target, state_jepa_loss, update_target
+from slm.optim import MasterOffloadAdamW, build_optimizer
+from slm.runlog import (JsonlLogger, assert_tokenizer_compatible, code_revision, environment_info,
+                        read_json, sha256_file, write_json)
+
+
+def lr_at(step: int, cfg: TrainConfig) -> float:
+    """Linear warmup, then warmup-stable-decay (linear decay over the final fraction) or cosine."""
+    if step < cfg.warmup_steps:
+        return cfg.lr * (step + 1) / cfg.warmup_steps
+    if cfg.schedule == "cosine":
+        progress = (step - cfg.warmup_steps) / max(1, cfg.max_steps - cfg.warmup_steps)
+        return cfg.min_lr + 0.5 * (cfg.lr - cfg.min_lr) * (1 + math.cos(math.pi * min(1.0, progress)))
+    decay_steps = int(cfg.max_steps * cfg.decay_fraction)
+    decay_start = cfg.max_steps - decay_steps
+    if step < decay_start or decay_steps == 0:
+        return cfg.lr
+    progress = (step - decay_start) / decay_steps
+    return cfg.lr + (cfg.min_lr - cfg.lr) * min(1.0, progress)
+
+
+def param_groups(model: SLM, weight_decay: float) -> list[dict[str, Any]]:
+    """Weight decay on matrices only; not on norms, gains or embeddings."""
+    decay, no_decay = [], []
+    seen = set()
+    for name, p in model.named_parameters():
+        if not p.requires_grad or id(p) in seen:
+            continue
+        seen.add(id(p))
+        (decay if p.dim() >= 2 and "embed" not in name else no_decay).append(p)
+    return [{"params": decay, "weight_decay": weight_decay}, {"params": no_decay, "weight_decay": 0.0}]
+
+
+def batch_rng(seed: int, step: int, rank: int, micro: int) -> np.random.Generator:
+    return np.random.default_rng([seed, step, rank, micro])
+
+
+def setup_distributed() -> tuple[int, int, torch.device]:
+    if "RANK" in os.environ and "WORLD_SIZE" in os.environ:
+        dist.init_process_group(backend="nccl" if torch.cuda.is_available() else "gloo")
+        rank, world = dist.get_rank(), dist.get_world_size()
+        if torch.cuda.is_available():
+            local = int(os.environ.get("LOCAL_RANK", 0))
+            torch.cuda.set_device(local)
+            return rank, world, torch.device("cuda", local)
+        return rank, world, torch.device("cpu")
+    return 0, 1, torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+def set_determinism(seed: int, deterministic: bool) -> None:
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+    if deterministic:
+        os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+        torch.use_deterministic_algorithms(True, warn_only=True)
+        torch.backends.cudnn.benchmark = False
+
+
+def autocast_context(device: torch.device, dtype: str):
+    if dtype == "float32":
+        return contextlib.nullcontext()
+    amp = torch.bfloat16 if dtype == "bfloat16" else torch.float16
+    if device.type == "cpu" and amp != torch.bfloat16:
+        return contextlib.nullcontext()
+    return torch.autocast(device_type=device.type, dtype=amp)
+
+
+def attention_backend(device: torch.device, deterministic: bool):
+    """Fused CUDA attention backward passes are not bitwise deterministic; fall back to math."""
+    if deterministic and device.type == "cuda":
+        from torch.nn.attention import SDPBackend, sdpa_kernel
+
+        return sdpa_kernel(SDPBackend.MATH)
+    return contextlib.nullcontext()
+
+
+def load_teacher(cfg: TrainConfig, device: torch.device, vocab_size: int) -> torch.nn.Module | None:
+    """Frozen Hugging Face teacher for logit distillation, in bfloat16, at its pinned revision."""
+    if not cfg.distill_teacher:
+        return None
+    from transformers import AutoModelForCausalLM
+
+    teacher = AutoModelForCausalLM.from_pretrained(cfg.distill_teacher, revision=cfg.distill_revision,
+                                                   torch_dtype=torch.bfloat16)
+    if teacher.config.vocab_size != vocab_size:
+        raise ValueError(f"teacher vocab {teacher.config.vocab_size} != student vocab {vocab_size}")
+    return teacher.to(device).eval().requires_grad_(False)
+
+
+@torch.no_grad()
+def teacher_logits(teacher: torch.nn.Module | None, x: torch.Tensor) -> torch.Tensor | None:
+    return None if teacher is None else teacher(input_ids=x, use_cache=False).logits
+
+
+def make_model(model_cfg) -> torch.nn.Module:
+    return HNet(model_cfg) if isinstance(model_cfg, HNetConfig) else SLM(model_cfg)
+
+
+def build_model_and_optimizer(model_cfg: ModelConfig, cfg: TrainConfig, device: torch.device):
+    model = make_model(model_cfg).to(device)
+    model.activation_checkpointing = cfg.activation_checkpointing
+    if cfg.jepa_weight:
+        model.jepa_predictor = JEPAPredictor(model_cfg.d_model, model_cfg.vocab_size, cfg.jepa_predictor_hidden).to(device)
+    if cfg.parallel_mode == "goodview":
+        model.jepa_predictor = GoodViewHead(model_cfg.d_model, cfg.goodview_dim).to(device)
+        model.keep_hidden = True
+    # The optimizer copies the fp32 initial weights first, so master-weight offload keeps them exact.
+    opt = build_optimizer(model, cfg.optimizer, cfg.lr, cfg.weight_decay, (cfg.beta1, cfg.beta2), cfg.eps,
+                          momentum=cfg.muon_momentum, fused=device.type == "cuda", offload=cfg.optimizer_offload,
+                          master_offload=cfg.master_weights_offload)
+    if cfg.master_weights_offload:
+        with torch.no_grad():
+            for p in model.parameters():  # parameters only: RoPE tables stay fp32
+                p.data = p.data.to(torch.bfloat16)
+    return model, opt
+
+
+def accumulate_gradients(opt) -> None:
+    if isinstance(opt, MasterOffloadAdamW):
+        opt.accumulate()
+
+
+def clip_gradients(model: SLM, opt, max_norm: float) -> float:
+    if isinstance(opt, MasterOffloadAdamW):
+        return opt.clip_grad_norm_(max_norm)
+    return torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm).item()
+
+
+def checkpoint_path(out_dir: Path, step: int) -> Path:
+    return out_dir / "checkpoints" / f"step_{step:08d}.pt"
+
+
+def save_checkpoint(out_dir: Path, step: int, model: SLM, opt: torch.optim.Optimizer, cfg: TrainConfig, keep: int,
+                    extra: dict[str, Any] | None = None) -> Path:
+    path = checkpoint_path(out_dir, step)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    state = {
+        **(extra or {}),
+        "step": step,
+        "model": model.state_dict(),
+        "optimizer": opt.state_dict(),
+        "model_config": model.cfg.__dict__,
+        "train_config": cfg.__dict__,
+        "torch_rng": torch.get_rng_state(),
+        "cuda_rng": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None,
+    }
+    tmp = path.with_suffix(".tmp")
+    torch.save(state, tmp)
+    tmp.replace(path)
+    ckpts = sorted(path.parent.glob("step_*.pt"))
+    for old in ckpts[:-keep] if keep > 0 else []:
+        old.unlink()
+    return path
+
+
+def latest_checkpoint(out_dir: Path) -> Path | None:
+    ckpts = sorted((out_dir / "checkpoints").glob("step_*.pt"))
+    return ckpts[-1] if ckpts else None
+
+
+def load_model(checkpoint: str | Path, device: str | torch.device = "cpu") -> SLM:
+    state = torch.load(checkpoint, map_location=device, weights_only=False)
+    saved = state["model_config"]
+    model_cfg = HNetConfig(**saved) if saved.get("arch") == "hnet" else ModelConfig(**saved)
+    model = make_model(model_cfg).to(device)
+    # Auxiliary training heads (e.g. the JEPA predictor) are not part of the evaluated model.
+    model.load_state_dict({k: v for k, v in state["model"].items() if not k.startswith("jepa_predictor.")})
+    return model
+
+
+@torch.no_grad()
+def evaluate_loss(model: SLM, data: TokenShards, cfg: TrainConfig, device: torch.device, eos_id: int | None = None) -> float:
+    """Loss on fixed validation windows, with the same attention masking as training.
+    Compare runs with different masking through bits per byte on whole documents instead."""
+    model.eval()
+    losses = []
+    for i in range(cfg.eval_batches):
+        x, y = data.sample(batch_rng(cfg.seed + 1, 0, 0, i), cfg.micro_batch_size, cfg.seq_len)
+        x = torch.from_numpy(x).to(device)
+        doc_ids = document_ids(x, eos_id) if eos_id is not None else None
+        with autocast_context(device, cfg.dtype):
+            _, loss = model(x, torch.from_numpy(y).to(device), doc_ids=doc_ids)
+        losses.append(loss.item())
+    model.train()
+    return float(np.mean(losses))
+
+
+def matrix_weights(model: SLM) -> dict[str, torch.Tensor]:
+    # Host copies: a device snapshot of every matrix would not fit beside the largest models.
+    return {n: p.detach().to("cpu", torch.float32, copy=True) for n, p in model.named_parameters() if p.dim() >= 2}
+
+
+@torch.no_grad()
+def update_ratios(model: SLM, before: dict[str, torch.Tensor]) -> dict[str, float]:
+    """||W_after - W_before|| / ||W_before|| per matrix: how much one optimiser step moved it."""
+    after = matrix_weights(model)
+    return {n: round(((w - before[n]).norm() / (before[n].norm() + 1e-12)).item(), 6) for n, w in after.items()}
+
+
+@torch.no_grad()
+def observe(model: SLM, probe: torch.Tensor) -> dict[str, Any]:
+    model.eval()
+    record: dict[str, Any] = {}
+    norms = interp.residual_norms(model, probe)
+    record["resid_rms"] = [round(v, 5) for v in norms["rms"].tolist()]
+    record["resid_max_abs"] = [round(v, 4) for v in norms["max_abs"].tolist()]
+    att = interp.attention_statistics(model, probe)
+    record["sink_mass_mean"] = [round(v, 5) for v in att["sink_mass"].mean(1).tolist()]
+    record["sink_mass_max"] = [round(v, 5) for v in att["sink_mass"].max(1).values.tolist()]
+    record["attn_entropy_mean"] = [round(v, 5) for v in att["entropy"].mean(1).tolist()]
+    if model.cfg.attn_gate != "none":
+        gates = interp.gate_statistics(model, probe)
+        record["gate_mean"] = [round(v, 4) for v in gates["mean"].mean(1).tolist()]
+        record["gate_closed_frac"] = [round(v, 4) for v in gates["closed_frac"].mean(1).tolist()]
+    record["weight_norm"] = {n: round(w.norm().item(), 4) for n, w in matrix_weights(model).items()}
+    model.train()
+    return record
+
+
+def benchmark(model_cfg: ModelConfig, cfg: TrainConfig, steps: int = 30, warmup: int = 5,
+              mean_doc_len: int = 600) -> dict[str, Any]:
+    """Controlled throughput measurement: random tokens, fixed shapes, warmup excluded.
+
+    Compares architectures and training options on equal footing, independently of data
+    loading and of whatever else ran during a real training job. When ``cfg.doc_mask`` is set,
+    end-of-text tokens are placed so documents average ``mean_doc_len`` tokens.
+    """
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    torch.manual_seed(cfg.seed)
+    model, opt = build_model_and_optimizer(model_cfg, cfg, device)
+    teacher = load_teacher(cfg, device, model_cfg.vocab_size)
+    gen = torch.Generator().manual_seed(cfg.seed)
+    eos = 0
+    times = []
+    if device.type == "cuda":
+        torch.cuda.reset_peak_memory_stats(device)
+    for step in range(warmup + steps):
+        if device.type == "cuda":
+            torch.cuda.synchronize()
+        t0 = time.perf_counter()
+        for _ in range(cfg.grad_accum_steps):
+            x = torch.randint(1, model_cfg.vocab_size, (cfg.micro_batch_size, cfg.seq_len + 1), generator=gen)
+            if cfg.doc_mask:
+                x[torch.rand(x.shape, generator=gen) < 1 / mean_doc_len] = eos
+            x = x.to(device)
+            doc_ids = document_ids(x[:, :-1], eos) if cfg.doc_mask else None
+            with autocast_context(device, cfg.dtype):
+                _, loss = model(x[:, :-1], x[:, 1:], return_logits=False, doc_ids=doc_ids,
+                                teacher_logits=teacher_logits(teacher, x[:, :-1]),
+                                distill_weight=cfg.distill_weight, distill_temperature=cfg.distill_temperature)
+                (loss / cfg.grad_accum_steps).backward()
+            accumulate_gradients(opt)
+        clip_gradients(model, opt, cfg.grad_clip)
+        opt.step()
+        opt.zero_grad(set_to_none=True)
+        if device.type == "cuda":
+            torch.cuda.synchronize()
+        if step >= warmup:
+            times.append(time.perf_counter() - t0)
+    tokens = cfg.micro_batch_size * cfg.seq_len * cfg.grad_accum_steps
+    med = float(np.median(times))
+    result = {
+        "device": torch.cuda.get_device_name(device) if device.type == "cuda" else "cpu",
+        "params": model.num_params(),
+        "optimizer": cfg.optimizer,
+        "doc_mask": cfg.doc_mask,
+        "tokens_per_step": tokens,
+        "median_step_s": round(med, 5),
+        "p90_step_s": round(float(np.percentile(times, 90)), 5),
+        "tokens_per_s": round(tokens / med, 1),
+    }
+    if device.type == "cuda":
+        result["max_mem_gb"] = round(torch.cuda.max_memory_allocated(device) / 1e9, 3)
+    if cfg.peak_tflops > 0:
+        result["mfu"] = round(model.flops_per_token(cfg.seq_len) * tokens / med / (cfg.peak_tflops * 1e12), 4)
+    return result
+
+
+def train(cfg: TrainConfig) -> dict[str, Any]:
+    rank, world, device = setup_distributed()
+    master = rank == 0
+    set_determinism(cfg.seed, cfg.deterministic)
+    out_dir = Path(cfg.out_dir)
+    model_cfg = load_model_config(cfg.model)
+    if cfg.mir and not 0 <= cfg.mir_mask_token_id < model_cfg.vocab_size:
+        raise ValueError(f"MIR mask token id {cfg.mir_mask_token_id} is outside vocab size {model_cfg.vocab_size}")
+
+    train_data = TokenShards(cfg.data_dir, "train")
+    val_data = TokenShards(cfg.data_dir, "val")
+    if train_data.vocab_size > model_cfg.vocab_size:
+        raise ValueError(f"tokenizer vocab {train_data.vocab_size} > model vocab {model_cfg.vocab_size}")
+    data_tokenizer_sha = train_data.manifest.get("tokenizer_sha256")
+    tokenizer_lineage: list[dict[str, str]] = []
+    if data_tokenizer_sha:
+        if cfg.resume:
+            existing = latest_checkpoint(out_dir)
+            if existing is not None:
+                tokenizer_lineage = assert_tokenizer_compatible(existing, data_tokenizer_sha)
+            elif cfg.init_from:
+                # A resumable run's first launch still needs to validate its seed checkpoint.
+                tokenizer_lineage = assert_tokenizer_compatible(cfg.init_from, data_tokenizer_sha)
+        elif cfg.init_from:
+            tokenizer_lineage = assert_tokenizer_compatible(cfg.init_from, data_tokenizer_sha)
+
+    model, opt = build_model_and_optimizer(model_cfg, cfg, device)
+    teacher = load_teacher(cfg, device, model_cfg.vocab_size)
+    if (teacher is not None or cfg.master_weights_offload) and world > 1:
+        raise ValueError("distillation and master-weight offload are implemented for single-process training")
+    eos_id = int(train_data.manifest["eos_id"]) if cfg.doc_mask else None
+
+    resume_from = latest_checkpoint(out_dir) if cfg.resume else None
+    init_info = None
+    if resume_from is not None and (out_dir / "run_manifest.json").exists():
+        init_info = read_json(out_dir / "run_manifest.json").get("initialized_from")
+    if cfg.init_from and resume_from is None:
+        init = torch.load(cfg.init_from, map_location="cpu", weights_only=False)
+        if ModelConfig(**init["model_config"]) != model_cfg:
+            raise ValueError(f"{cfg.init_from} was built for a different model configuration")
+        model.load_state_dict(init["model"])
+        if isinstance(opt, MasterOffloadAdamW):
+            opt.sync_from_device()  # initial weights pass through bfloat16 once
+        init_info = {"path": cfg.init_from, "sha256": sha256_file(cfg.init_from), "grown_from": init.get("grown_from")}
+
+    start_step = 0
+    energy_before_wh = 0.0  # energy of earlier segments of this run, restored from the checkpoint
+    if resume_from is not None:
+        state = torch.load(resume_from, map_location="cpu", weights_only=False)
+        energy_before_wh = float(state.get("gpu_energy_wh") or 0.0)
+        model.load_state_dict(state["model"])
+        opt.load_state_dict(state["optimizer"])
+        torch.set_rng_state(state["torch_rng"])
+        if state.get("cuda_rng") is not None and torch.cuda.is_available():
+            torch.cuda.set_rng_state_all(state["cuda_rng"])
+        start_step = state["step"]
+
+    parallel = ParallelPairs(cfg.parallel_data) if cfg.parallel_mode else None
+    jepa_target = make_target(model) if cfg.jepa_weight else None
+    jepa_ignore = int(train_data.manifest["eos_id"]) if jepa_target is not None else None
+    if jepa_target is not None and resume_from is not None and "jepa_target" in state:
+        jepa_target.load_state_dict(state["jepa_target"])
+
+    run_model: torch.nn.Module = model
+    if cfg.compile:
+        run_model = torch.compile(run_model)
+    if world > 1:
+        run_model = DDP(run_model, device_ids=[device.index] if device.type == "cuda" else None)
+
+    if master:
+        data_manifest_path = Path(cfg.data_dir) / "manifest.json"
+        data_manifest = read_json(data_manifest_path)
+        provenance_path = Path(cfg.data_dir) / "provenance.json"
+        data_provenance = read_json(provenance_path) if provenance_path.is_file() else None
+        write_json(out_dir / "run_manifest.json", {
+            "kind": "slm.train",
+            "train_config": cfg.__dict__,
+            "train_config_hash": config_hash(cfg),
+            "model_config": model_cfg.__dict__,
+            "model_config_hash": config_hash(model_cfg),
+            "params": model.num_params(),
+            "params_non_embedding": model.num_params(non_embedding=True),
+            "data": {
+                "dir": cfg.data_dir,
+                "manifest_sha256": sha256_file(data_manifest_path),
+                "provenance_path": str(provenance_path) if provenance_path.is_file() else None,
+                "provenance": data_provenance,
+                "tokenizer_sha256": data_manifest.get("tokenizer_sha256"),
+                "tokenizer_compatibility": {
+                    "dataset_tokenizer_sha256": data_tokenizer_sha,
+                    "source_checkpoint_lineage": tokenizer_lineage,
+                    "verified": bool(data_tokenizer_sha and (not cfg.init_from or tokenizer_lineage)),
+                },
+                "splits": {s: {"tokens": v["tokens"], "shards": [x["sha256"] for x in v["shards"]]}
+                           for s, v in data_manifest["splits"].items()},
+            },
+            "world_size": world,
+            "resumed_from": str(resume_from) if resume_from else None,
+            "initialized_from": init_info,
+            "distillation": None if teacher is None else {
+                "teacher": cfg.distill_teacher, "revision": cfg.distill_revision,
+                "teacher_params": sum(p.numel() for p in teacher.parameters()),
+                "weight": cfg.distill_weight, "temperature": cfg.distill_temperature,
+                "objective": "(1 - w) * CE + w * T^2 * KL(teacher || student), full vocabulary",
+            },
+            "jepa": None if jepa_target is None else {
+                "weight": cfg.jepa_weight, "ema": cfg.jepa_ema,
+                "predictor_params": sum(p.numel() for p in model.jepa_predictor.parameters()),
+                "objective": "CE + w * MSE(predictor(h_t, a_t+1), layer_norm(EMA h_t+1)), end-of-sequence actions excluded",
+            },
+            "code": code_revision(),
+            "environment": environment_info(),
+        })
+    metrics = JsonlLogger(out_dir / "metrics.jsonl", master)
+    evals = JsonlLogger(out_dir / "eval.jsonl", master)
+    obs = JsonlLogger(out_dir / "observability.jsonl", master)
+
+    tokens_per_step = cfg.micro_batch_size * cfg.seq_len * cfg.grad_accum_steps * world
+    flops_per_step = model.flops_per_token(cfg.seq_len) * tokens_per_step
+    if cfg.mir:
+        # Both clean and masked objectives contribute a forward/backward pass.
+        flops_per_step *= 2
+    # Row-aligned data (one record per window) cannot be cut shorter; text uses a short probe.
+    probe_len = cfg.seq_len if val_data.manifest.get("row_length") else min(cfg.seq_len, 128)
+    probe = torch.from_numpy(val_data.sample(batch_rng(cfg.seed + 2, 0, 0, 0), 2, probe_len)[0]).to(device)
+    last_loss = float("nan")
+    meter = GpuEnergyMeter(device.index or 0) if master and cfg.measure_energy and device.type == "cuda" else None
+    if meter is not None and meter.available:
+        write_json(out_dir / f"energy_meter_{start_step:08d}.json", {
+            "method": meter.method, "start_step": start_step, "gpu_energy_wh_before": energy_before_wh,
+            "scope": "GPU board only (NVML); CPU, RAM and power-supply losses not measured; includes every process "
+                     "using this GPU during the run",
+        })
+
+    def energy_wh() -> float | None:
+        current = meter.energy_wh() if meter is not None else None
+        return None if current is None else energy_before_wh + current
+
+    t0 = time.perf_counter()
+
+    for step in range(start_step, cfg.max_steps):
+        lr = lr_at(step, cfg)
+        for group in opt.param_groups:
+            group["lr"] = lr
+        loss_sum = 0.0
+        clean_loss_sum = 0.0
+        mir_loss_sum = 0.0
+        kl_sum = 0.0
+        jepa_sum = 0.0
+        parallel_stats: dict[str, float] = {}
+        for micro in range(cfg.grad_accum_steps):
+            rng = batch_rng(cfg.seed, step, rank, micro)
+            x, y = train_data.sample(rng, cfg.micro_batch_size, cfg.seq_len)
+            x, y = torch.from_numpy(x).to(device), torch.from_numpy(y).to(device)
+            sync = contextlib.nullcontext()
+            if world > 1 and micro < cfg.grad_accum_steps - 1:
+                sync = run_model.no_sync()
+            doc_ids = document_ids(x, eos_id) if eos_id is not None else None
+            with sync, autocast_context(device, cfg.dtype), attention_backend(device, cfg.deterministic):
+                _, loss = run_model(x, y, return_logits=False, doc_ids=doc_ids,
+                                    teacher_logits=teacher_logits(teacher, x), distill_weight=cfg.distill_weight,
+                                    distill_temperature=cfg.distill_temperature)
+                total_loss = loss
+                if teacher is not None:
+                    # Log the next-token term as the model's loss; the KL term separately.
+                    loss = model.last_loss_parts["ce"]
+                    kl_sum += model.last_loss_parts["kl"].item()
+                if cfg.mir:
+                    ratios = rng.uniform(cfg.mir_mask_ratio_min, cfg.mir_mask_ratio_max,
+                                         size=(cfg.micro_batch_size, 1))
+                    mask = rng.random((cfg.micro_batch_size, cfg.seq_len)) < ratios
+                    x_masked = x.clone()
+                    x_masked[torch.from_numpy(mask).to(device)] = cfg.mir_mask_token_id
+                    _, mir_loss = run_model(x_masked, y, return_logits=False, doc_ids=doc_ids)
+                    total_loss = loss + cfg.mir_aux_weight * mir_loss
+                    mir_loss_sum += mir_loss.item()
+                if jepa_target is not None:
+                    with torch.no_grad():
+                        jepa_target(x)
+                    if cfg.jepa_mode == "state":
+                        j_loss = state_jepa_loss(model.jepa_predictor, model.last_hidden, jepa_target.last_hidden, x,
+                                                 cfg.jepa_state_tokens)
+                    else:
+                        j_loss = jepa_loss(model.jepa_predictor, model.last_hidden, jepa_target.last_hidden, x,
+                                           ignore_action=jepa_ignore)
+                    total_loss = total_loss + cfg.jepa_weight * j_loss
+                    jepa_sum += j_loss.item()
+                if parallel is not None and micro == 0:
+                    # Once per update: one batch of translation pairs, weighted so that after the division
+                    # by grad_accum_steps below its gradient has weight parallel_weight.
+                    en, en_len, fr, fr_len = (torch.from_numpy(a.astype(np.int64)).to(device)
+                                              for a in parallel.sample(batch_rng(cfg.seed + 7, step, rank, 0),
+                                                                       cfg.parallel_batch))
+                    if cfg.parallel_mode == "goodview":
+                        model(en)
+                        z_en = model.jepa_predictor(masked_mean(model.last_hidden, en_len))
+                        model(fr)
+                        z_fr = model.jepa_predictor(masked_mean(model.last_hidden, fr_len))
+                        p_loss, parallel_stats = goodview_loss(z_en, z_fr, cfg.goodview_gamma, cfg.goodview_variant)
+                    else:
+                        p_loss = 0.5 * (parallel_ntp_loss(model(en)[0], en, en_len)
+                                        + parallel_ntp_loss(model(fr)[0], fr, fr_len))
+                    parallel_stats["parallel_loss"] = p_loss.item()
+                    total_loss = total_loss + cfg.grad_accum_steps * cfg.parallel_weight * p_loss
+                (total_loss / cfg.grad_accum_steps).backward()
+            accumulate_gradients(opt)
+            clean_loss_sum += loss.item()
+            loss_sum += total_loss.item()
+        grad_norm = clip_gradients(model, opt, cfg.grad_clip)
+        observing = master and cfg.observe_interval and step % cfg.observe_interval == 0
+        if observing:
+            obs_record = observe(model, probe)
+            before = matrix_weights(model)
+        opt.step()
+        opt.zero_grad(set_to_none=True)
+        if jepa_target is not None:
+            update_target(jepa_target, model, cfg.jepa_ema)
+        if observing:
+            obs.log(step=step, **obs_record, update_ratio=update_ratios(model, before))
+        last_loss = loss_sum / cfg.grad_accum_steps
+        done = step + 1
+
+        if master and (done % cfg.log_interval == 0 or done == cfg.max_steps):
+            if device.type == "cuda":
+                torch.cuda.synchronize()
+            dt = time.perf_counter() - t0
+            steps_timed = cfg.log_interval if done % cfg.log_interval == 0 else done % cfg.log_interval
+            record = {
+                "step": done,
+                "loss": round(last_loss, 5),
+                "lr": lr,
+                "grad_norm": round(grad_norm, 5),
+                "tokens": done * tokens_per_step,
+                "tokens_per_s": round(steps_timed * tokens_per_step / dt, 1),
+            }
+            record["ntp_loss"] = round(clean_loss_sum / cfg.grad_accum_steps, 5)
+            if cfg.mir:
+                record["mir_aux_loss"] = round(mir_loss_sum / cfg.grad_accum_steps, 5)
+            if teacher is not None:
+                record["distill_kl"] = round(kl_sum / cfg.grad_accum_steps, 5)
+            if jepa_target is not None:
+                record["jepa_loss"] = round(jepa_sum / cfg.grad_accum_steps, 5)
+            record.update({k: round(v, 5) for k, v in parallel_stats.items()})
+            if isinstance(model, HNet):
+                record.update({k: round(v, 5) for k, v in model.last_chunk_stats.items()})
+            if cfg.peak_tflops > 0:
+                record["mfu"] = round(steps_timed * flops_per_step / dt / (cfg.peak_tflops * 1e12 * world), 4)
+            if device.type == "cuda":
+                record["max_mem_gb"] = round(torch.cuda.max_memory_allocated(device) / 1e9, 3)
+            if energy_wh() is not None:
+                record["gpu_energy_wh"] = round(energy_wh(), 3)
+                record["gpu_power_w"] = round(meter.power_w() or 0.0, 1)
+            metrics.log(**record)
+            t0 = time.perf_counter()
+        if master and cfg.eval_interval and (done % cfg.eval_interval == 0 or done == cfg.max_steps):
+            evals.log(step=done, val_loss=round(evaluate_loss(model, val_data, cfg, device, eos_id), 5))
+        if master and cfg.ckpt_interval and (done % cfg.ckpt_interval == 0 or done == cfg.max_steps):
+            extra = {"jepa_target": jepa_target.state_dict()} if jepa_target is not None else {}
+            if energy_wh() is not None:
+                extra["gpu_energy_wh"] = energy_wh()
+            save_checkpoint(out_dir, done, model, opt, cfg, cfg.keep_checkpoints, extra=extra or None)
+        if world > 1:
+            dist.barrier()
+
+    if meter is not None:
+        meter.close()
+    if world > 1:
+        dist.destroy_process_group()
+    return {"final_step": cfg.max_steps, "final_loss": last_loss}
